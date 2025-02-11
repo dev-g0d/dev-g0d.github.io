@@ -1,1 +1,0 @@
-# dev-g0d.github.io
