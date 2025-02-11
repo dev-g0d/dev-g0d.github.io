@@ -3,32 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>เล่นสตรีม HLS</title>
+    <title></title>
+    <style>
+        /* Dark theme for the whole page */
+        body {
+            background-color: #121212;
+            color: #f1f1f1;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Full screen video */
+        video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;  /* Ensures the entire video is visible without cropping */
+            background-color: black;  /* Prevents black borders in case of aspect ratio mismatch */
+        }
+
+        /* Optional: Centered text for fallback message */
+        video + p {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+            color: white;
+        }
+    </style>
 </head>
 <body>
 
-    <video id="video" controls width="640" height="360"></video>
-
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-    <script>
-        var video = document.getElementById('video');
-        var videoSrc = "https://pd.cybar.xyz/Pd7WQJgt"; // เปลี่ยนเป็นลิงก์ของคุณ
-
-        if (Hls.isSupported()) {
-            var hls = new Hls();
-            hls.loadSource(videoSrc);  // โหลด URL ของไฟล์ M3U8 (หากมันเป็นไฟล์ HLS)
-            hls.attachMedia(video);    // ผูกกับตัว player
-            hls.on(Hls.Events.MANIFEST_PARSED, function () {
-                video.play();
-            });
-        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-            // สำหรับเบราว์เซอร์ที่รองรับ HLS โดยตรง เช่น Safari
-            video.src = videoSrc;
-            video.addEventListener('loadedmetadata', function () {
-                video.play();
-            });
-        }
-    </script>
+<video id="video" controls>
+    <source src="https://pd.cybar.xyz/MnZrRMox" type="video/mp4">
+    วิดีโอไม่สามารถเล่นได้
+</video>
 
 </body>
 </html>
