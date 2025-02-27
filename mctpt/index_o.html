@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCTPT</title>
+    <style>
+        body {
+            background-color: #181818;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+        }
+        .video-wrapper {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .ep-list {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        .ep-list button {
+            background: #e50914;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+            flex: 1 1 auto;
+            min-width: 100px;
+        }
+        .ep-list button:hover {
+            background: #b20710;
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+            .ep-list {
+                flex-direction: column;
+                align-items: center;
+            }
+            .ep-list button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>MasterChef The Professionals Thailand</h1>
+        <div class="video-wrapper">
+            <iframe id="video" src="https://www.youtube.com/embed/wJfcIBTNIDk" allowfullscreen></iframe>
+        </div>
+        <div class="ep-list">
+            <button onclick="changeEpisode('wJfcIBTNIDk')">EP 1</button>
+            <button onclick="changeEpisode('28vpgZFifTE')">EP 2</button>
+            <button onclick="changeEpisode('3eDlNlFWg7w')">EP 3</button>	
+        </div>
+    </div>
+    <script>
+        function changeEpisode(videoId) {
+            document.getElementById('video').src = `https://www.youtube.com/embed/${videoId}`;
+        }
+    </script>
+</body>
+</html>
