@@ -1,7 +1,7 @@
 @echo off
 setlocal enabledelayedexpansion
 
-set status=online
+set status=offline
 set YELLOW=[33m&set RESET=[0m
 
 if /i "%status%"=="online" (
