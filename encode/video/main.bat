@@ -17,6 +17,6 @@ if /i "%status%"=="online" (
 	start "" "C:\Program Files\VideoLAN\VLC\vlc.exe" --meta-title="encode" "!encode!"
 exit
 ) else (
-    powershell -Command "& {Add-Type -AssemblyName 'System.Windows.Forms'; [System.Windows.Forms.MessageBox]::Show('Offline Protection.', 'Self-protect.', 'OK', 'Error')}"
+    powershell -Command "& {Add-Type -AssemblyName 'System.Windows.Forms'; [System.Windows.Forms.MessageBox]::Show('Self-Protect.', 'Bad Request.', 'OK', 'Error')}"
     exit /b
 )
