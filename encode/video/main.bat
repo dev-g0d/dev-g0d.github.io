@@ -1,7 +1,7 @@
 @echo off
 setlocal enabledelayedexpansion
 
-set status=1
+set status=0
 set YELLOW=[33m&set RESET=[0m
 
 if /i "%status%"=="1" (
