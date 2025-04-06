@@ -1,10 +1,10 @@
 @echo off
 setlocal enabledelayedexpansion
 
-set status=online
+set status=0
 set YELLOW=[33m&set RESET=[0m
 
-if /i "%status%"=="online" (
+if /i "%status%"=="1" (
 	echo %YELLOW%==============================%RESET%
 	echo    Video Loader By g0d  %RESET%
 	echo %YELLOW%==============================%RESET%
