@@ -12,6 +12,7 @@ if /i "%status%"=="1" (
 	echo !g0d!> g0d.b64
 	certutil -f -decode g0d.b64 g0d.txt >nul
 	set /p encode=<g0d.txt
+	set "encode=!encode!?t=%random%"
 	del g0d.*
 	timeout /t 3 >nul 2>&1
 	start "" "C:\Program Files\VideoLAN\VLC\vlc.exe" --meta-title="encode" "!encode!"
