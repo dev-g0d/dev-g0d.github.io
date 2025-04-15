@@ -1,28 +1,33 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Youtube Packs</title>
+  <title>Youtube packs</title>
   <script>
     window.onload = function() {
-      const urls = [
-        "https://github.com/dev-g0d/dev-g0d.github.io/raw/refs/heads/main-site/youtube-packs/Youtube-Ad-blocker-Reminder-Remover.user.js",
-        "https://gist.github.com/barraIhsan/bc901bc9c3604749d48361d23a094d29/raw/4133fa5aa12a019de96faa7a7c432283ca6334be/ytPremiumLogo.user.js",
-        "https://gist.github.com/barraIhsan/bc901bc9c3604749d48361d23a094d29/raw/4133fa5aa12a019de96faa7a7c432283ca6334be/ytMusicPremiumLogo.user.js",
-        "https://update.greasyfork.org/scripts/9062/Youtube%20Unblocker.user.js",
-        "https://update.greasyfork.org/scripts/503639/Youtube%20HLS%20Enabler.user.js",
-        "https://update.greasyfork.org/scripts/377412/Youtube%20video%20ending%20screen%20card%20remover.user.js",
-        "https://update.greasyfork.org/scripts/436115/Return%20YouTube%20Dislike.user.js"
+      const base64Urls = [
+        "aHR0cHM6Ly9naXRodWIuY29tL2Rldi1nMGQvZGV2LWcwZC5naXRodWIuaW8vcmF3L3JlZnMvaGVhZHMvbWFpbi1zaXRlL3lvdXR1YmUtcGFja3MvWW91dHViZS1BZC1ibG9ja2VyLVJlbWluZGVyLVJlbW92ZXIudXNlci5qcw==",
+        "aHR0cHM6Ly9naXN0LmdpdGh1Yi5jb20vYmFycmFJaHNhbi9iYzkwMWJjOWMzNjA0NzQ5ZDQ4MzYxZDIzYTA5NGQyOS9yYXcvNDEzM2ZhNWFhMTJhMDE5ZGU5NmZhYTdhN2M0MzIyODNjYTYzMzRiZS95dFByZW1pdW1Mb2dvLnVzZXIuanM=",
+        "aHR0cHM6Ly9naXN0LmdpdGh1Yi5jb20vYmFycmFJaHNhbi9iYzkwMWJjOWMzNjA0NzQ5ZDQ4MzYxZDIzYTA5NGQyOS9yYXcvNDEzM2ZhNWFhMTJhMDE5ZGU5NmZhYTdhN2M0MzIyODNjYTYzMzRiZS95dE11c2ljUHJlbWl1bUxvZ28udXNlci5qcw==",
+        "aHR0cHM6Ly91cGRhdGUuZ3JlYXN5Zm9yay5vcmcvc2NyaXB0cy85MDYyL1lvdXR1YmUlMjBVbmJsb2NrZXIudXNlci5qcw==",
+        "aHR0cHM6Ly91cGRhdGUuZ3JlYXN5Zm9yay5vcmcvc2NyaXB0cy81MDM2MzkvWW91dHViZSUyMEhMUyUyMEVuYWJsZXIudXNlci5qcw==",
+        "aHR0cHM6Ly91cGRhdGUuZ3JlYXN5Zm9yay5vcmcvc2NyaXB0cy8zNzc0MTIvWW91dHViZSUyMHZpZGVvJTIwZW5kaW5nJTIwc2NyZWVuJTIwY2FyZCUyMHJlbW92ZXIudXNlci5qcw==",
+        "aHR0cHM6Ly91cGRhdGUuZ3JlYXN5Zm9yay5vcmcvc2NyaXB0cy80MzYxMTUvUmV0dXJuJTIwWW91VHViZSUyMERpc2xpa2UudXNlci5qcw=="
       ];
 
-      urls.forEach(url => {
-        window.open(url, '_blank');
+      base64Urls.forEach(base64Url => {
+        try {
+          const url = window.atob(base64Url);
+          window.open(url, '_blank');
+        } catch (error) {
+          console.error("Error decoding or opening URL:", base64Url, error);
+        }
       });
     };
   </script>
 </head>
 <body>
 
-  <p></p>
+  <p>กำลังเปิดแท็บใหม่ (Base64)...</p>
 
 </body>
 </html>
