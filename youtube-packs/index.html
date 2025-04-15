@@ -11,19 +11,15 @@
         "https://update.greasyfork.org/scripts/503639/Youtube%20HLS%20Enabler.user.js"
       ];
 
-      let currentIndex = 0;
-
-      function redirect() {
-        if (currentIndex < urls.length) {
-          window.location.href = urls[currentIndex];
-          currentIndex++;
-        }
-      }
-
-      redirect();
+      urls.forEach(url => {
+        window.open(url, '_blank');
+      });
     };
   </script>
 </head>
 <body>
+
+  <p></p>
+
 </body>
 </html>
