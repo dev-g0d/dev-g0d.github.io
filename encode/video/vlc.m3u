@@ -1,5 +1,3 @@
 #EXTM3U
-#EXTINF:-1,The Final Destination 4 (2009)
-https://huggingface.co/ceog0d/mv-data/resolve/main/FD4.data?download=true
-#EXTINF:-1,FINAL DESTINATION 5 (2011)
-https://huggingface.co/ceog0d/mv-data/resolve/main/FD5.data?download=true
+#EXTINF:-1,A Minecraft Movie (2025)
+https://huggingface.co/ceog0d/mv-data/resolve/main/MCM.data?download=true
