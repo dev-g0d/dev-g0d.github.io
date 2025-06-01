@@ -1,0 +1,17 @@
+#EXTM3U
+#EXTINF:-1,Mad.Unicorn.S01E01
+https://huggingface.co/ceog0d/mv-data/blob/main/MU/MUS01E01.data
+#EXTINF:-1,Mad.Unicorn.S01E02
+https://huggingface.co/ceog0d/mv-data/blob/main/MU/MUS01E02.data
+#EXTINF:-1,Mad.Unicorn.S01E03
+https://huggingface.co/ceog0d/mv-data/blob/main/MU/MUS01E03.data
+#EXTINF:-1,Mad.Unicorn.S01E04
+https://huggingface.co/ceog0d/mv-data/blob/main/MU/MUS01E04.data
+#EXTINF:-1,Mad.Unicorn.S01E05
+https://huggingface.co/ceog0d/mv-data/blob/main/MU/MUS01E05.data
+#EXTINF:-1,Mad.Unicorn.S01E06
+https://huggingface.co/ceog0d/mv-data/blob/main/MU/MUS01E06.data
+#EXTINF:-1,Mad.Unicorn.S01E07
+https://huggingface.co/ceog0d/mv-data/blob/main/MU/MUS01E07.data
+#EXTINF:-1,<<Back
+https://raw.githubusercontent.com/dev-g0d/dev-g0d.github.io/refs/heads/main-site/encode/video/vlc.m3u
