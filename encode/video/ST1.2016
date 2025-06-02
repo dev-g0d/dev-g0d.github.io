@@ -1,0 +1,17 @@
+#EXTM3U
+#EXTINF:-1,Stranger Things S01E01 - The Vanishing of Will Byers
+https://huggingface.co/ceog0d/mv-data/resolve/main/ST1/ST1.S01E01.data?download=true
+#EXTINF:-1,Stranger Things S01E02 - The Weirdo On Maple Street
+https://huggingface.co/ceog0d/mv-data/resolve/main/ST1/ST1.S01E02.data?download=true
+#EXTINF:-1,Stranger Things S01E03 - Holly Jolly
+https://huggingface.co/ceog0d/mv-data/resolve/main/ST1/ST1.S01E03.data?download=true
+#EXTINF:-1,Stranger Things S01E04 - The Body
+https://huggingface.co/ceog0d/mv-data/resolve/main/ST1/ST1.S01E04.data?download=true
+#EXTINF:-1,Stranger Things S01E05 - The Flea and the Acrobat
+https://huggingface.co/ceog0d/mv-data/resolve/main/ST1/ST1.S01E05.data?download=true
+#EXTINF:-1,Stranger Things S01E06 - The Monster
+https://huggingface.co/ceog0d/mv-data/resolve/main/ST1/ST1.S01E06.data?download=true
+#EXTINF:-1,Stranger Things S01E07 - The Bathtub
+https://huggingface.co/ceog0d/mv-data/resolve/main/ST1/ST1.S01E07.data?download=true
+#EXTINF:-1,Stranger Things S01E08 - The Upside Down
+https://huggingface.co/ceog0d/mv-data/resolve/main/ST1/ST1.S01E08.data?download=true
