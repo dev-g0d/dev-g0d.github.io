@@ -1,19 +1,19 @@
 #EXTM3U
-#EXTINF:-1, Dept Q S01EP1
+#EXTINF:-1, Dept Q EP1
 https://huggingface.co/ceog0d/mv2-data/resolve/main/DQSS1/DQ.S01E01.data?download=true
-#EXTINF:-1, Dept Q S01EP2
+#EXTINF:-1, Dept Q EP2
 https://huggingface.co/ceog0d/mv2-data/resolve/main/DQSS1/DQ.S01E02.data?download=true
-#EXTINF:-1, Dept Q S01EP3
+#EXTINF:-1, Dept Q EP3
 https://huggingface.co/ceog0d/mv2-data/resolve/main/DQSS1/DQ.S01E03.data?download=true
-#EXTINF:-1, Dept Q S01EP4
+#EXTINF:-1, Dept Q EP4
 https://huggingface.co/ceog0d/mv2-data/resolve/main/DQSS1/DQ.S01E04.data?download=true
-#EXTINF:-1, Dept Q S01EP5
+#EXTINF:-1, Dept Q EP5
 https://huggingface.co/ceog0d/mv2-data/resolve/main/DQSS1/DQ.S01E05.data?download=true
-#EXTINF:-1, Dept Q S01EP6
+#EXTINF:-1, Dept Q EP6
 https://huggingface.co/ceog0d/mv2-data/resolve/main/DQSS1/DQ.S01E06.data?download=true
-#EXTINF:-1, Dept Q S01EP7
+#EXTINF:-1, Dept Q EP7
 https://huggingface.co/ceog0d/mv2-data/resolve/main/DQSS1/DQ.S01E07.data?download=true
-#EXTINF:-1, Dept Q S01EP8
+#EXTINF:-1, Dept Q EP8
 https://huggingface.co/ceog0d/mv2-data/resolve/main/DQSS1/DQ.S01E08.data?download=true
-#EXTINF:-1, Dept Q S01EP9
+#EXTINF:-1, Dept Q EP9
 https://huggingface.co/ceog0d/mv2-data/resolve/main/DQSS1/DQ.S01E09.data?download=true
