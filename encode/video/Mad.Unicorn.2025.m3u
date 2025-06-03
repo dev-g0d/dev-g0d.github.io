@@ -1,15 +1,15 @@
 #EXTM3U
-#EXTINF:-1,Mad Unicorn S01E01
+#EXTINF:-1,Mad Unicorn EP01
 https://huggingface.co/ceog0d/mv-data/resolve/main/MU/MUS01E01.data?download=true
-#EXTINF:-1,Mad Unicorn S01E02
+#EXTINF:-1,Mad Unicorn EP02
 https://huggingface.co/ceog0d/mv-data/resolve/main/MU/MUS01E02.data?download=true
-#EXTINF:-1,Mad Unicorn S01E03
+#EXTINF:-1,Mad Unicorn EP03
 https://huggingface.co/ceog0d/mv-data/resolve/main/MU/MUS01E03.data?download=true
-#EXTINF:-1,Mad Unicorn S01E04
+#EXTINF:-1,Mad Unicorn EP04
 https://huggingface.co/ceog0d/mv-data/resolve/main/MU/MUS01E04.data?download=true
-#EXTINF:-1,Mad Unicorn S01E05
+#EXTINF:-1,Mad Unicorn EP05
 https://huggingface.co/ceog0d/mv-data/resolve/main/MU/MUS01E05.data?download=true
-#EXTINF:-1,Mad Unicorn S01E06
+#EXTINF:-1,Mad Unicorn EP06
 https://huggingface.co/ceog0d/mv-data/resolve/main/MU/MUS01E06.data?download=true
-#EXTINF:-1,Mad Unicorn S01E07
+#EXTINF:-1,Mad Unicorn EP07
 https://huggingface.co/ceog0d/mv-data/resolve/main/MU/MUS01E07.data?download=true
