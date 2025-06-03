@@ -1,0 +1,51 @@
+#EXTM3U
+#EXTINF:-1, [ซีซั่น1]Stranger Things EP01 The Vanishing of Will Byers
+https://huggingface.co/ceog0d/mv-data/resolve/main/ST1/ST1.S01E01.data?download=true
+#EXTINF:-1, [ซีซั่น1]Stranger Things EP02 The Weirdo On Maple Street
+https://huggingface.co/ceog0d/mv-data/resolve/main/ST1/ST1.S01E02.data?download=true
+#EXTINF:-1,[ซีซั่น1]Stranger Things EP03 Holly Jolly
+https://huggingface.co/ceog0d/mv-data/resolve/main/ST1/ST1.S01E03.data?download=true
+#EXTINF:-1, [ซีซั่น1]Stranger Things EP04 The Body
+https://huggingface.co/ceog0d/mv-data/resolve/main/ST1/ST1.S01E04.data?download=true
+#EXTINF:-1, [ซีซั่น1]Stranger Things EP05 The Flea and the Acrobat
+https://huggingface.co/ceog0d/mv-data/resolve/main/ST1/ST1.S01E05.data?download=true
+#EXTINF:-1, [ซีซั่น1]Stranger Things EP06 The Monster
+https://huggingface.co/ceog0d/mv-data/resolve/main/ST1/ST1.S01E06.data?download=true
+#EXTINF:-1, [ซีซั่น1]Stranger Things EP07 The Bathtub
+https://huggingface.co/ceog0d/mv-data/resolve/main/ST1/ST1.S01E07.data?download=true
+#EXTINF:-1, [ซีซั่น1]Stranger Things EP08 The Upside Down
+https://huggingface.co/ceog0d/mv-data/resolve/main/ST1/ST1.S01E08.data?download=true
+#EXTINF:-1, [ซีซั่น2]Stranger Things EP01 MADMAX
+https://huggingface.co/ceog0d/mv-data/resolve/main/ST2/ST2.S02E01.data?download=true
+#EXTINF:-1, [ซีซั่น2]Stranger Things EP02 Trick or Treat Freak
+https://huggingface.co/ceog0d/mv-data/resolve/main/ST2/ST2.S02E02.data?download=true
+#EXTINF:-1, [ซีซั่น2]Stranger Things EP03 The Pollywog
+https://huggingface.co/ceog0d/mv-data/resolve/main/ST2/ST2.S02E03.data?download=true
+#EXTINF:-1, [ซีซั่น2]Stranger Things EP04 Will the Wise
+https://huggingface.co/ceog0d/mv-data/resolve/main/ST2/ST2.S02E04.data?download=true
+#EXTINF:-1, [ซีซั่น2]Stranger Things EP05 Dig Dug
+https://huggingface.co/ceog0d/mv-data/resolve/main/ST2/ST2.S02E05.data?download=true
+#EXTINF:-1, [ซีซั่น2]Stranger Things EP06 The Spy
+https://huggingface.co/ceog0d/mv-data/resolve/main/ST2/ST2.S02E06.data?download=true
+#EXTINF:-1, [ซีซั่น2]Stranger Things EP07 The Lost Sister
+https://huggingface.co/ceog0d/mv-data/resolve/main/ST2/ST2.S02E07.data?download=true
+#EXTINF:-1, [ซีซั่น2]Stranger Things EP08 The Mind Flayer
+https://huggingface.co/ceog0d/mv-data/resolve/main/ST2/ST2.S02E08.data?download=true
+#EXTINF:-1, [ซีซั่น2]Stranger Things EP09 The Gate
+https://huggingface.co/ceog0d/mv-data/resolve/main/ST2/ST2.S02E09.data?download=true
+#EXTINF:-1, [ซีซั่น3]Stranger Things EP01 The Suzie Do You Copy
+https://huggingface.co/ceog0d/mv2-data/resolve/main/ST3/ST3.S03E01.data?download=true
+#EXTINF:-1, [ซีซั่น3]Stranger Things EP02 The Mall Rats
+https://huggingface.co/ceog0d/mv2-data/resolve/main/ST3/ST3.S03E02.data?download=true
+#EXTINF:-1, [ซีซั่น3]Stranger Things EP03 The Case of the Missing Lifeguard
+https://huggingface.co/ceog0d/mv2-data/resolve/main/ST3/ST3.S03E03.data?download=true
+#EXTINF:-1, [ซีซั่น3]Stranger Things EP04 The Sauna Test
+https://huggingface.co/ceog0d/mv2-data/resolve/main/ST3/ST3.S03E04.data?download=true
+#EXTINF:-1, [ซีซั่น3]Stranger Things EP05 The Flayed
+https://huggingface.co/ceog0d/mv2-data/resolve/main/ST3/ST3.S03E05.data?download=true
+#EXTINF:-1, [ซีซั่น3]Stranger Things EP06 E Pluribus Unum
+https://huggingface.co/ceog0d/mv2-data/resolve/main/ST3/ST3.S03E06.data?download=true
+#EXTINF:-1, [ซีซั่น3]Stranger Things EP07 The Bite
+https://huggingface.co/ceog0d/mv2-data/resolve/main/ST3/ST3.S03E07.data?download=true
+#EXTINF:-1, [ซีซั่น3]Stranger Things EP08 The Battle of Starcourt
+https://huggingface.co/ceog0d/mv2-data/resolve/main/ST3/ST3.S03E08.data?download=true
