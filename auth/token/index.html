@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dev/g0d - Token Generator</title>
+</head>
+<body>
+  <script>
+    // ฟังก์ชันสร้าง token แบบ random
+    function generateToken() {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      let token = '';
+      for (let i = 0; i < 16; i++) {
+        token += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return token;
+    }
+
+    // สร้างและเก็บ token
+    const token = generateToken();
+    localStorage.setItem('authToken', token);
+
+    // ตั้งให้ token หมดอายุใน 10 วินาที
+    setTimeout(() => {
+      localStorage.removeItem('authToken');
+    }, 10000);
+
+    // Redirect ไปหน้า site ทันที
+    window.location.href = '/site/index.html';
+  </script>
+</body>
+</html>
