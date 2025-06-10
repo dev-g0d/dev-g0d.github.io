@@ -3,22 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Dev/g0d - Token Generator</title>
+  <title>Dev/g0d - Token</title>
 </head>
 <body>
   <script>
-    // ฟังก์ชันสร้าง token แบบ random
-    function generateToken() {
-      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-      let token = '';
-      for (let i = 0; i < 16; i++) {
-        token += chars.charAt(Math.floor(Math.random() * chars.length));
-      }
-      return token;
-    }
-
-    // สร้างและเก็บ token
-    const token = generateToken();
+    // เก็บ token คงที่
+    const token = 'g0d24tokenaccess';
     localStorage.setItem('authToken', token);
 
     // ตั้งให้ token หมดอายุใน 10 วินาที
