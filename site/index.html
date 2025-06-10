@@ -5,153 +5,136 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Dev/g0d</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-</head>
-<body>
-  <script>
-    // ตรวจสอบ token
-    if (localStorage.getItem('authToken') !== 'g0d24tokenaccess') {
-      // ถ้าไม่มี token หรือ token ไม่ถูกต้อง ไม่ทำอะไรเลย (หน้าจะว่าง)
-      document.body.innerHTML = '';
-      return;
+  <style>
+    body {
+      background-color: #1a1a1a;
+      color: #e0e0e0;
+      font-family: 'Arial', sans-serif;
     }
+    .thumbnail {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .thumbnail:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px rgba(147, 51, 234, 0.7);
+    }
+    .download-btn {
+      background: linear-gradient(45deg, #3b82f6, #ec4899);
+      transition: background 0.3s ease;
+    }
+    .download-btn:hover:enabled {
+      background: linear-gradient(45deg, #ec4899, #3b82f6);
+    }
+    .fix-btn {
+      background: linear-gradient(45deg, #3b82f6, #ec4899);
+      transition: background 0.3s ease;
+    }
+    .fix-btn:hover:enabled {
+      background: linear-gradient(45deg, #ec4899, #3b82f6);
+    }
+    .disabled-btn {
+      background: #4b5563;
+      cursor: not-allowed;
+    }
+    .tab {
+      transition: all 0.3s ease;
+    }
+    .tab:hover {
+      background-color: #3b82f6;
+    }
+    .active-tab {
+      background: linear-gradient(45deg, #3b82f6, #ec4899);
+    }
+    .media-container {
+      position: relative;
+      width: 100%;
+      height: 192px; /* 48 * 4 */
+      overflow: hidden;
+      background-color: #000;
+      cursor: pointer;
+    }
+    .media-container img,
+    .media-container video {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      top: 0;
+      left: 0;
+    }
+    .media-container video {
+      display: none;
+      z-index: 1;
+    }
+    .media-container:hover video {
+      display: block;
+    }
+    .media-container:hover img {
+      display: none;
+    }
+    .popup {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      display: none;
+    }
+    .popup-video {
+      width: 80%;
+      max-width: 800px;
+      height: auto;
+      max-height: 80vh;
+      object-fit: contain;
+    }
+    .close-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      color: #e0e0e0;
+      font-size: 2rem;
+      cursor: pointer;
+      background: none;
+      border: none;
+    }
+    .search-bar {
+      background-color: #2d2d2d;
+      border: 1px solid #3b82f6;
+      color: #e0e0e0;
+      padding: 8px 12px;
+      border-radius: 8px;
+      width: 100%;
+      max-width: 400px;
+    }
+    .search-bar:focus {
+      outline: none;
+      border-color: #ec4899;
+      box-shadow: 0 0 5px rgba(236, 72, 153, 0.5);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center p-6">
+  <h1 class="text-4xl font-bold text-blue-400 mb-4">Dev/g0d</h1>
+  <input type="text" id="searchBar" class="search-bar mb-6" placeholder="ค้นหา...">
+  <div class="flex space-x-4 mb-6">
+    <button id="allGamesTab" class="tab px-4 py-2 rounded text-white font-bold active-tab">เกมที่แก้ไข</button>
+    <button id="unfixableTab" class="tab px-4 py-2 rounded text-white font-bold">เกมที่แก้ไขไม่ได้</button>
+  </div>
+  <div id="gameGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-6xl"></div>
+  <div id="unfixableList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-6xl hidden"></div>
+  <div id="videoPopup" class="popup">
+    <button class="close-btn" onclick="closePopup()">×</button>
+    <video id="popupPlayer" class="popup-video" controls autoplay>
+      <source id="popupSource" type="video/webm">
+    </video>
+  </div>
 
-    // ถ้ามี token ถูกต้อง สร้าง DOM และรันโค้ดปกติ
-    document.body.innerHTML = `
-      <div id="mainContent" class="min-h-screen flex flex-col items-center p-6">
-        <h1 class="text-4xl font-bold text-blue-400 mb-4">Dev/g0d</h1>
-        <input type="text" id="searchBar" class="search-bar mb-4" placeholder="ค้นหา...">
-        <div class="flex space-x-4 mb-6">
-          <button id="allGamesTab" class="tab px-4 py-2 rounded text-white font-bold active-tab">เกมที่แก้ไข</button>
-          <button id="unfixableTab" class="tab px-4 py-2 rounded text-white font-bold">เกมที่แก้ไขไม่ได้</button>
-        </div>
-        <div id="gameGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-6xl"></div>
-        <div id="unfixableList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-6xl hidden"></div>
-        <div id="videoPopup" class="popup">
-          <button id="closePopupBtn" class="close-btn">×</button>
-          <video id="popupPlayer" class="popup-video" controls autoplay>
-            <source id="popupSource" type="video/webm">
-          </video>
-        </div>
-      </div>
-    `;
-
-    // สไตล์ CSS
-    const style = document.createElement('style');
-    style.textContent = `
-      body {
-        background-color: #1a1a1a;
-        color: #e0e0e0;
-        font-family: 'Arial', sans-serif;
-      }
-      .thumbnail {
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-      }
-      .thumbnail:hover {
-        transform: scale(1.05);
-        box-shadow: 0 0 15px rgba(147, 51, 234, 0.7);
-      }
-      .download-btn {
-        background: linear-gradient(45deg, #3b82f6, #ec4899);
-        transition: background 0.3s ease;
-      }
-      .download-btn:hover:enabled {
-        background: linear-gradient(45deg, #ec4899, #3b82f6);
-      }
-      .fix-btn {
-        background: linear-gradient(45deg, #3b82f6, #ec4899);
-        transition: background 0.3s ease;
-      }
-      .fix-btn:hover:enabled {
-        background: linear-gradient(45deg, #ec4899, #3b82f6);
-      }
-      .disabled-btn {
-        background: #4b5563;
-        cursor: not-allowed;
-      }
-      .tab {
-        transition: all 0.3s ease;
-      }
-      .tab:hover {
-        background-color: #3b82f6;
-      }
-      .active-tab {
-        background: linear-gradient(45deg, #3b82f6, #ec4899);
-      }
-      .media-container {
-        position: relative;
-        width: 100%;
-        height: 192px;
-        overflow: hidden;
-        background-color: #000;
-        cursor: pointer;
-      }
-      .media-container img,
-      .media-container video {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-        top: 0;
-        left: 0;
-      }
-      .media-container video {
-        display: none;
-        z-index: 1;
-      }
-      .media-container:hover video {
-        display: block;
-      }
-      .media-container:hover img {
-        display: none;
-      }
-      .popup {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.9);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
-        display: none;
-      }
-      .popup-video {
-        width: 80%;
-        max-width: 800px;
-        height: auto;
-        max-height: 80vh;
-        object-fit: contain;
-      }
-      .close-btn {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        color: #e0e0e0;
-        font-size: 2rem;
-        cursor: pointer;
-        background: none;
-        border: none;
-      }
-      .search-bar {
-        background-color: #2d2d2d;
-        border: 1px solid #3b82f6;
-        color: #e0e0e0;
-        padding: 8px 12px;
-        border-radius: 8px;
-        width: 100%;
-        max-width: 400px;
-      }
-      .search-bar:focus {
-        outline: none;
-        border-color: #ec4899;
-        box-shadow: 0 0 5px rgba(236, 72, 153, 0.5);
-      }
-    `;
-    document.head.appendChild(style);
-
-    // ข้อมูลเกม
+  <script>
     const games = [
       {
         "title": "R.E.P.O.",
@@ -163,52 +146,25 @@
         "crackedBy": "g0d",
         "platform": "Steam",
         "downloadEnabled": true,
-        "fixEnabled": true,
+        "fixEnabled": false,
         "officialLink": "https://store.steampowered.com/app/3241660/REPO/",
-        "password": "repo123",
-        "fixPassword": "fixrepo456"
+        "password": "g0d",
+        "fixPassword": ""
       },
       {
-        "title": "Cyber Heist",
-        "thumbnail": "https://via.placeholder.com/300x400.png?text=Cyber+Heist",
-        "downloadLink": "https://akirabox.com/E1x3Adq8nmyk/file",
-        "fixLink": "https://akirabox.com/E1x3Adq8nmyk/file",
-        "version": "v2.0.1",
-        "crackedBy": "NightHax",
-        "platform": "PC",
+        "title": "POPUCOM",
+        "thumbnail": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2543180/df67c9096023cbff9bd766d9b146fb08f85fba38/header.jpg?t=1749551959",
+        "video": "https://video.fastly.steamstatic.com/store_trailers/257147512/movie480_vp9.webm?t=1748491645",
+		"downloadLink": "https://gofile.io/d/Ej1628",
+        "fixLink": "https://gofile.io/d/Ej1628",
+        "version": "1.0.2",
+        "crackedBy": "Online-fix.me",
+        "platform": "EPIC STORE",
         "downloadEnabled": true,
         "fixEnabled": false,
-        "officialLink": "#",
-        "password": "cyber789",
-        "fixPassword": "fixcyber000"
-      },
-      {
-        "title": "DoomForge",
-        "thumbnail": "https://via.placeholder.com/300x400.png?text=DoomForge",
-        "downloadLink": "https://akirabox.com/E1x3Adq8nmyk/file",
-        "fixLink": "https://akirabox.com/E1x3Adq8nmyk/file",
-        "version": "v1.5.0",
-        "crackedBy": "ShadowLads",
-        "platform": "PC",
-        "downloadEnabled": false,
-        "fixEnabled": false,
-        "officialLink": "#",
-        "password": "doom321",
-        "fixPassword": "fixdoom654"
-      },
-      {
-        "title": "Rogue Galaxy",
-        "thumbnail": "https://via.placeholder.com/300x400.png?text=Rogue+Galaxy",
-        "downloadLink": "https://akirabox.com/E1x3Adq8nmyk/file",
-        "fixLink": "https://akirabox.com/E1x3Adq8nmyk/file",
-        "version": "v3.1.2",
-        "crackedBy": "CrackZoid",
-        "platform": "PC",
-        "downloadEnabled": true,
-        "fixEnabled": true,
-        "officialLink": "#",
-        "password": "rogue987",
-        "fixPassword": "fixrogue111"
+        "officialLink": "https://store.epicgames.com/th/p/popucom-3b79ee",
+        "password": "Online-fix.me",
+        "fixPassword": ""
       }
     ];
 
@@ -219,10 +175,37 @@
         "video": "https://video.fastly.steamstatic.com/store_trailers/256936422/movie480_vp9.webm?t=1679086628",
         "issue": "ถูกป้องกันจากเซิฟเวอร์",
         "officialLink": "#"
+      },
+	  {
+        "title": "Party Animals",
+        "thumbnail": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1260320/header.jpg?t=1749110461",
+        "video": "https://video.fastly.steamstatic.com/store_trailers/257091168/movie480_vp9.webm?t=1737683953",
+        "issue": "ถูกป้องกันจากเซิฟเวอร์",
+        "officialLink": "https://store.steampowered.com/app/1260320/Party_Animals/"
+      },
+	  {
+        "title": "Ravenswatch",
+        "thumbnail": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2071280/7e3edd6e9dcf587f11756092eda04f4ffe612728/header_alt_assets_7.jpg?t=1748333300",
+        "video": "https://video.fastly.steamstatic.com/store_trailers/257056194/movie480_vp9.webm?t=1739807167",
+        "issue": "ถูกป้องกันจากเซิฟเวอร์",
+        "officialLink": "https://store.steampowered.com/app/2071280/Ravenswatch/"
+      },
+	  {
+        "title": "The Outlast Trials",
+        "thumbnail": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1304930/50246c247bf813b707c2c7cee7b7ad29148e0228/header.jpg?t=1745332104",
+        "video": "https://video.fastly.steamstatic.com/store_trailers/257015646/movie480_vp9.webm?t=1719519011",
+        "issue": "ถูกป้องกันจากเซิฟเวอร์",
+        "officialLink": "https://store.steampowered.com/app/1304930/The_Outlast_Trials/"
+      },
+	  {
+        "title": "World War Z",
+        "thumbnail": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/699130/header.jpg?t=1733932481",
+        "video": "https://video.fastly.steamstatic.com/store_trailers/257078877/movie480_vp9.webm?t=1733403632",
+        "issue": "ถูกป้องกันจากเซิฟเวอร์",
+        "officialLink": "https://store.steampowered.com/app/699130/World_War_Z/"
       }
     ];
 
-    // DOM elements
     const gameGrid = document.getElementById('gameGrid');
     const unfixableList = document.getElementById('unfixableList');
     const allGamesTab = document.getElementById('allGamesTab');
@@ -231,7 +214,6 @@
     const popupPlayer = document.getElementById('popupPlayer');
     const popupSource = document.getElementById('popupSource');
     const searchBar = document.getElementById('searchBar');
-    const closePopupBtn = document.getElementById('closePopupBtn');
 
     function renderAllGames() {
       gameGrid.innerHTML = '';
@@ -415,8 +397,6 @@
         renderSearchResults(searchTerm);
       }
     });
-
-    closePopupBtn.addEventListener('click', closePopup);
 
     renderAllGames();
   </script>
