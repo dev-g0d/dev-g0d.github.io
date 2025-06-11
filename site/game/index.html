@@ -32,9 +32,13 @@
     .fix-btn:hover:enabled {
       background: linear-gradient(45deg, #ec4899, #3b82f6);
     }
-    .disabled-btn {
-      background: #4b5563;
-      cursor: not-allowed;
+    .disabled-btn,
+    .download-btn[disabled],
+    .fix-btn[disabled] {
+      background: #4b5563 !important;
+      cursor: not-allowed !important;
+      pointer-events: none !important;
+      opacity: 0.7;
     }
     .tab {
       transition: all 0.3s ease;
@@ -145,21 +149,20 @@
       display: none;
     }
 	.howto-content {
-	background: #232323;
-	color: #fff;
-	border-radius: 16px;
-	padding: 32px 28px 24px 28px;
-	/* max-width: 420px;  <-- ลบออกหรือแก้เป็น 90vw */
-	max-width: 90vw;
-	width: auto;
-	min-width: 200px;
-	display: inline-block;
-	box-shadow: 0 0 16px #000b;
-	font-size: 1.1rem;
-	position: relative;
-	line-height: 1.7;
-	white-space: pre-line;
-	word-break: break-word;
+	  background: #232323;
+	  color: #fff;
+	  border-radius: 16px;
+	  padding: 32px 28px 24px 28px;
+	  max-width: 90vw;
+	  width: auto;
+	  min-width: 200px;
+	  display: inline-block;
+	  box-shadow: 0 0 16px #000b;
+	  font-size: 1.1rem;
+	  position: relative;
+	  line-height: 1.7;
+	  white-space: pre-line;
+	  word-break: break-word;
 	}
     .howto-close-btn {
       position: absolute;
@@ -366,6 +369,7 @@
         const card = document.createElement('div');
         card.className = 'thumbnail bg-gray-800 rounded-lg overflow-hidden shadow-lg';
 
+        // ใช้ <button> แทน <a> สำหรับปุ่มที่ disable ได้จริง, และจัดการปุ่มด้วย JS
         card.innerHTML = 
           `<div class="media-container" data-video="${game.video || ''}">
             <img src="${game.thumbnail}" alt="${game.title}">
@@ -385,8 +389,8 @@
               <button class="howto-btn" type="button">วิธีแก้ไข</button>
             </p>
             <div class="flex space-x-2 mt-4">
-              <a href="${game.downloadLink}" target="_blank" class="download-btn flex-1 text-center py-2 px-4 rounded text-white font-bold ${!game.downloadEnabled ? 'disabled-btn' : ''}" ${game.downloadEnabled ? '' : 'disabled'}>ดาวน์โหลด</a>
-              <a href="${game.fixLink}" target="_blank" class="fix-btn flex-1 text-center py-2 px-4 rounded text-white font-bold ${!game.fixEnabled ? 'disabled-btn' : ''}" ${game.fixEnabled ? '' : 'disabled'}>แก้ไข</a>
+              <button class="download-btn flex-1 text-center py-2 px-4 rounded text-white font-bold" type="button" ${game.downloadEnabled ? '' : 'disabled'} data-link="${game.downloadLink}">ดาวน์โหลด</button>
+              <button class="fix-btn flex-1 text-center py-2 px-4 rounded text-white font-bold" type="button" ${game.fixEnabled ? '' : 'disabled'} data-link="${game.fixLink}">แก้ไข</button>
             </div>
           </div>
         `;
@@ -401,6 +405,26 @@
               popupPlayer.load();
               videoPopup.style.display = 'flex';
               popupPlayer.play();
+            }
+          });
+        }
+
+        // ปุ่ม download/fix ให้เปิดลิงก์เฉพาะถ้า enabled
+        const downloadBtn = card.querySelector('.download-btn');
+        if (downloadBtn) {
+          if (!game.downloadEnabled) downloadBtn.classList.add('disabled-btn');
+          downloadBtn.addEventListener('click', function() {
+            if (game.downloadEnabled && game.downloadLink) {
+              window.open(game.downloadLink, '_blank');
+            }
+          });
+        }
+        const fixBtn = card.querySelector('.fix-btn');
+        if (fixBtn) {
+          if (!game.fixEnabled) fixBtn.classList.add('disabled-btn');
+          fixBtn.addEventListener('click', function() {
+            if (game.fixEnabled && game.fixLink) {
+              window.open(game.fixLink, '_blank');
             }
           });
         }
@@ -483,8 +507,8 @@
                 <button class="howto-btn" type="button">วิธีแก้ไข</button>
               </p>
               <div class="flex space-x-2 mt-4">
-                <a href="${game.downloadLink}" target="_blank" class="download-btn flex-1 text-center py-2 px-4 rounded text-white font-bold ${!game.downloadEnabled ? 'disabled-btn' : ''}" ${game.downloadEnabled ? '' : 'disabled'}>ดาวน์โหลด</a>
-                <a href="${game.fixLink}" target="_blank" class="fix-btn flex-1 text-center py-2 px-4 rounded text-white font-bold ${!game.fixEnabled ? 'disabled-btn' : ''}" ${game.fixEnabled ? '' : 'disabled'}>แก้ไข</a>
+                <button class="download-btn flex-1 text-center py-2 px-4 rounded text-white font-bold" type="button" ${game.downloadEnabled ? '' : 'disabled'} data-link="${game.downloadLink}">ดาวน์โหลด</button>
+                <button class="fix-btn flex-1 text-center py-2 px-4 rounded text-white font-bold" type="button" ${game.fixEnabled ? '' : 'disabled'} data-link="${game.fixLink}">แก้ไข</button>
               </div>
             </div>
           `;
@@ -493,6 +517,25 @@
             card.querySelector('.howto-btn').addEventListener('click', () => {
               showHowtoPopup(game.instructions || "ไม่มีวิธีแก้ไขสำหรับเกมนี้");
             });
+            // ปุ่ม download/fix
+            const downloadBtn = card.querySelector('.download-btn');
+            if (downloadBtn) {
+              if (!game.downloadEnabled) downloadBtn.classList.add('disabled-btn');
+              downloadBtn.addEventListener('click', function() {
+                if (game.downloadEnabled && game.downloadLink) {
+                  window.open(game.downloadLink, '_blank');
+                }
+              });
+            }
+            const fixBtn = card.querySelector('.fix-btn');
+            if (fixBtn) {
+              if (!game.fixEnabled) fixBtn.classList.add('disabled-btn');
+              fixBtn.addEventListener('click', function() {
+                if (game.fixEnabled && game.fixLink) {
+                  window.open(game.fixLink, '_blank');
+                }
+              });
+            }
           }, 0);
         } else {
           card.innerHTML = 
