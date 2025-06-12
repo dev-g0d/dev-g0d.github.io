@@ -1,196 +1,259 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Dev/g0d</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <style>
+    @font-face {
+      font-family: 'SFProTH';
+      src: url('https://raw.githubusercontent.com/dev-g0d/dev-g0d.github.io/main-site/fonts/SFProTH_regular.woff.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+    :root {
+      --primary-bg: #10131a;
+      --surface-dark: #181b28;
+      --surface-mid: #1e2233;
+      --surface-light: #23263b;
+      --border-color: #22273a;
+      --primary-blue: #2563eb;
+      --highlight-pink: #ec4899;
+      --text-main: #c9d5ea;
+      --text-mid: #8ca3c7;
+      --text-subtle: #556080;
+      --btn-disabled: #23263b;
+      --btn-disabled-text: #7b8ca7;
+    }
     body {
-      background-color: #1a1a1a;
-      color: #e0e0e0;
-      font-family: 'Arial', sans-serif;
+      background-color: var(--primary-bg);
+      color: var(--text-main);
+      font-family: 'SFProTH', 'Segoe UI', Arial, sans-serif;
     }
     .thumbnail {
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      background: var(--surface-dark);
+      border: 1.5px solid var(--border-color);
+      transition: transform 0.25s, box-shadow 0.25s;
+      box-shadow: 0 2px 10px 0 #11131a60;
     }
     .thumbnail:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 15px rgba(147, 51, 234, 0.7);
+      transform: translateY(-3px) scale(1.015);
+      box-shadow: 0 6px 24px 2px #27304955;
+      border-color: var(--primary-blue);
     }
-    .download-btn {
-      background: linear-gradient(45deg, #3b82f6, #ec4899);
-      transition: background 0.3s ease;
+    .main-btn, .download-btn, .fix-btn {
+      background: var(--primary-blue);
+      color: #fff;
+      border: none;
+      transition: background 0.17s, color 0.17s, opacity 0.15s;
+      border-radius: 0.5rem;
+      font-size: 1.05rem;
+      letter-spacing: 0.01em;
+      box-shadow: 0 1px 3px #0002;
+      outline: none;
+      padding: 0.5rem 1rem;
     }
-    .download-btn:hover:enabled {
-      background: linear-gradient(45deg, #ec4899, #3b82f6);
-    }
-    .fix-btn {
-      background: linear-gradient(45deg, #3b82f6, #ec4899);
-      transition: background 0.3s ease;
-    }
+    .main-btn:hover:enabled,
+    .download-btn:hover:enabled,
     .fix-btn:hover:enabled {
-      background: linear-gradient(45deg, #ec4899, #3b82f6);
+      background: var(--highlight-pink);
+      color: #fff;
     }
-    .disabled-btn,
-    .download-btn[disabled],
-    .fix-btn[disabled] {
-      background: #4b5563 !important;
+    .disabled-btn, .download-btn[disabled], .fix-btn[disabled], .tab[disabled] {
+      background: var(--btn-disabled) !important;
+      color: var(--btn-disabled-text) !important;
       cursor: not-allowed !important;
       pointer-events: none !important;
-      opacity: 0.7;
+      opacity: 1 !important;
+      border: none !important;
     }
     .tab {
-      transition: all 0.3s ease;
+      background: none;
+      color: #fff;
+      border: none;
+      transition: background 0.2s, color 0.2s;
+      padding: 0.5rem 1.5rem;
+      border-radius: 0.5rem;
+      font-size: 1.05rem;
+      margin-right: 8px;
+      text-decoration: none !important; /* Remove underline */
     }
-    .tab:hover {
-      background-color: #3b82f6;
+    .tab:last-child { margin-right: 0; }
+    .tab.active-tab {
+      background: var(--primary-blue);
+      color: #fff;
+      box-shadow: 0 2px 12px #1e233b33;
+      text-decoration: none !important; /* Remove underline */
     }
-    .active-tab {
-      background: linear-gradient(45deg, #3b82f6, #ec4899);
+    .tab:not(.active-tab):hover {
+      color: var(--highlight-pink);
+      background: none;
+      text-decoration: none !important;
     }
     .media-container {
       position: relative;
       width: 100%;
       height: 192px;
       overflow: hidden;
-      background-color: #000;
+      background-color: #000 !important;
       cursor: pointer;
+      border-bottom: 1.5px solid var(--border-color);
     }
-    .media-container img,
-    .media-container video {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      top: 0;
-      left: 0;
+    .media-container img, .media-container video {
+      position: absolute; width: 100%; height: 100%;
+      object-fit: contain; top: 0; left: 0;
     }
-    .media-container video {
-      display: none;
-      z-index: 1;
-    }
-    .media-container:hover video {
-      display: block;
-    }
-    .media-container:hover img {
-      display: none;
-    }
+    .media-container video { display: none; z-index: 1;}
+    .media-container:hover video { display: block;}
+    .media-container:hover img { display: none;}
     .popup {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.9);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-      display: none;
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.92);
+      display: flex; justify-content: center; align-items: center;
+      z-index: 1000; display: none;
     }
+    .popup.show { display: flex; }
     .popup-video {
       width: 80%;
       max-width: 800px;
       height: auto;
       max-height: 80vh;
       object-fit: contain;
-    }
-    .close-btn {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      color: #e0e0e0;
-      font-size: 2rem;
-      cursor: pointer;
       background: none;
       border: none;
+      border-radius: 0;
+      box-shadow: none;
+      display: block;
     }
+    .close-btn {
+      position: absolute; top: 20px; right: 20px;
+      color: var(--primary-blue); font-size: 2rem; cursor: pointer;
+      background: none; border: none; border-radius: 50%;
+      width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
+      transition: background .17s, color 0.16s;
+    }
+    .close-btn:hover { background: #fff1; color: var(--highlight-pink);}
     .search-bar {
-      background-color: #2d2d2d;
-      border: 1px solid #3b82f6;
-      color: #e0e0e0;
-      padding: 8px 12px;
-      border-radius: 8px;
-      width: 100%;
-      max-width: 400px;
+      background: var(--surface-dark);
+      border: 1.5px solid var(--border-color);
+      color: var(--text-main);
+      padding: 10px 14px;
+      border-radius: 10px;
+      width: 100%; max-width: 400px;
+      font-size: 16px;
+      margin-top: 2.2rem;
+      transition: border .18s, box-shadow .18s;
     }
     .search-bar:focus {
       outline: none;
-      border-color: #ec4899;
-      box-shadow: 0 0 5px rgba(236, 72, 153, 0.5);
+      border-color: var(--primary-blue);
+      box-shadow: 0 0 8px 1.5px var(--primary-blue);
     }
     .howto-btn {
       background: none;
-      color: #7dd3fc;
-      font-weight: bold;
-      text-decoration: underline;
+      color: var(--highlight-pink);
+      text-decoration: none !important;
       border: none;
       border-radius: 0;
       padding: 0;
       margin: 0;
       cursor: pointer;
       font-size: 1em;
-      transition: color 0.2s;
+      transition: color 0.16s;
       display: inline;
     }
-    .howto-btn:hover {
-      color: #ec4899;
-      text-decoration: underline;
-    }
+    .howto-btn:hover { color: var(--primary-blue);}
     .howto-popup {
-      position: fixed;
-      left: 0; top: 0; width: 100vw; height: 100vh;
-      background: rgba(0,0,0,0.85);
+      position: fixed; left: 0; top: 0; width: 100vw; height: 100vh;
+      background: rgba(10,12,18,0.98);
       z-index: 2000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      display: none;
+      display: flex; align-items: center; justify-content: center; display: none;
     }
-	.howto-content {
-	  background: #232323;
-	  color: #fff;
-	  border-radius: 16px;
-	  padding: 32px 28px 24px 28px;
-	  max-width: 90vw;
-	  width: auto;
-	  min-width: 200px;
-	  display: inline-block;
-	  box-shadow: 0 0 16px #000b;
-	  font-size: 1.1rem;
-	  position: relative;
-	  line-height: 1.7;
-	  white-space: pre-line;
-	  word-break: break-word;
-	}
+    .howto-content {
+      background: var(--surface-mid);
+      color: var(--text-mid);
+      border-radius: 18px;
+      padding: 28px 24px 20px 24px;
+      max-width: 90vw;
+      width: auto;
+      min-width: 200px;
+      display: inline-block;
+      box-shadow: 0 0 10px #000b;
+      font-size: 1.08rem;
+      position: relative;
+      line-height: 1.7;
+      white-space: pre-line;
+      word-break: break-word;
+      border: 1.5px solid var(--primary-blue);
+    }
     .howto-close-btn {
-      position: absolute;
-      right: 16px;
-      top: 12px;
-      font-size: 2rem;
-      background: none;
-      border: none;
+      position: absolute; right: 16px; top: 12px; font-size: 2rem;
+      background: none; border: none; color: var(--highlight-pink); cursor: pointer;
+      transition: color .17s;
+    }
+    .howto-close-btn:hover { color: var(--primary-blue);}
+    #downloadLinksList a {
+      background: var(--primary-blue);
       color: #fff;
-      cursor: pointer;
+      border-radius: 8px;
+      display: block;
+      margin: 0.5rem 0;
+      padding: 10px 0;
+      text-align: center;
+      text-decoration: none !important;
+      transition: background .14s, color .14s;
+      border: 1.5px solid var(--primary-blue);
+      box-shadow: 0 1px 8px #21273a22;
+    }
+    #downloadLinksList a:hover {
+      background: var(--highlight-pink);
+      color: #fff;
+      border-color: var(--highlight-pink);
+    }
+    a {
+      text-decoration: none !important;
+    }
+    .text-gray-400, .text-gray-500, .text-gray-300, .text-gray-200 {
+      color: var(--text-mid) !important;
+    }
+    .text-blue-300, .text-blue-400, .text-blue-500 {
+      color: var(--primary-blue) !important;
+    }
+    .text-red-400 { color: var(--highlight-pink) !important; }
+    .text-sm { font-size: 0.97rem; }
+    .text-xl { font-size: 1.20rem;}
+    .thumbnail .p-4, .thumbnail .p-4 p, .thumbnail .p-4 a, .thumbnail .p-4 span {
+      line-height: 1.7;
     }
   </style>
 </head>
 <body class="min-h-screen flex flex-col items-center p-6">
-  <h1 class="text-4xl font-bold text-blue-400 mb-4">Dev/g0d</h1>
+  <h1 class="text-4xl" style="color:var(--primary-blue);margin-bottom:0;">Dev/g0d</h1>
+  <div style="color: #8ca3c7; font-size: 1.08rem; margin-top: .5rem;">
+    แหล่งอ้างอิง ชุมชน <a href="https://cs.rin.ru/" target="_blank" style="color:var(--primary-blue);">cs.rin.ru</a>
+  </div>
   <input type="text" id="searchBar" class="search-bar mb-6" placeholder="ค้นหา...">
   <div class="flex space-x-4 mb-6">
-    <button id="allGamesTab" class="tab px-4 py-2 rounded text-white font-bold active-tab">เกมที่แก้ไข</button>
-    <button id="unfixableTab" class="tab px-4 py-2 rounded text-white font-bold">เกมที่แก้ไขไม่ได้</button>
+    <button id="allGamesTab" class="tab active-tab">เกมที่แก้ไข</button>
+    <button id="unfixableTab" class="tab">เกมที่แก้ไขไม่ได้</button>
   </div>
   <div id="gameGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-6xl"></div>
   <div id="unfixableList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-6xl hidden"></div>
+  <!-- Video Popup -->
   <div id="videoPopup" class="popup">
     <button class="close-btn" onclick="closePopup()">×</button>
     <video id="popupPlayer" class="popup-video" controls autoplay>
       <source id="popupSource" type="video/webm">
     </video>
   </div>
+  <!-- Download Multi-part Popup -->
+  <div id="downloadPopup" class="popup">
+    <button class="close-btn" onclick="closeDownloadPopup()">×</button>
+    <div id="downloadLinksList" class="bg-gray-900 p-6 rounded-lg max-w-md w-full text-center"></div>
+  </div>
+  <!-- Howto Popup -->
   <div id="howtoPopup" class="howto-popup">
     <div class="howto-content">
       <button class="howto-close-btn" onclick="closeHowto()">×</button>
@@ -208,6 +271,7 @@
         "version": "ล่าสุดบนSteam",
         "crackedBy": "online-fix.me",
         "platform": "Steam",
+        "players": "1-2 คน",
         "downloadEnabled": true,
         "fixEnabled": true,
         "officialLink": "https://store.steampowered.com/app/2001120/Split_Fiction/",
@@ -219,11 +283,14 @@
         "title": "R.E.P.O.",
         "thumbnail": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3241660/1ea445e044a2d5b09cfa8291350b63ebed6e5741/header.jpg?t=1747381002",
         "video": "https://video.fastly.steamstatic.com/store_trailers/257093766/movie480_vp9.webm?t=1743517223",
-        "downloadLink": "https://akirabox.com/E1x3Adq8nmyk/file",
+        "downloadLink1": "https://multi-part.example.com/REPO.part1.rar",
+        "downloadLink2": "https://multi-part.example.com/REPO.part2.rar",
+        "downloadLink3": "https://multi-part.example.com/REPO.part3.rar",
         "fixLink": "https://akirabox.com/E1x3Adq8nmyk/file",
         "version": "1.2.32 Beta",
         "crackedBy": "g0d",
         "platform": "Steam",
+        "players": "1-4 คน",
         "downloadEnabled": false,
         "fixEnabled": false,
         "officialLink": "https://store.steampowered.com/app/3241660/REPO/",
@@ -240,12 +307,13 @@
         "version": "v0.6.01",
         "crackedBy": "g0d",
         "platform": "Steam",
+        "players": "1-16 คน",
         "downloadEnabled": true,
         "fixEnabled": false,
         "officialLink": "https://store.steampowered.com/app/2080690/Sunkenland/",
         "password": "g0d",
         "fixPassword": "",
-        "instructions": "1. แตกไฟล์ zip/rar ลงในฟอเดอร์เก็บเกมของคุณ \n2.เล่นได้เลย!"
+        "instructions": "1.แตกไฟล์ zip/rar ลงในฟอเดอร์เก็บเกมของคุณ \n2.เล่นได้เลย!"
       },
       {
         "title": "Schedule I",
@@ -256,12 +324,13 @@
         "version": "v.0.3.6f4",
         "crackedBy": "g0d",
         "platform": "Steam",
+        "players": "1-16 คน",
         "downloadEnabled": false,
         "fixEnabled": false,
         "officialLink": "https://store.steampowered.com/app/3164500/Schedule_I/",
         "password": "g0d",
         "fixPassword": "",
-		"instructions": "1. แตกไฟล์ zip/rar ลงในฟอเดอร์เก็บเกม \n2.เล่นได้เลย!"
+		"instructions": "1.แตกไฟล์ zip/rar ลงในฟอเดอร์เก็บเกม \n2.เล่นได้เลย!"
       },
       {
         "title": "Lethal Company",
@@ -272,12 +341,13 @@
         "version": "v72",
         "crackedBy": "g0d",
         "platform": "Steam",
+        "players": "1-16 คน",
         "downloadEnabled": false,
         "fixEnabled": false,
         "officialLink": "https://store.steampowered.com/app/1966720/Lethal_Company/",
         "password": "g0d",
         "fixPassword": "",
-		"instructions": "1. แตกไฟล์ zip/rar ลงในฟอเดอร์เก็บเกม \n2.เล่นได้เลย!"
+		"instructions": "1.แตกไฟล์ zip/rar ลงในฟอเดอร์เก็บเกม \n2.เล่นได้เลย!"
       },
 	  {
         "title": "Zort",
@@ -288,12 +358,13 @@
         "version": "v0.3.4",
         "crackedBy": "g0d",
         "platform": "Steam",
+		"players": "1-16 คน",
         "downloadEnabled": false,
         "fixEnabled": false,
         "officialLink": "https://store.steampowered.com/app/3121110/Zort/",
         "password": "g0d",
         "fixPassword": "",
-		"instructions": "1. แตกไฟล์ zip/rar ลงในฟอเดอร์เก็บเกม \n2.เล่นได้เลย!"
+		"instructions": "1.แตกไฟล์ zip/rar ลงในฟอเดอร์เก็บเกม \n2.เล่นได้เลย!"
       },
       {
         "title": "POPUCOM",
@@ -304,12 +375,13 @@
         "version": "1.0.2",
         "crackedBy": "Online-fix.me",
         "platform": "Epic Store",
+        "players": "1-4 คน",
         "downloadEnabled": false,
         "fixEnabled": false,
         "officialLink": "https://store.epicgames.com/th/p/popucom-3b79ee",
         "password": "online-fix.me",
         "fixPassword": "",
-		"instructions": "1. แตกไฟล์ zip/rar ลงในฟอเดอร์เก็บเกม \n2.เล่นได้เลย!"
+		"instructions": "1.แตกไฟล์ zip/rar ลงในฟอเดอร์เก็บเกม \n2.เล่นได้เลย!"
       }
     ];
     const unfixableGames = [
@@ -350,47 +422,64 @@
       }
     ];
 
-    const gameGrid = document.getElementById('gameGrid');
-    const unfixableList = document.getElementById('unfixableList');
-    const allGamesTab = document.getElementById('allGamesTab');
-    const unfixableTab = document.getElementById('unfixableTab');
-    const videoPopup = document.getElementById('videoPopup');
-    const popupPlayer = document.getElementById('popupPlayer');
-    const popupSource = document.getElementById('popupSource');
-    const searchBar = document.getElementById('searchBar');
-    const howtoPopup = document.getElementById('howtoPopup');
-    const howtoText = document.getElementById('howtoText');
+    function infoLine(label, value, color = "gray-400") {
+      if (value === undefined || value === null) return '';
+      if (typeof value === "string" && value.trim() === "") return '';
+      return `<p class="text-${color} text-sm">${label} ${value}</p>`;
+    }
+    function showDownloadPopup(links) {
+      const downloadLinksList = document.getElementById('downloadLinksList');
+      downloadLinksList.innerHTML = links.map((link, i) =>
+        `<a href="${link}" target="_blank"
+          >พาร์ท ${i + 1}</a>`).join("");
+      document.getElementById('downloadPopup').classList.add('show');
+    }
+    function closeDownloadPopup() {
+      document.getElementById('downloadPopup').classList.remove('show');
+    }
+    function showHowtoPopup(text) {
+      document.getElementById('howtoText').innerText = text;
+      document.getElementById('howtoPopup').style.display = 'flex';
+    }
+    function closeHowto() { document.getElementById('howtoPopup').style.display = 'none'; }
+    function closePopup() {
+      document.getElementById('videoPopup').style.display = 'none';
+      document.getElementById('popupPlayer').pause();
+      document.getElementById('popupSource').src = '';
+    }
 
     function renderAllGames() {
+      const gameGrid = document.getElementById('gameGrid');
       gameGrid.innerHTML = '';
-      unfixableList.classList.add('hidden');
+      document.getElementById('unfixableList').classList.add('hidden');
       gameGrid.classList.remove('hidden');
       games.forEach(game => {
         const card = document.createElement('div');
-        card.className = 'thumbnail bg-gray-800 rounded-lg overflow-hidden shadow-lg';
+        card.className = 'thumbnail rounded-lg overflow-hidden';
 
-        // ใช้ <button> แทน <a> สำหรับปุ่มที่ disable ได้จริง, และจัดการปุ่มด้วย JS
-        card.innerHTML = 
+        card.innerHTML =
           `<div class="media-container" data-video="${game.video || ''}">
             <img src="${game.thumbnail}" alt="${game.title}">
-            ${game.video ? 
+            ${game.video ?
               `<video autoplay muted loop playsinline preload>
                 <source src="${game.video}" type="video/webm">
               </video>` : ''}
           </div>
           <div class="p-4">
-            <a href="${game.officialLink}" target="_blank" class="text-xl font-semibold text-blue-400 hover:underline">${game.title}</a>
-            <p class="text-gray-400 text-sm">เวอร์ชั่น: ${game.version}</p>
-            <p class="text-gray-400 text-sm">แก้ไขโดย: ${game.crackedBy}</p>
-            <p class="text-gray-400 text-sm">แพลตฟอร์ม: ${game.platform}</p>
-            <p class="text-gray-400 text-sm">รหัสผ่าน: ${game.password}</p>
-            <p class="text-gray-400 text-sm">รหัสผ่านแก้ไข: ${game.fixPassword}</p>
-            <p class="text-blue-300 text-sm mt-2">
+            <a href="${game.officialLink}" target="_blank" class="text-xl hover:underline"
+              style="color:var(--text-main) !important;">${game.title}</a>
+            ${infoLine("เวอร์ชั่น:", game.version)}
+            ${infoLine("ผู้เล่น:", game.players)}
+            ${infoLine("แก้ไขโดย:", game.crackedBy)}
+            ${infoLine("แพลตฟอร์ม:", game.platform)}
+            ${infoLine("รหัสผ่าน:", game.password)}
+            ${infoLine("รหัสผ่านแก้ไข:", game.fixPassword)}
+            <p class="text-sm mt-2">
               <button class="howto-btn" type="button">วิธีแก้ไข</button>
             </p>
-            <div class="flex space-x-2 mt-4">
-              <button class="download-btn flex-1 text-center py-2 px-4 rounded text-white font-bold" type="button" ${game.downloadEnabled ? '' : 'disabled'} data-link="${game.downloadLink}">ดาวน์โหลด</button>
-              <button class="fix-btn flex-1 text-center py-2 px-4 rounded text-white font-bold" type="button" ${game.fixEnabled ? '' : 'disabled'} data-link="${game.fixLink}">แก้ไข</button>
+            <div class="flex space-x-4 mt-6">
+              <button class="download-btn main-btn flex-1 text-center" type="button" ${game.downloadEnabled ? '' : 'disabled'}>ดาวน์โหลด</button>
+              <button class="fix-btn main-btn flex-1 text-center" type="button" ${game.fixEnabled ? '' : 'disabled'}>แก้ไข</button>
             </div>
           </div>
         `;
@@ -401,60 +490,74 @@
         if (video) {
           mediaContainer.addEventListener('click', () => {
             if (game.video) {
-              popupSource.src = game.video;
-              popupPlayer.load();
-              videoPopup.style.display = 'flex';
-              popupPlayer.play();
+              document.getElementById('popupSource').src = game.video;
+              document.getElementById('popupPlayer').load();
+              document.getElementById('videoPopup').style.display = 'flex';
+              document.getElementById('popupPlayer').play();
             }
           });
         }
 
-        // ปุ่ม download/fix ให้เปิดลิงก์เฉพาะถ้า enabled
+        // ดาวน์โหลด (multi-part)
         const downloadBtn = card.querySelector('.download-btn');
         if (downloadBtn) {
           if (!game.downloadEnabled) downloadBtn.classList.add('disabled-btn');
-          downloadBtn.addEventListener('click', function() {
-            if (game.downloadEnabled && game.downloadLink) {
-              window.open(game.downloadLink, '_blank');
+          else {
+            const downloadLinks = [];
+            let idx = 1;
+            while (game['downloadLink'+idx]) {
+              downloadLinks.push(game['downloadLink'+idx]);
+              idx++;
             }
-          });
+            if (downloadLinks.length > 0) {
+              downloadBtn.addEventListener('click', function() {
+                showDownloadPopup(downloadLinks);
+              });
+            } else if (game.downloadLink) {
+              downloadBtn.addEventListener('click', function() {
+                window.open(game.downloadLink, '_blank');
+              });
+            }
+          }
         }
         const fixBtn = card.querySelector('.fix-btn');
         if (fixBtn) {
           if (!game.fixEnabled) fixBtn.classList.add('disabled-btn');
-          fixBtn.addEventListener('click', function() {
-            if (game.fixEnabled && game.fixLink) {
+          else if (game.fixLink) {
+            fixBtn.addEventListener('click', function() {
               window.open(game.fixLink, '_blank');
-            }
+            });
+          }
+        }
+        const howtoBtn = card.querySelector('.howto-btn');
+        if (howtoBtn) {
+          howtoBtn.addEventListener('click', () => {
+            showHowtoPopup(game.instructions || "ไม่มีวิธีแก้ไขสำหรับเกมนี้");
           });
         }
-
-        // วิธีใช้ (instructions popup)
-        const howtoBtn = card.querySelector('.howto-btn');
-        howtoBtn.addEventListener('click', () => {
-          showHowtoPopup(game.instructions || "ไม่มีวิธีแก้ไขสำหรับเกมนี้");
-        });
       });
     }
 
     function renderUnfixableGames() {
+      const unfixableList = document.getElementById('unfixableList');
       unfixableList.innerHTML = '';
-      gameGrid.classList.add('hidden');
+      document.getElementById('gameGrid').classList.add('hidden');
       unfixableList.classList.remove('hidden');
       unfixableGames.forEach(game => {
         const card = document.createElement('div');
-        card.className = 'thumbnail bg-gray-800 rounded-lg overflow-hidden shadow-lg';
-        card.innerHTML = 
+        card.className = 'thumbnail rounded-lg overflow-hidden';
+        card.innerHTML =
           `<div class="media-container" data-video="${game.video || ''}">
             <img src="${game.thumbnail}" alt="${game.title}">
-            ${game.video ? 
+            ${game.video ?
               `<video autoplay muted loop playsinline preload>
                 <source src="${game.video}" type="video/webm">
               </video>` : ''}
           </div>
           <div class="p-4">
-            <a href="${game.officialLink}" target="_blank" class="text-xl font-semibold text-blue-400 hover:underline">${game.title}</a>
-            <p class="text-red-400 text-sm">ปัญหาหลัก: ${game.issue}</p>
+            <a href="${game.officialLink}" target="_blank" class="text-xl hover:underline"
+              style="color:var(--text-main) !important;">${game.title}</a>
+            ${infoLine("ปัญหาหลัก:", game.issue, "red-400")}
           </div>
         `;
         unfixableList.appendChild(card);
@@ -464,91 +567,106 @@
         if (video) {
           mediaContainer.addEventListener('click', () => {
             if (game.video) {
-              popupSource.src = game.video;
-              popupPlayer.load();
-              videoPopup.style.display = 'flex';
-              popupPlayer.play();
+              document.getElementById('popupSource').src = game.video;
+              document.getElementById('popupPlayer').load();
+              document.getElementById('videoPopup').style.display = 'flex';
+              document.getElementById('popupPlayer').play();
             }
           });
         }
       });
     }
-
     function renderSearchResults(searchTerm) {
+      const gameGrid = document.getElementById('gameGrid');
+      const unfixableList = document.getElementById('unfixableList');
       gameGrid.innerHTML = '';
       unfixableList.innerHTML = '';
       gameGrid.classList.remove('hidden');
       unfixableList.classList.add('hidden');
-      
+
       const allGames = [...games, ...unfixableGames];
       const filteredGames = allGames.filter(game => game.title.toLowerCase().includes(searchTerm.toLowerCase()));
-
       filteredGames.forEach(game => {
         const card = document.createElement('div');
-        card.className = 'thumbnail bg-gray-800 rounded-lg overflow-hidden shadow-lg';
-
+        card.className = 'thumbnail rounded-lg overflow-hidden';
         if (game.downloadEnabled !== undefined) {
-          card.innerHTML = 
+          card.innerHTML =
             `<div class="media-container" data-video="${game.video || ''}">
               <img src="${game.thumbnail}" alt="${game.title}">
-              ${game.video ? 
+              ${game.video ?
                 `<video autoplay muted loop playsinline preload>
                   <source src="${game.video}" type="video/webm">
                 </video>` : ''}
             </div>
             <div class="p-4">
-              <a href="${game.officialLink}" target="_blank" class="text-xl font-semibold text-blue-400 hover:underline">${game.title}</a>
-              <p class="text-gray-400 text-sm">เวอร์ชั่น: ${game.version}</p>
-              <p class="text-gray-400 text-sm">แก้ไขโดย: ${game.crackedBy}</p>
-              <p class="text-gray-400 text-sm">แพลตฟอร์ม: ${game.platform}</p>
-              <p class="text-gray-400 text-sm">รหัสผ่าน: ${game.password}</p>
-              <p class="text-gray-400 text-sm">รหัสผ่านแก้ไข: ${game.fixPassword}</p>
-              <p class="text-blue-300 text-sm mt-2">
+              <a href="${game.officialLink}" target="_blank" class="text-xl hover:underline"
+                style="color:var(--text-main) !important;">${game.title}</a>
+              ${infoLine("เวอร์ชั่น:", game.version)}
+              ${infoLine("ผู้เล่น:", game.players)}
+              ${infoLine("แก้ไขโดย:", game.crackedBy)}
+              ${infoLine("แพลตฟอร์ม:", game.platform)}
+              ${infoLine("รหัสผ่าน:", game.password)}
+              ${infoLine("รหัสผ่านแก้ไข:", game.fixPassword)}
+              <p class="text-sm mt-2">
                 <button class="howto-btn" type="button">วิธีแก้ไข</button>
               </p>
-              <div class="flex space-x-2 mt-4">
-                <button class="download-btn flex-1 text-center py-2 px-4 rounded text-white font-bold" type="button" ${game.downloadEnabled ? '' : 'disabled'} data-link="${game.downloadLink}">ดาวน์โหลด</button>
-                <button class="fix-btn flex-1 text-center py-2 px-4 rounded text-white font-bold" type="button" ${game.fixEnabled ? '' : 'disabled'} data-link="${game.fixLink}">แก้ไข</button>
+              <div class="flex space-x-4 mt-6">
+                <button class="download-btn main-btn flex-1 text-center" type="button" ${game.downloadEnabled ? '' : 'disabled'}>ดาวน์โหลด</button>
+                <button class="fix-btn main-btn flex-1 text-center" type="button" ${game.fixEnabled ? '' : 'disabled'}>แก้ไข</button>
               </div>
             </div>
           `;
-          // วิธีใช้ (instructions popup)
           setTimeout(() => {
-            card.querySelector('.howto-btn').addEventListener('click', () => {
-              showHowtoPopup(game.instructions || "ไม่มีวิธีแก้ไขสำหรับเกมนี้");
-            });
-            // ปุ่ม download/fix
             const downloadBtn = card.querySelector('.download-btn');
             if (downloadBtn) {
               if (!game.downloadEnabled) downloadBtn.classList.add('disabled-btn');
-              downloadBtn.addEventListener('click', function() {
-                if (game.downloadEnabled && game.downloadLink) {
-                  window.open(game.downloadLink, '_blank');
+              else {
+                const downloadLinks = [];
+                let idx = 1;
+                while (game['downloadLink'+idx]) {
+                  downloadLinks.push(game['downloadLink'+idx]);
+                  idx++;
                 }
-              });
+                if (downloadLinks.length > 0) {
+                  downloadBtn.addEventListener('click', function() {
+                    showDownloadPopup(downloadLinks);
+                  });
+                } else if (game.downloadLink) {
+                  downloadBtn.addEventListener('click', function() {
+                    window.open(game.downloadLink, '_blank');
+                  });
+                }
+              }
             }
             const fixBtn = card.querySelector('.fix-btn');
             if (fixBtn) {
               if (!game.fixEnabled) fixBtn.classList.add('disabled-btn');
-              fixBtn.addEventListener('click', function() {
-                if (game.fixEnabled && game.fixLink) {
+              else if (game.fixLink) {
+                fixBtn.addEventListener('click', function() {
                   window.open(game.fixLink, '_blank');
-                }
+                });
+              }
+            }
+            const howtoBtn = card.querySelector('.howto-btn');
+            if (howtoBtn) {
+              howtoBtn.addEventListener('click', () => {
+                showHowtoPopup(game.instructions || "ไม่มีวิธีแก้ไขสำหรับเกมนี้");
               });
             }
           }, 0);
         } else {
-          card.innerHTML = 
+          card.innerHTML =
             `<div class="media-container" data-video="${game.video || ''}">
               <img src="${game.thumbnail}" alt="${game.title}">
-              ${game.video ? 
+              ${game.video ?
                 `<video autoplay muted loop playsinline preload>
                   <source src="${game.video}" type="video/webm">
                 </video>` : ''}
             </div>
             <div class="p-4">
-              <a href="${game.officialLink}" target="_blank" class="text-xl font-semibold text-blue-400 hover:underline">${game.title}</a>
-              <p class="text-red-400 text-sm">ปัญหาหลัก: ${game.issue}</p>
+              <a href="${game.officialLink}" target="_blank" class="text-xl hover:underline"
+                style="color:var(--text-main) !important;">${game.title}</a>
+              ${infoLine("ปัญหาหลัก:", game.issue, "red-400")}
             </div>
           `;
         }
@@ -559,62 +677,42 @@
         if (video) {
           mediaContainer.addEventListener('click', () => {
             if (game.video) {
-              popupSource.src = game.video;
-              popupPlayer.load();
-              videoPopup.style.display = 'flex';
-              popupPlayer.play();
+              document.getElementById('popupSource').src = game.video;
+              document.getElementById('popupPlayer').load();
+              document.getElementById('videoPopup').style.display = 'flex';
+              document.getElementById('popupPlayer').play();
             }
           });
         }
       });
     }
-
-    function showHowtoPopup(text) {
-      howtoText.innerText = text;
-      howtoPopup.style.display = 'flex';
-    }
-    function closeHowto() {
-      howtoPopup.style.display = 'none';
-    }
-
-    function closePopup() {
-      videoPopup.style.display = 'none';
-      popupPlayer.pause();
-      popupSource.src = '';
-    }
-
-    allGamesTab.addEventListener('click', () => {
-      allGamesTab.classList.add('active-tab');
-      unfixableTab.classList.remove('active-tab');
-      searchBar.value = '';
+    document.getElementById('allGamesTab').addEventListener('click', () => {
+      document.getElementById('allGamesTab').classList.add('active-tab');
+      document.getElementById('unfixableTab').classList.remove('active-tab');
+      document.getElementById('searchBar').value = '';
       renderAllGames();
     });
-
-    unfixableTab.addEventListener('click', () => {
-      unfixableTab.classList.add('active-tab');
-      allGamesTab.classList.remove('active-tab');
-      searchBar.value = '';
+    document.getElementById('unfixableTab').addEventListener('click', () => {
+      document.getElementById('unfixableTab').classList.add('active-tab');
+      document.getElementById('allGamesTab').classList.remove('active-tab');
+      document.getElementById('searchBar').value = '';
       renderUnfixableGames();
     });
-
-    searchBar.addEventListener('input', () => {
-      const searchTerm = searchBar.value.trim();
+    document.getElementById('searchBar').addEventListener('input', () => {
+      const searchTerm = document.getElementById('searchBar').value.trim();
       if (searchTerm === '') {
-        if (allGamesTab.classList.contains('active-tab')) {
-          renderAllGames();
-        } else {
-          renderUnfixableGames();
-        }
+        if (document.getElementById('allGamesTab').classList.contains('active-tab')) renderAllGames();
+        else renderUnfixableGames();
       } else {
         renderSearchResults(searchTerm);
       }
     });
-
-    // Close howto popup by clicking outside content
-    howtoPopup.addEventListener('click', function(e) {
+    document.getElementById('howtoPopup').addEventListener('click', function(e) {
       if (e.target === this) closeHowto();
     });
-
+    document.getElementById('downloadPopup').addEventListener('click', function(e) {
+      if (e.target === this) closeDownloadPopup();
+    });
     renderAllGames();
   </script>
 </body>
