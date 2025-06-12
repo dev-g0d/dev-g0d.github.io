@@ -298,13 +298,13 @@
       document.getElementById('popupSource').src = '';
     }
 
-    function renderAllGames() {
+    function renderAllGames(list = games) {
       const gameGrid = document.getElementById('gameGrid');
       gameGrid.innerHTML = '';
       document.getElementById('unfixableList').classList.add('hidden');
       document.getElementById('offlineList').classList.add('hidden');
       gameGrid.classList.remove('hidden');
-      games.forEach(game => {
+      list.forEach(game => {
         const card = document.createElement('div');
         card.className = 'thumbnail rounded-lg overflow-hidden';
 
@@ -389,13 +389,13 @@
       });
     }
 
-    function renderUnfixableGames() {
+    function renderUnfixableGames(list = unfixableGames) {
       const unfixableList = document.getElementById('unfixableList');
       unfixableList.innerHTML = '';
       document.getElementById('gameGrid').classList.add('hidden');
       document.getElementById('offlineList').classList.add('hidden');
       unfixableList.classList.remove('hidden');
-      unfixableGames.forEach(game => {
+      list.forEach(game => {
         const card = document.createElement('div');
         card.className = 'thumbnail rounded-lg overflow-hidden';
         card.innerHTML =
@@ -429,13 +429,13 @@
       });
     }
 
-    function renderOfflineGames() {
+    function renderOfflineGames(list = offlineGames) {
       const offlineList = document.getElementById('offlineList');
       offlineList.innerHTML = '';
       document.getElementById('gameGrid').classList.add('hidden');
       document.getElementById('unfixableList').classList.add('hidden');
       offlineList.classList.remove('hidden');
-      offlineGames.forEach(game => {
+      list.forEach(game => {
         const card = document.createElement('div');
         card.className = 'thumbnail rounded-lg overflow-hidden';
         card.innerHTML =
@@ -494,7 +494,7 @@
     });
 
     document.getElementById('searchBar').addEventListener('input', () => {
-      const searchTerm = document.getElementById('searchBar').value.trim();
+      const searchTerm = document.getElementById('searchBar').value.trim().toLowerCase();
       if (searchTerm === '') {
         if (document.getElementById('allGamesTab').classList.contains('active-tab')) renderAllGames();
         else if (document.getElementById('unfixableTab').classList.contains('active-tab')) renderUnfixableGames();
@@ -502,73 +502,17 @@
       } else {
         // เฉพาะ All/Unfix/Offline
         if (document.getElementById('allGamesTab').classList.contains('active-tab')) {
-          filterAndRender(games, 'gameGrid', renderAllGames);
+          const filtered = games.filter(game => (game.title || '').toLowerCase().includes(searchTerm));
+          renderAllGames(filtered);
         } else if (document.getElementById('unfixableTab').classList.contains('active-tab')) {
-          filterAndRender(unfixableGames, 'unfixableList', renderUnfixableGames, true);
+          const filtered = unfixableGames.filter(game => (game.title || '').toLowerCase().includes(searchTerm));
+          renderUnfixableGames(filtered);
         } else {
-          filterAndRender(offlineGames, 'offlineList', renderOfflineGames);
+          const filtered = offlineGames.filter(game => (game.title || '').toLowerCase().includes(searchTerm));
+          renderOfflineGames(filtered);
         }
       }
     });
-
-    function filterAndRender(arr, containerId, fallback, isUnfix = false) {
-      const searchTerm = document.getElementById('searchBar').value.trim().toLowerCase();
-      const filtered = arr.filter(game => (game.title || '').toLowerCase().includes(searchTerm));
-      const container = document.getElementById(containerId);
-      container.innerHTML = '';
-      if (filtered.length === 0) {
-        container.innerHTML = `<div class="text-center text-gray-400 py-8">ไม่พบเกมที่ค้นหา</div>`;
-        return;
-      }
-      filtered.forEach(game => {
-        let card = document.createElement('div');
-        card.className = 'thumbnail rounded-lg overflow-hidden';
-        if (!isUnfix) {
-          card.innerHTML =
-            `<div class="media-container">
-              <img src="${game.thumbnail}" alt="${game.title}">
-            </div>
-            <div class="p-4">
-              <a href="${game.officialLink}" target="_blank" class="text-xl"
-                style="color:var(--text-main) !important;">${game.title}</a>
-              ${infoLine("เวอร์ชั่น:", game.version)}
-              <p class="text-sm mt-2">
-                <button class="howto-btn" type="button">วิธีแก้ไข</button>
-              </p>
-              <div class="flex space-x-4 mt-6">
-                <button class="download-btn main-btn flex-1 text-center" type="button" ${game.downloadLink ? '' : 'disabled'}>ดาวน์โหลด</button>
-              </div>
-            </div>
-          `;
-          container.appendChild(card);
-
-          const downloadBtn = card.querySelector('.download-btn');
-          if (downloadBtn && game.downloadLink) {
-            downloadBtn.addEventListener('click', function() {
-              window.open(game.downloadLink, '_blank');
-            });
-          }
-          const howtoBtn = card.querySelector('.howto-btn');
-          if (howtoBtn) {
-            howtoBtn.addEventListener('click', () => {
-              showHowtoPopup(game.instructions || "ไม่มีวิธีแก้ไขสำหรับเกมนี้");
-            });
-          }
-        } else {
-          card.innerHTML =
-            `<div class="media-container">
-              <img src="${game.thumbnail}" alt="${game.title}">
-            </div>
-            <div class="p-4">
-              <a href="${game.officialLink}" target="_blank" class="text-xl"
-                style="color:var(--text-main) !important;">${game.title}</a>
-              ${infoLine("ปัญหาหลัก:", game.issue, "red-400")}
-            </div>
-          `;
-          container.appendChild(card);
-        }
-      });
-    }
 
     document.getElementById('howtoPopup').addEventListener('click', function(e) {
       if (e.target === this) closeHowto();
