@@ -236,9 +236,9 @@
   </div>
   <input type="text" id="searchBar" class="search-bar mb-6" placeholder="ค้นหา...">
   <div class="flex space-x-4 mb-6">
-    <button id="allGamesTab" class="tab active-tab">แก้ไขออนไลน์</button>
-    <button id="unfixableTab" class="tab">แก้ไขไม่ได้</button>
-    <button id="offlineTab" class="tab">เล่นคนเดียว</button>
+    <button id="allGamesTab" class="tab active-tab">เกมที่แก้ไข</button>
+    <button id="unfixableTab" class="tab">เกมที่แก้ไขไม่ได้</button>
+    <button id="offlineTab" class="tab">เกมออฟไลน์</button>
   </div>
   <div id="gameGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-6xl"></div>
   <div id="unfixableList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-6xl hidden"></div>
@@ -494,6 +494,200 @@
       });
     }
 
+    // ฟังก์ชันแสดงผลลัพธ์ค้นหาทุกหมวด
+    function renderSearchAllResults(results) {
+      const gameGrid = document.getElementById('gameGrid');
+      const unfixableList = document.getElementById('unfixableList');
+      const offlineList = document.getElementById('offlineList');
+      gameGrid.innerHTML = '';
+      unfixableList.classList.add('hidden');
+      offlineList.classList.add('hidden');
+      gameGrid.classList.remove('hidden');
+
+      if (results.length === 0) {
+        gameGrid.innerHTML = `<div class="text-center text-gray-400 py-8">ไม่พบเกมที่ค้นหา</div>`;
+        return;
+      }
+
+      results.forEach(game => {
+        const card = document.createElement('div');
+        card.className = 'thumbnail rounded-lg overflow-hidden';
+        if (game.hasOwnProperty('downloadEnabled')) {
+          // หมวดเกมที่แก้ไข
+          card.innerHTML =
+            `<div class="media-container" data-video="${game.video || ''}">
+              <img src="${game.thumbnail}" alt="${game.title}">
+              ${game.video ?
+                `<video autoplay muted loop playsinline preload>
+                  <source src="${game.video}" type="video/webm">
+                </video>` : ''}
+            </div>
+            <div class="p-4">
+              <a href="${game.officialLink}" target="_blank" class="text-xl"
+                style="color:var(--text-main) !important;">${game.title}</a>
+              ${infoLine("เวอร์ชั่น:", game.version)}
+              ${infoLine("ผู้เล่น:", game.players)}
+              ${infoLine("แก้ไขโดย:", game.crackedBy)}
+              ${infoLine("แพลตฟอร์ม:", game.platform)}
+              ${infoLine("รหัสผ่าน:", game.password)}
+              ${infoLine("รหัสผ่านแก้ไข:", game.fixPassword)}
+              <p class="text-sm mt-2">
+                <button class="howto-btn" type="button">วิธีแก้ไข</button>
+              </p>
+              <div class="flex space-x-4 mt-6">
+                <button class="download-btn main-btn flex-1 text-center" type="button" ${game.downloadEnabled ? '' : 'disabled'}>ดาวน์โหลด</button>
+                <button class="fix-btn main-btn flex-1 text-center" type="button" ${game.fixEnabled ? '' : 'disabled'}>แก้ไข</button>
+              </div>
+            </div>
+          `;
+          gameGrid.appendChild(card);
+          const mediaContainer = card.querySelector('.media-container');
+          const video = mediaContainer.querySelector('video');
+          if (video) {
+            mediaContainer.addEventListener('click', () => {
+              if (game.video) {
+                document.getElementById('popupSource').src = game.video;
+                document.getElementById('popupPlayer').load();
+                document.getElementById('videoPopup').style.display = 'flex';
+                document.getElementById('popupPlayer').play();
+              }
+            });
+          }
+          const downloadBtn = card.querySelector('.download-btn');
+          if (downloadBtn) {
+            if (!game.downloadEnabled) downloadBtn.classList.add('disabled-btn');
+            else {
+              const downloadLinks = [];
+              let idx = 1;
+              while (game['downloadLink'+idx]) {
+                downloadLinks.push(game['downloadLink'+idx]);
+                idx++;
+              }
+              if (downloadLinks.length > 0) {
+                downloadBtn.addEventListener('click', function() {
+                  showDownloadPopup(downloadLinks);
+                });
+              } else if (game.downloadLink) {
+                downloadBtn.addEventListener('click', function() {
+                  window.open(game.downloadLink, '_blank');
+                });
+              }
+            }
+          }
+          const fixBtn = card.querySelector('.fix-btn');
+          if (fixBtn) {
+            if (!game.fixEnabled) fixBtn.classList.add('disabled-btn');
+            else if (game.fixLink) {
+              fixBtn.addEventListener('click', function() {
+                window.open(game.fixLink, '_blank');
+              });
+            }
+          }
+          const howtoBtn = card.querySelector('.howto-btn');
+          if (howtoBtn) {
+            howtoBtn.addEventListener('click', () => {
+              showHowtoPopup(game.instructions || "ไม่มีวิธีแก้ไขสำหรับเกมนี้");
+            });
+          }
+        } else if (game.hasOwnProperty('issue')) {
+          // หมวดเกมที่แก้ไขไม่ได้
+          card.innerHTML =
+            `<div class="media-container" data-video="${game.video || ''}">
+              <img src="${game.thumbnail}" alt="${game.title}">
+              ${game.video ?
+                `<video autoplay muted loop playsinline preload>
+                  <source src="${game.video}" type="video/webm">
+                </video>` : ''}
+            </div>
+            <div class="p-4">
+              <a href="${game.officialLink}" target="_blank" class="text-xl"
+                style="color:var(--text-main) !important;">${game.title}</a>
+              ${infoLine("ปัญหาหลัก:", game.issue, "red-400")}
+            </div>
+          `;
+          gameGrid.appendChild(card);
+          const mediaContainer = card.querySelector('.media-container');
+          const video = mediaContainer.querySelector('video');
+          if (video) {
+            mediaContainer.addEventListener('click', () => {
+              if (game.video) {
+                document.getElementById('popupSource').src = game.video;
+                document.getElementById('popupPlayer').load();
+                document.getElementById('videoPopup').style.display = 'flex';
+                document.getElementById('popupPlayer').play();
+              }
+            });
+          }
+        } else {
+          // หมวดเกมออฟไลน์
+          card.innerHTML =
+            `<div class="media-container" data-video="${game.video || ''}">
+              <img src="${game.thumbnail}" alt="${game.title}">
+              ${game.video ?
+                `<video autoplay muted loop playsinline preload>
+                  <source src="${game.video}" type="video/webm">
+                </video>` : ''}
+            </div>
+            <div class="p-4">
+              <a href="${game.officialLink}" target="_blank" class="text-xl"
+                style="color:var(--text-main) !important;">${game.title}</a>
+              ${infoLine("เวอร์ชั่น:", game.version)}
+              ${infoLine("ไฟล์โดย:", game.FileBy, "gray-400")}
+              <p class="text-sm mt-2">
+                <button class="howto-btn" type="button">วิธีแก้ไข</button>
+              </p>
+              <div class="flex space-x-4 mt-6">
+                <button class="download-btn main-btn flex-1 text-center" type="button" ${game.downloadLink ? '' : 'disabled'}>ดาวน์โหลด</button>
+              </div>
+            </div>
+          `;
+          gameGrid.appendChild(card);
+          const mediaContainer = card.querySelector('.media-container');
+          const video = mediaContainer.querySelector('video');
+          if (video) {
+            mediaContainer.addEventListener('click', () => {
+              if (game.video) {
+                document.getElementById('popupSource').src = game.video;
+                document.getElementById('popupPlayer').load();
+                document.getElementById('videoPopup').style.display = 'flex';
+                document.getElementById('popupPlayer').play();
+              }
+            });
+          }
+          const downloadBtn = card.querySelector('.download-btn');
+          if (downloadBtn && game.downloadLink) {
+            downloadBtn.addEventListener('click', function() {
+              window.open(game.downloadLink, '_blank');
+            });
+          }
+          const howtoBtn = card.querySelector('.howto-btn');
+          if (howtoBtn) {
+            howtoBtn.addEventListener('click', () => {
+              showHowtoPopup(game.instructions || "ไม่มีวิธีแก้ไขสำหรับเกมนี้");
+            });
+          }
+        }
+      });
+    }
+
+    // เปลี่ยนให้ searchBar ค้นหาทุกหมวดเสมอ
+    document.getElementById('searchBar').addEventListener('input', () => {
+      const searchTerm = document.getElementById('searchBar').value.trim().toLowerCase();
+      if (searchTerm === '') {
+        if (document.getElementById('allGamesTab').classList.contains('active-tab')) renderAllGames();
+        else if (document.getElementById('unfixableTab').classList.contains('active-tab')) renderUnfixableGames();
+        else renderOfflineGames();
+      } else {
+        // SEARCH MODE: รวมทุกหมวด
+        const allResults = [
+          ...games.filter(game => (game.title || '').toLowerCase().includes(searchTerm)),
+          ...unfixableGames.filter(game => (game.title || '').toLowerCase().includes(searchTerm)),
+          ...offlineGames.filter(game => (game.title || '').toLowerCase().includes(searchTerm))
+        ];
+        renderSearchAllResults(allResults);
+      }
+    });
+
     document.getElementById('allGamesTab').addEventListener('click', () => {
       document.getElementById('allGamesTab').classList.add('active-tab');
       document.getElementById('unfixableTab').classList.remove('active-tab');
@@ -514,26 +708,6 @@
       document.getElementById('unfixableTab').classList.remove('active-tab');
       document.getElementById('searchBar').value = '';
       renderOfflineGames();
-    });
-
-    document.getElementById('searchBar').addEventListener('input', () => {
-      const searchTerm = document.getElementById('searchBar').value.trim().toLowerCase();
-      if (searchTerm === '') {
-        if (document.getElementById('allGamesTab').classList.contains('active-tab')) renderAllGames();
-        else if (document.getElementById('unfixableTab').classList.contains('active-tab')) renderUnfixableGames();
-        else renderOfflineGames();
-      } else {
-        if (document.getElementById('allGamesTab').classList.contains('active-tab')) {
-          const filtered = games.filter(game => (game.title || '').toLowerCase().includes(searchTerm));
-          renderAllGames(filtered);
-        } else if (document.getElementById('unfixableTab').classList.contains('active-tab')) {
-          const filtered = unfixableGames.filter(game => (game.title || '').toLowerCase().includes(searchTerm));
-          renderUnfixableGames(filtered);
-        } else {
-          const filtered = offlineGames.filter(game => (game.title || '').toLowerCase().includes(searchTerm));
-          renderOfflineGames(filtered);
-        }
-      }
     });
 
     document.getElementById('howtoPopup').addEventListener('click', function(e) {
