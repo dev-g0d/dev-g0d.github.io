@@ -266,9 +266,13 @@
     let games = [], unfixableGames = [], offlineGames = [];
 
     async function loadData() {
-      games = await fetch('gamefix.json').then(r => r.json());
-      unfixableGames = await fetch('gameunfix.json').then(r => r.json());
-      offlineGames = await fetch('gameoffline.json').then(r => r.json());
+      async function safeFetch(url) {
+        try { return await fetch(url).then(r => r.json()); }
+        catch { return []; }
+      }
+      games = await safeFetch('gamefix.json');
+      unfixableGames = await safeFetch('gameunfix.json');
+      offlineGames = await safeFetch('gameoffline.json');
       renderAllGames();
     }
 
@@ -439,13 +443,18 @@
         const card = document.createElement('div');
         card.className = 'thumbnail rounded-lg overflow-hidden';
         card.innerHTML =
-          `<div class="media-container">
+          `<div class="media-container" data-video="${game.video || ''}">
             <img src="${game.thumbnail}" alt="${game.title}">
+            ${game.video ?
+              `<video autoplay muted loop playsinline preload>
+                <source src="${game.video}" type="video/webm">
+              </video>` : ''}
           </div>
           <div class="p-4">
             <a href="${game.officialLink}" target="_blank" class="text-xl"
               style="color:var(--text-main) !important;">${game.title}</a>
             ${infoLine("เวอร์ชั่น:", game.version)}
+            ${infoLine("ไฟล์โดย:", game.FileBy, "gray-400")}
             <p class="text-sm mt-2">
               <button class="howto-btn" type="button">วิธีแก้ไข</button>
             </p>
@@ -455,6 +464,20 @@
           </div>
         `;
         offlineList.appendChild(card);
+
+        // รองรับ video popup
+        const mediaContainer = card.querySelector('.media-container');
+        const video = mediaContainer.querySelector('video');
+        if (video) {
+          mediaContainer.addEventListener('click', () => {
+            if (game.video) {
+              document.getElementById('popupSource').src = game.video;
+              document.getElementById('popupPlayer').load();
+              document.getElementById('videoPopup').style.display = 'flex';
+              document.getElementById('popupPlayer').play();
+            }
+          });
+        }
 
         const downloadBtn = card.querySelector('.download-btn');
         if (downloadBtn && game.downloadLink) {
@@ -500,7 +523,6 @@
         else if (document.getElementById('unfixableTab').classList.contains('active-tab')) renderUnfixableGames();
         else renderOfflineGames();
       } else {
-        // เฉพาะ All/Unfix/Offline
         if (document.getElementById('allGamesTab').classList.contains('active-tab')) {
           const filtered = games.filter(game => (game.title || '').toLowerCase().includes(searchTerm));
           renderAllGames(filtered);
