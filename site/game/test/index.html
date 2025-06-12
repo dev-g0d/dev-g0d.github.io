@@ -521,7 +521,8 @@
       if (e.target === this) closeDownloadPopup();
     });
 
-    loadData();
+    // ให้โชว์ tab แรกอัตโนมัติ ไม่ต้องรอกด
+    document.addEventListener('DOMContentLoaded', loadData);
   </script>
 </body>
 </html>
