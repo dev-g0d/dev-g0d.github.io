@@ -235,7 +235,6 @@
     .thumbnail .p-4, .thumbnail .p-4 p, .thumbnail .p-4 a, .thumbnail .p-4 span {
       line-height: 1.7;
     }
-    /* --- custom tag badge --- */
     .game-tag {
       display: inline-block;
       font-size: 0.73rem;
@@ -264,7 +263,6 @@
       color: var(--tag-offline);
       border: 1.2px solid var(--tag-offline);
     }
-    /* --- สำหรับกล่องปิดคู่มือ --- */
     #lockedContent {
       position: fixed;
       left: 0; top: 0; width: 100vw; height: 100vh;
@@ -296,7 +294,6 @@
       display: block;
       margin-bottom: 10px;
     }
-    /* Center mainContent wrapper horizontally */
     .center-content-wrapper {
       width: 100vw;
       display: flex;
@@ -311,7 +308,6 @@
   <div style="color: #8ca3c7; font-size: 1.08rem; margin-top: .5rem;">
     แหล่งอ้างอิง ชุมชน <a href="https://cs.rin.ru/" target="_blank" style="color:var(--primary-blue);">cs.rin.ru</a>
   </div>
-  <!-- กล่องเนื้อหาถูกปิด -->
   <div id="lockedContent" class="hide">
     <div>
       <span class="icon">🔒</span>
@@ -319,7 +315,6 @@
       กรุณาติดต่อผู้ดูแลระบบหรือรอประกาศเพิ่มเติม
     </div>
   </div>
-  <!-- เนื้อหาเว็บปกติ -->
   <div class="center-content-wrapper">
     <div id="mainContent">
       <input type="text" id="searchBar" class="search-bar mb-6" placeholder="ค้นหา...">
@@ -333,19 +328,16 @@
       <div id="offlineList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-6xl hidden"></div>
     </div>
   </div>
-  <!-- Video Popup -->
   <div id="videoPopup" class="popup">
     <button class="close-btn" onclick="closePopup()">×</button>
     <video id="popupPlayer" class="popup-video" controls autoplay>
       <source id="popupSource" type="video/webm">
     </video>
   </div>
-  <!-- Download Multi-part Popup -->
   <div id="downloadPopup" class="popup">
     <button class="close-btn" onclick="closeDownloadPopup()">×</button>
     <div id="downloadLinksList" class="bg-gray-900 p-6 rounded-lg max-w-md w-full text-center"></div>
   </div>
-  <!-- Howto Popup -->
   <div id="howtoPopup" class="howto-popup">
     <div class="howto-content">
       <button class="howto-close-btn" onclick="closeHowto()">×</button>
@@ -353,9 +345,7 @@
     </div>
   </div>
   <script>
-    // === เปิด/ปิดคู่มือ ===
-    // เปลี่ยน status เป็น "on" หรือ "off" ได้ที่นี่
-    const status = "off"; // "on" = เปิดเว็บปกติ, "off" = ปิดเนื้อหา
+    const status = "off";
 
     function setContentStatus(status) {
       status = (status + '').toLowerCase().trim();
@@ -370,7 +360,6 @@
       }
     }
     setContentStatus(status);
-    // ==========
 
     let games = [], unfixableGames = [], offlineGames = [];
 
@@ -481,7 +470,6 @@
           });
         }
 
-        // ดาวน์โหลด (multi-part)
         const downloadBtn = card.querySelector('.download-btn');
         if (downloadBtn) {
           if (!game.downloadEnabled) downloadBtn.classList.add('disabled-btn');
@@ -595,7 +583,6 @@
         `;
         offlineList.appendChild(card);
 
-        // รองรับ video popup
         const mediaContainer = card.querySelector('.media-container');
         const video = mediaContainer.querySelector('video');
         if (video) {
@@ -624,7 +611,6 @@
       });
     }
 
-    // ฟังก์ชันแสดงผลลัพธ์ค้นหาทุกหมวด
     function renderSearchAllResults(results) {
       const gameGrid = document.getElementById('gameGrid');
       const unfixableList = document.getElementById('unfixableList');
@@ -643,7 +629,6 @@
         const card = document.createElement('div');
         card.className = 'thumbnail rounded-lg overflow-hidden';
         if (game.hasOwnProperty('downloadEnabled')) {
-          // หมวดเกมที่แก้ไข
           card.innerHTML =
             `<div class="media-container" data-video="${game.video || ''}">
               <img src="${game.thumbnail}" alt="${game.title}">
@@ -721,7 +706,6 @@
             });
           }
         } else if (game.hasOwnProperty('issue')) {
-          // หมวดเกมที่แก้ไขไม่ได้
           card.innerHTML =
             `<div class="media-container" data-video="${game.video || ''}">
               <img src="${game.thumbnail}" alt="${game.title}">
@@ -751,7 +735,6 @@
             });
           }
         } else {
-          // หมวดเกมออฟไลน์
           card.innerHTML =
             `<div class="media-container" data-video="${game.video || ''}">
               <img src="${game.thumbnail}" alt="${game.title}">
@@ -810,7 +793,6 @@
         else if (document.getElementById('unfixableTab').classList.contains('active-tab')) renderUnfixableGames();
         else renderOfflineGames();
       } else {
-        // SEARCH MODE: รวมทุกหมวด
         const allResults = [
           ...games.filter(game => (game.title || '').toLowerCase().includes(searchTerm)),
           ...unfixableGames.filter(game => (game.title || '').toLowerCase().includes(searchTerm)),
