@@ -236,30 +236,31 @@
     /* --- custom tag badge --- */
     .game-tag {
       display: inline-block;
-      font-size: 0.85rem;
+      font-size: 0.73rem;
       font-weight: 500;
       letter-spacing: 0.01em;
-      padding: 2px 12px 2px 12px;
+      padding: 0.5px 8px;
       border-radius: 999px;
-      margin-bottom: 8px;
+      margin-bottom: 0;
       margin-right: 6px;
       vertical-align: middle;
       user-select: none;
+      line-height: 1.6;
     }
     .tag-online {
       background: var(--tag-online-bg);
       color: var(--tag-online);
-      border: 1.5px solid var(--tag-online);
+      border: 1.2px solid var(--tag-online);
     }
     .tag-unfix {
       background: var(--tag-unfix-bg);
       color: var(--tag-unfix);
-      border: 1.5px solid var(--tag-unfix);
+      border: 1.2px solid var(--tag-unfix);
     }
     .tag-offline {
       background: var(--tag-offline-bg);
       color: var(--tag-offline);
-      border: 1.5px solid var(--tag-offline);
+      border: 1.2px solid var(--tag-offline);
     }
   </style>
 </head>
@@ -373,7 +374,7 @@
               </video>` : ''}
           </div>
           <div class="p-4">
-            ${renderGameTag("online")}
+            <div class="mb-1">${renderGameTag("online")}</div>
             <a href="${game.officialLink}" target="_blank" class="text-xl"
               style="color:var(--text-main) !important;">${game.title}</a>
             ${infoLine("เวอร์ชั่น:", game.version)}
@@ -464,7 +465,7 @@
               </video>` : ''}
           </div>
           <div class="p-4">
-            ${renderGameTag("unfix")}
+            <div class="mb-1">${renderGameTag("unfix")}</div>
             <a href="${game.officialLink}" target="_blank" class="text-xl"
               style="color:var(--text-main) !important;">${game.title}</a>
             ${infoLine("ปัญหาหลัก:", game.issue, "red-400")}
@@ -505,7 +506,7 @@
               </video>` : ''}
           </div>
           <div class="p-4">
-            ${renderGameTag("offline")}
+            <div class="mb-1">${renderGameTag("offline")}</div>
             <a href="${game.officialLink}" target="_blank" class="text-xl"
               style="color:var(--text-main) !important;">${game.title}</a>
             ${infoLine("เวอร์ชั่น:", game.version)}
@@ -578,7 +579,7 @@
                 </video>` : ''}
             </div>
             <div class="p-4">
-              ${renderGameTag("online")}
+              <div class="mb-1">${renderGameTag("online")}</div>
               <a href="${game.officialLink}" target="_blank" class="text-xl"
                 style="color:var(--text-main) !important;">${game.title}</a>
               ${infoLine("เวอร์ชั่น:", game.version)}
@@ -656,7 +657,7 @@
                 </video>` : ''}
             </div>
             <div class="p-4">
-              ${renderGameTag("unfix")}
+              <div class="mb-1">${renderGameTag("unfix")}</div>
               <a href="${game.officialLink}" target="_blank" class="text-xl"
                 style="color:var(--text-main) !important;">${game.title}</a>
               ${infoLine("ปัญหาหลัก:", game.issue, "red-400")}
@@ -686,7 +687,7 @@
                 </video>` : ''}
             </div>
             <div class="p-4">
-              ${renderGameTag("offline")}
+              <div class="mb-1">${renderGameTag("offline")}</div>
               <a href="${game.officialLink}" target="_blank" class="text-xl"
                 style="color:var(--text-main) !important;">${game.title}</a>
               ${infoLine("เวอร์ชั่น:", game.version)}
