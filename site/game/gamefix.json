@@ -12,8 +12,8 @@
         "downloadEnabled": true,
         "fixEnabled": false,
         "officialLink": "https://store.steampowered.com/app/1858650",
-        "password": "",
-        "fixPassword": "g0d",
+        "password": "g0d",
+        "fixPassword": "",
         "instructions": "1.แตกไฟล์ zip/rar ลงในฟอเดอร์เก็บเกมของคุณ\n2.เปิดSteam\n3.เปิดเกมผ่าน In Sink.exe"
       },
       {
