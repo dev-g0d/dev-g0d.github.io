@@ -26,6 +26,12 @@
       --text-subtle: #556080;
       --btn-disabled: #23263b;
       --btn-disabled-text: #7b8ca7;
+      --tag-online: #2563eb;
+      --tag-unfix: #ec4899;
+      --tag-offline: #eab308;
+      --tag-online-bg: #232c4a;
+      --tag-unfix-bg: #3d1d2d;
+      --tag-offline-bg: #3b3218;
     }
     body {
       background-color: var(--primary-bg);
@@ -227,6 +233,34 @@
     .thumbnail .p-4, .thumbnail .p-4 p, .thumbnail .p-4 a, .thumbnail .p-4 span {
       line-height: 1.7;
     }
+    /* --- custom tag badge --- */
+    .game-tag {
+      display: inline-block;
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+      padding: 2px 12px 2px 12px;
+      border-radius: 999px;
+      margin-bottom: 8px;
+      margin-right: 6px;
+      vertical-align: middle;
+      user-select: none;
+    }
+    .tag-online {
+      background: var(--tag-online-bg);
+      color: var(--tag-online);
+      border: 1.5px solid var(--tag-online);
+    }
+    .tag-unfix {
+      background: var(--tag-unfix-bg);
+      color: var(--tag-unfix);
+      border: 1.5px solid var(--tag-unfix);
+    }
+    .tag-offline {
+      background: var(--tag-offline-bg);
+      color: var(--tag-offline);
+      border: 1.5px solid var(--tag-offline);
+    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col items-center p-6">
@@ -266,7 +300,6 @@
     let games = [], unfixableGames = [], offlineGames = [];
 
     async function loadData() {
-      // ฟังก์ชันช่วยแถม query string unique ทุกครั้งเพื่อ bypass cache
       function nocache(url) {
         const sep = url.includes('?') ? '&' : '?';
         return url + sep + 'v=' + Date.now();
@@ -286,6 +319,20 @@
       if (typeof value === "string" && value.trim() === "") return '';
       return `<p class="text-${color} text-sm">${label} ${value}</p>`;
     }
+
+    function renderGameTag(type) {
+      if (type === "online") {
+        return '<span class="game-tag tag-online">แก้ไขออนไลน์</span>';
+      }
+      if (type === "unfix") {
+        return '<span class="game-tag tag-unfix">แก้ไขไม่ได้</span>';
+      }
+      if (type === "offline") {
+        return '<span class="game-tag tag-offline">เกมออฟไลน์</span>';
+      }
+      return '';
+    }
+
     function showDownloadPopup(links) {
       const downloadLinksList = document.getElementById('downloadLinksList');
       downloadLinksList.innerHTML = links.map((link, i) =>
@@ -326,6 +373,7 @@
               </video>` : ''}
           </div>
           <div class="p-4">
+            ${renderGameTag("online")}
             <a href="${game.officialLink}" target="_blank" class="text-xl"
               style="color:var(--text-main) !important;">${game.title}</a>
             ${infoLine("เวอร์ชั่น:", game.version)}
@@ -416,6 +464,7 @@
               </video>` : ''}
           </div>
           <div class="p-4">
+            ${renderGameTag("unfix")}
             <a href="${game.officialLink}" target="_blank" class="text-xl"
               style="color:var(--text-main) !important;">${game.title}</a>
             ${infoLine("ปัญหาหลัก:", game.issue, "red-400")}
@@ -456,6 +505,7 @@
               </video>` : ''}
           </div>
           <div class="p-4">
+            ${renderGameTag("offline")}
             <a href="${game.officialLink}" target="_blank" class="text-xl"
               style="color:var(--text-main) !important;">${game.title}</a>
             ${infoLine("เวอร์ชั่น:", game.version)}
@@ -528,6 +578,7 @@
                 </video>` : ''}
             </div>
             <div class="p-4">
+              ${renderGameTag("online")}
               <a href="${game.officialLink}" target="_blank" class="text-xl"
                 style="color:var(--text-main) !important;">${game.title}</a>
               ${infoLine("เวอร์ชั่น:", game.version)}
@@ -605,6 +656,7 @@
                 </video>` : ''}
             </div>
             <div class="p-4">
+              ${renderGameTag("unfix")}
               <a href="${game.officialLink}" target="_blank" class="text-xl"
                 style="color:var(--text-main) !important;">${game.title}</a>
               ${infoLine("ปัญหาหลัก:", game.issue, "red-400")}
@@ -634,6 +686,7 @@
                 </video>` : ''}
             </div>
             <div class="p-4">
+              ${renderGameTag("offline")}
               <a href="${game.officialLink}" target="_blank" class="text-xl"
                 style="color:var(--text-main) !important;">${game.title}</a>
               ${infoLine("เวอร์ชั่น:", game.version)}
@@ -675,7 +728,6 @@
       });
     }
 
-    // เปลี่ยนให้ searchBar ค้นหาทุกหมวดเสมอ
     document.getElementById('searchBar').addEventListener('input', () => {
       const searchTerm = document.getElementById('searchBar').value.trim().toLowerCase();
       if (searchTerm === '') {
