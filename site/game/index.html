@@ -262,6 +262,43 @@
       color: var(--tag-offline);
       border: 1.2px solid var(--tag-offline);
     }
+    /* --- ระบบเปิด/ปิดเนื้อหา --- */
+    #lockedContent {
+      background: var(--surface-mid);
+      color: var(--highlight-pink);
+      border: 2px solid var(--highlight-pink);
+      border-radius: 12px;
+      margin: 40px auto 0 auto;
+      padding: 42px 24px 32px 24px;
+      font-size: 1.33rem;
+      text-align: center;
+      max-width: 420px;
+      box-shadow: 0 0 10px #000a;
+      display: none;
+    }
+    #statusInput {
+      background: var(--surface-light);
+      border: 1.5px solid var(--border-color);
+      color: var(--primary-blue);
+      font-weight: 700;
+      font-size: 1.10rem;
+      border-radius: 8px;
+      padding: 8px 18px;
+      margin-left: 16px;
+      outline: none;
+      transition: border .16s;
+      width: 90px;
+      text-align: center;
+    }
+    #statusInput:focus {
+      border-color: var(--highlight-pink);
+    }
+    #statusBoxLabel {
+      color: var(--highlight-pink);
+      margin-left: 0.5rem;
+      font-size: 1.07rem;
+      font-weight: 500;
+    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col items-center p-6">
@@ -269,15 +306,31 @@
   <div style="color: #8ca3c7; font-size: 1.08rem; margin-top: .5rem;">
     แหล่งอ้างอิง ชุมชน <a href="https://cs.rin.ru/" target="_blank" style="color:var(--primary-blue);">cs.rin.ru</a>
   </div>
-  <input type="text" id="searchBar" class="search-bar mb-6" placeholder="ค้นหา...">
-  <div class="flex space-x-4 mb-6">
-    <button id="allGamesTab" class="tab active-tab">แก้ไขออนไลน์</button>
-    <button id="unfixableTab" class="tab">แก้ไขไม่ได้</button>
-    <button id="offlineTab" class="tab">เกมออฟไลน์</button>
+  <!-- กล่องสำหรับเปลี่ยนสถานะ -->
+  <div style="margin-top: 1.7rem; margin-bottom: 1.3rem;">
+    <label id="statusBoxLabel">สถานะคู่มือ: </label>
+    <input type="text" id="statusInput" value="on" placeholder="on/off" autocomplete="off" />
   </div>
-  <div id="gameGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-6xl"></div>
-  <div id="unfixableList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-6xl hidden"></div>
-  <div id="offlineList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-6xl hidden"></div>
+  <!-- กล่องเนื้อหาถูกปิด -->
+  <div id="lockedContent">
+    <span style="font-size:2.2rem;">🔒</span><br>
+    <div style="margin-top:12px;">
+      <b>คู่มือแก้ไข ถูกปิดการใช้งาน</b><br>
+      กรุณาติดต่อผู้ดูแลระบบหรือรอประกาศเพิ่มเติม
+    </div>
+  </div>
+  <!-- เนื้อหาเว็บปกติทั้งหมด รวมถึง search bar, tabs, grid ต่างๆ -->
+  <div id="mainContent">
+    <input type="text" id="searchBar" class="search-bar mb-6" placeholder="ค้นหา...">
+    <div class="flex space-x-4 mb-6">
+      <button id="allGamesTab" class="tab active-tab">แก้ไขออนไลน์</button>
+      <button id="unfixableTab" class="tab">แก้ไขไม่ได้</button>
+      <button id="offlineTab" class="tab">เกมออฟไลน์</button>
+    </div>
+    <div id="gameGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-6xl"></div>
+    <div id="unfixableList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-6xl hidden"></div>
+    <div id="offlineList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-6xl hidden"></div>
+  </div>
   <!-- Video Popup -->
   <div id="videoPopup" class="popup">
     <button class="close-btn" onclick="closePopup()">×</button>
@@ -298,6 +351,34 @@
     </div>
   </div>
   <script>
+    // --- ระบบเปิด/ปิดเนื้อหา ---
+    function setContentStatus(status) {
+      status = (status + '').toLowerCase().trim();
+      const mainContent = document.getElementById('mainContent');
+      const lockedContent = document.getElementById('lockedContent');
+      if (status === 'on') {
+        mainContent.style.display = '';
+        lockedContent.style.display = 'none';
+      } else {
+        mainContent.style.display = 'none';
+        lockedContent.style.display = '';
+      }
+    }
+    // อ่านค่าเริ่มต้น (จาก localStorage ถ้ามี)
+    function getInitialStatus() {
+      return localStorage.getItem('howtoStatus') || 'on';
+    }
+    document.getElementById('statusInput').value = getInitialStatus();
+    setContentStatus(getInitialStatus());
+    // เมื่อพิมพ์ on/off แล้ว enter หรือ blur
+    document.getElementById('statusInput').addEventListener('input', function(e) {
+      let val = e.target.value.trim().toLowerCase();
+      if (val !== 'on' && val !== 'off') return;
+      localStorage.setItem('howtoStatus', val);
+      setContentStatus(val);
+    });
+
+    // ----- จากตรงนี้ลงไปคือสคริปต์เดิม -----
     let games = [], unfixableGames = [], offlineGames = [];
 
     async function loadData() {
@@ -320,7 +401,6 @@
       if (typeof value === "string" && value.trim() === "") return '';
       return `<p class="text-${color} text-sm">${label} ${value}</p>`;
     }
-
     function renderGameTag(type) {
       if (type === "online") {
         return '<span class="game-tag tag-online">แก้ไขออนไลน์</span>';
@@ -333,7 +413,6 @@
       }
       return '';
     }
-
     function showDownloadPopup(links) {
       const downloadLinksList = document.getElementById('downloadLinksList');
       downloadLinksList.innerHTML = links.map((link, i) =>
