@@ -99,13 +99,13 @@
         "officialLink": "https://store.steampowered.com/app/2080690/Sunkenland/",
         "password": "g0d",
         "fixPassword": "",
-        "instructions": "1.แตกไฟล์ zip/rar ลงในฟอเดอร์เก็บเกมของคุณ \n2.เล่นได้เลย!"
+        "instructions": "*คุณสามารถเล่นร่วมกับเซิฟเวอร์เกมจริง [Official Server]\n1.แตกไฟล์ zip/rar ลงในฟอเดอร์เก็บเกมของคุณ\n2.เปิดSteam\n3.เปิดเกมผ่าน Sunkenland.exe"
       },
       {
         "title": "Schedule I",
         "thumbnail": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3164500/header.jpg?t=1748368581",
         "video": "https://video.fastly.steamstatic.com/store_trailers/257080424/movie480_vp9.webm?t=1733875324",
-		"downloadLink": "",
+	"downloadLink": "",
         "fixLink": "",
         "version": "v.0.3.6f4",
         "crackedBy": "g0d",
@@ -116,13 +116,13 @@
         "officialLink": "https://store.steampowered.com/app/3164500/Schedule_I/",
         "password": "g0d",
         "fixPassword": "",
-		"instructions": "1.แตกไฟล์ zip/rar ลงในฟอเดอร์เก็บเกม \n2.เล่นได้เลย!"
+	"instructions": ""
       },
       {
         "title": "Lethal Company",
         "thumbnail": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1966720/header.jpg?t=1748737442",
         "video": "https://video.fastly.steamstatic.com/store_trailers/256961309/movie480_vp9.webm?t=1690909590",
-		"downloadLink": "",
+	"downloadLink": "",
         "fixLink": "",
         "version": "v72",
         "crackedBy": "g0d",
@@ -133,40 +133,40 @@
         "officialLink": "https://store.steampowered.com/app/1966720/Lethal_Company/",
         "password": "g0d",
         "fixPassword": "",
-		"instructions": "1.แตกไฟล์ zip/rar ลงในฟอเดอร์เก็บเกม \n2.เล่นได้เลย!"
+	"instructions": ""
       },
 	  {
         "title": "Zort",
         "thumbnail": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3121110/header.jpg?t=1741804510",
         "video": "https://video.fastly.steamstatic.com/store_trailers/257080050/movie480_vp9.webm?t=1733688200",
-		"downloadLink": "",
+	"downloadLink": "",
         "fixLink": "",
         "version": "v0.3.4",
         "crackedBy": "g0d",
         "platform": "Steam",
-		"players": "1-16 คน",
+	"players": "1-16 คน",
         "downloadEnabled": false,
         "fixEnabled": false,
         "officialLink": "https://store.steampowered.com/app/3121110/Zort/",
         "password": "g0d",
         "fixPassword": "",
-		"instructions": "1.แตกไฟล์ zip/rar ลงในฟอเดอร์เก็บเกม \n2.เล่นได้เลย!"
+	"instructions": ""
       },
       {
         "title": "POPUCOM",
         "thumbnail": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2543180/df67c9096023cbff9bd766d9b146fb08f85fba38/header.jpg?t=1749551959",
         "video": "https://video.fastly.steamstatic.com/store_trailers/257147512/movie480_vp9.webm?t=1748491645",
-		"downloadLink": "https://gofile.io/d/Ej1628",
-        "fixLink": "https://gofile.io/d/Ej1628",
+	"downloadLink": "",
+        "fixLink": "",
         "version": "1.0.2",
         "crackedBy": "Online-fix.me",
-        "platform": "Epic Store",
+        "platform": "Epic Game",
         "players": "1-4 คน",
         "downloadEnabled": false,
         "fixEnabled": false,
         "officialLink": "https://store.epicgames.com/th/p/popucom-3b79ee",
         "password": "online-fix.me",
         "fixPassword": "",
-		"instructions": "1.แตกไฟล์ zip/rar ลงในฟอเดอร์เก็บเกม \n2.เล่นได้เลย!"
+	"instructions": ""
       }
 ]
