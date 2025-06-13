@@ -149,8 +149,10 @@
       border-radius: 10px;
       width: 100%; max-width: 400px;
       font-size: 16px;
-      margin-top: 2.2rem;
+      margin: 0 auto 1.5rem auto;
+      display: block;
       transition: border .18s, box-shadow .18s;
+      /* Centered! */
     }
     .search-bar:focus {
       outline: none;
@@ -264,17 +266,43 @@
     }
     /* --- สำหรับกล่องปิดคู่มือ --- */
     #lockedContent {
+      position: fixed;
+      left: 0; top: 0; width: 100vw; height: 100vh;
+      z-index: 9999;
+      background: rgba(16,19,26,0.96);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+      padding: 0;
+      border: none;
+      box-shadow: none;
+    }
+    #lockedContent > div {
       background: var(--surface-mid);
       color: var(--highlight-pink);
       border: 2px solid var(--highlight-pink);
       border-radius: 12px;
-      margin: 40px auto 0 auto;
       padding: 42px 24px 32px 24px;
       font-size: 1.33rem;
       text-align: center;
       max-width: 420px;
       box-shadow: 0 0 10px #000a;
-      display: none;
+      margin: 0;
+    }
+    #lockedContent.hide { display: none !important; }
+    #lockedContent .icon {
+      font-size:2.2rem;
+      display: block;
+      margin-bottom: 10px;
+    }
+    /* Center mainContent wrapper horizontally */
+    .center-content-wrapper {
+      width: 100vw;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
     }
   </style>
 </head>
@@ -284,24 +312,26 @@
     แหล่งอ้างอิง ชุมชน <a href="https://cs.rin.ru/" target="_blank" style="color:var(--primary-blue);">cs.rin.ru</a>
   </div>
   <!-- กล่องเนื้อหาถูกปิด -->
-  <div id="lockedContent">
-    <span style="font-size:2.2rem;">🔒</span><br>
-    <div style="margin-top:12px;">
+  <div id="lockedContent" class="hide">
+    <div>
+      <span class="icon">🔒</span>
       <b>คู่มือแก้ไข ถูกปิดการใช้งาน</b><br>
       กรุณาติดต่อผู้ดูแลระบบหรือรอประกาศเพิ่มเติม
     </div>
   </div>
   <!-- เนื้อหาเว็บปกติ -->
-  <div id="mainContent">
-    <input type="text" id="searchBar" class="search-bar mb-6" placeholder="ค้นหา...">
-    <div class="flex space-x-4 mb-6">
-      <button id="allGamesTab" class="tab active-tab">แก้ไขออนไลน์</button>
-      <button id="unfixableTab" class="tab">แก้ไขไม่ได้</button>
-      <button id="offlineTab" class="tab">เกมออฟไลน์</button>
+  <div class="center-content-wrapper">
+    <div id="mainContent">
+      <input type="text" id="searchBar" class="search-bar mb-6" placeholder="ค้นหา...">
+      <div class="flex space-x-4 mb-6">
+        <button id="allGamesTab" class="tab active-tab">แก้ไขออนไลน์</button>
+        <button id="unfixableTab" class="tab">แก้ไขไม่ได้</button>
+        <button id="offlineTab" class="tab">เกมออฟไลน์</button>
+      </div>
+      <div id="gameGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-6xl"></div>
+      <div id="unfixableList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-6xl hidden"></div>
+      <div id="offlineList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-6xl hidden"></div>
     </div>
-    <div id="gameGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-6xl"></div>
-    <div id="unfixableList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-6xl hidden"></div>
-    <div id="offlineList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-6xl hidden"></div>
   </div>
   <!-- Video Popup -->
   <div id="videoPopup" class="popup">
@@ -325,7 +355,7 @@
   <script>
     // === เปิด/ปิดคู่มือ ===
     // เปลี่ยน status เป็น "on" หรือ "off" ได้ที่นี่
-    const status = "off"; // "on" = เปิดเว็บปกติ, "off" = ปิดเนื้อหา
+    const status = "on"; // "on" = เปิดเว็บปกติ, "off" = ปิดเนื้อหา
 
     function setContentStatus(status) {
       status = (status + '').toLowerCase().trim();
@@ -333,10 +363,10 @@
       const lockedContent = document.getElementById('lockedContent');
       if (status === 'on') {
         mainContent.style.display = '';
-        lockedContent.style.display = 'none';
+        lockedContent.classList.add('hide');
       } else {
         mainContent.style.display = 'none';
-        lockedContent.style.display = '';
+        lockedContent.classList.remove('hide');
       }
     }
     setContentStatus(status);
