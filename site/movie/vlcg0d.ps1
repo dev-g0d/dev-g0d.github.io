@@ -1,4 +1,40 @@
-# กำหนดเนื้อหา .reg
+# ====== Self-Elevate to Administrator ======
+If (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
+    Write-Host "กำลังขอสิทธิ์ Administrator..."
+    $myInvocation = $MyInvocation.MyCommand.Definition
+    Start-Process powershell -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File `"$myInvocation`"" -Verb RunAs
+    exit
+}
+
+# ====== Check VLC Path ======
+$vlcExePath = "C:\Program Files\VideoLAN\VLC\vlc.exe"
+$batPath = "C:\Program Files\VideoLAN\VLC\v.g0d.bat"
+If (-not (Test-Path $vlcExePath)) {
+    Write-Host "ไม่พบ VLC ที่ $vlcExePath"
+    Write-Host "โปรดติดตั้ง VLC ก่อน!"
+    exit 1
+}
+
+# ====== Write .bat File ======
+$batContent = @"
+@echo off
+REM รับ argument แรก
+set url=%1
+REM ลบ 'vlcg0d:' ออก (แปลง vlcg0d:https://.... เป็น https://....)
+set url=%url:vlcg0d:=%
+REM เปิด VLC พร้อมลิงก์
+start "" "C:\Program Files\VideoLAN\VLC\vlc.exe" "%url%"
+"@
+
+Try {
+    $batContent | Set-Content -Encoding ASCII -Path $batPath -Force
+    Write-Host "สร้างไฟล์ v.g0d.bat สำเร็จ"
+} Catch {
+    Write-Host "เกิดข้อผิดพลาดในการสร้างไฟล์ v.g0d.bat: $_" -ForegroundColor Red
+    exit 1
+}
+
+# ====== Write .reg File ======
 $regContent = @"
 Windows Registry Editor Version 5.00
 
@@ -16,30 +52,24 @@ Windows Registry Editor Version 5.00
 [HKEY_CLASSES_ROOT\vlcg0d\shell\open\command]
 @="\"C:\\Program Files\\VideoLAN\\VLC\\v.g0d.bat\" \"%1\""
 "@
-
-# สร้างไฟล์ .reg ในโฟลเดอร์ชั่วคราว
 $regPath = "$env:TEMP\vlcg0d.reg"
-$regContent | Set-Content -Encoding UTF8 -Path $regPath
 
-# กำหนดเนื้อหา .bat
-$batContent = @"
-@echo off
-REM รับ argument แรก
-set url=%1
-REM ลบ 'vlcg0d:' ออก (แปลง vlcg0d:https://.... เป็น https://....)
-set url=%url:vlcg0d:=%
-REM เปิด VLC พร้อมลิงก์
-start "" "C:\Program Files\VideoLAN\VLC\vlc.exe" "%url%"
-"@
+Try {
+    $regContent | Set-Content -Encoding UTF8 -Path $regPath
+    Write-Host "สร้างไฟล์ vlcg0d.reg สำเร็จ"
+} Catch {
+    Write-Host "เกิดข้อผิดพลาดในการสร้างไฟล์ .reg: $_" -ForegroundColor Red
+    exit 1
+}
 
-# กำหนด path ไฟล์ .bat
-$batPath = "C:\Program Files\VideoLAN\VLC\v.g0d.bat"
+# ====== Import .reg File ======
+Try {
+    Start-Process regedit.exe -ArgumentList "/s `"$regPath`"" -Wait -ErrorAction Stop
+    Write-Host "เพิ่ม registry สำเร็จ"
+} Catch {
+    Write-Host "เกิดข้อผิดพลาดในการเพิ่ม registry: $_" -ForegroundColor Red
+    exit 1
+}
 
-# Copy .bat ไปยังโฟลเดอร์ VLC (ต้องรัน PowerShell เป็น Administrator)
-$batContent | Set-Content -Encoding ASCII -Path $batPath
-
-# รันไฟล์ .reg เพื่อเพิ่ม protocol (ต้องรัน PowerShell เป็น Administrator)
-Start-Process regedit.exe -ArgumentList "/s `"$regPath`"" -Wait
-
-Write-Host "สร้างไฟล์ v.g0d.bat และเพิ่ม protocol สำเร็จแล้ว!"
+Write-Host "`n--- ดำเนินการเสร็จสิ้น ---" -ForegroundColor Green
 Write-Host "ทดสอบโดยพิมพ์ vlcg0d:https://... ใน Run หรือ Browser"
