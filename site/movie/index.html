@@ -75,28 +75,47 @@
       opacity: 1 !important;
       border: none !important;
     }
+    /* TAB BAR: Centered, fixed width, no shifting */
+    .tab-bar-wrapper {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      margin-bottom: 1.5rem;
+    }
+    .tab-bar {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      background: var(--surface-mid);
+      border-radius: 1rem;
+      box-shadow: 0 2px 16px #161b2e22;
+      min-width: 340px;
+      max-width: 400px;
+      width: 100%;
+      padding: 0.25rem 0.5rem;
+      margin: 0 auto;
+    }
     .tab {
       background: none;
       color: #fff;
       border: none;
       transition: background 0.2s, color 0.2s;
-      padding: 0.5rem 1.5rem;
+      padding: 0.5rem 1.2rem;
       border-radius: 0.5rem;
       font-size: 1.05rem;
-      margin-right: 8px;
+      margin: 0 0.25rem;
       text-decoration: none !important;
+      min-width: 80px;
     }
-    .tab:last-child { margin-right: 0; }
     .tab.active-tab {
       background: var(--primary-blue);
       color: #fff;
       box-shadow: 0 2px 12px #1e233b33;
-      text-decoration: none !important;
     }
     .tab:not(.active-tab):hover {
       color: var(--highlight-pink);
       background: none;
-      text-decoration: none !important;
     }
     .media-container {
       position: relative;
@@ -200,16 +219,15 @@
 </head>
 <body class="min-h-screen flex flex-col items-center p-6">
   <h1 class="text-4xl" style="color:var(--primary-blue);margin-bottom:0;">Dev/g0d - เว็บหนัง</h1>
-  <div style="color: #8ca3c7; font-size: 1.08rem; margin-top: .5rem;">
-    แหล่งอ้างอิง ชุมชน <a href="https://cs.rin.ru/" target="_blank" style="color:var(--primary-blue);">cs.rin.ru</a>
-  </div>
   <div class="center-content-wrapper">
     <div id="mainContent">
-      <input type="text" id="searchBar" class="search-bar mb-6" placeholder="ค้นหาชื่อหนัง...">
-      <div class="flex space-x-4 mb-6">
-        <button id="onlineTab" class="tab active-tab">มีให้ชม</button>
-        <button id="seriesTab" class="tab">ซีรี่ย์</button>
-        <button id="comingTab" class="tab">เร็วๆนี้</button>
+      <input type="text" id="searchBar" class="search-bar mb-4" placeholder="ค้นหาชื่อหนัง...">
+      <div class="tab-bar-wrapper">
+        <div class="tab-bar">
+          <button id="onlineTab" class="tab active-tab">มีให้ชม</button>
+          <button id="seriesTab" class="tab">ซีรี่ย์</button>
+          <button id="comingTab" class="tab">เร็วๆนี้</button>
+        </div>
       </div>
       <div id="movieGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-6xl"></div>
       <div id="seriesList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-6xl hidden"></div>
@@ -269,12 +287,12 @@
             <div class="mb-1">${renderMovieTag("online")}</div>
             <p class="text-xl" style="color:var(--text-main) !important;">${movie.title}</p>
             <p class="text-gray-400 text-sm mb-2">${movie.year ? `ปี ${movie.year}` : ''}</p>
-            <button class="main-btn" type="button">connect</button>
+            <button class="main-btn" type="button">ดูออนไลน์</button>
           </div>
         `;
         movieGrid.appendChild(card);
 
-        // ปุ่ม connect
+        // ปุ่ม ดูออนไลน์
         const viewBtn = card.querySelector('.main-btn');
         if (viewBtn && movie.connect) {
           viewBtn.addEventListener('click', function() {
@@ -311,7 +329,7 @@
             <div class="mb-1">${renderMovieTag("series")}</div>
             <p class="text-xl" style="color:var(--text-main) !important;">${movie.title}</p>
             <p class="text-gray-400 text-sm mb-2">${movie.year ? `ปี ${movie.year}` : ''}</p>
-            <button class="main-btn" type="button">connect</button>
+            <button class="main-btn" type="button">ดูออนไลน์</button>
           </div>
         `;
         seriesList.appendChild(card);
@@ -351,7 +369,7 @@
             <div class="mb-1">${renderMovieTag("coming")}</div>
             <p class="text-xl" style="color:var(--text-main) !important;">${movie.title}</p>
             <p class="text-gray-400 text-sm mb-2">${movie.year ? `ปี ${movie.year}` : ''}</p>
-            <button class="main-btn disabled-btn" type="button" disabled>connect</button>
+            <button class="main-btn disabled-btn" type="button" disabled>ดูออนไลน์</button>
           </div>
         `;
         comingList.appendChild(card);
@@ -439,7 +457,7 @@
             <div class="mb-1">${renderMovieTag(tagType)}</div>
             <p class="text-xl" style="color:var(--text-main) !important;">${movie.title}</p>
             <p class="text-gray-400 text-sm mb-2">${movie.year ? `ปี ${movie.year}` : ''}</p>
-            <button class="main-btn" type="button" ${tagType === 'coming' ? 'disabled' : ''}>connect</button>
+            <button class="main-btn" type="button" ${tagType === 'coming' ? 'disabled' : ''}>ดูออนไลน์</button>
           </div>
         `;
         movieGrid.appendChild(card);
