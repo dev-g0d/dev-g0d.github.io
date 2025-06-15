@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Dev/g0d - Movies</title>
+  <title>Dev/g0d - เว็บหนัง</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <style>
     @font-face {
@@ -80,7 +80,8 @@
       display: flex;
       justify-content: center;
       width: 100%;
-      margin-bottom: 1.5rem;
+      margin-bottom: 2.3rem;
+      margin-top: 1.2rem;
     }
     .tab-bar {
       display: flex;
@@ -169,7 +170,7 @@
       border-radius: 10px;
       width: 100%; max-width: 400px;
       font-size: 16px;
-      margin: 0 auto 1.5rem auto;
+      margin: 0 auto 0.5rem auto;
       display: block;
       transition: border .18s, box-shadow .18s;
     }
@@ -218,10 +219,10 @@
   </style>
 </head>
 <body class="min-h-screen flex flex-col items-center p-6">
-  <h1 class="text-4xl" style="color:var(--primary-blue);margin-bottom:0;">Dev/g0d - เว็บหนัง</h1>
+  <h1 class="text-4xl mb-6" style="color:var(--primary-blue);margin-bottom:0;">Dev/g0d - เว็บหนัง</h1>
   <div class="center-content-wrapper">
     <div id="mainContent">
-      <input type="text" id="searchBar" class="search-bar mb-4" placeholder="ค้นหาชื่อหนัง...">
+      <input type="text" id="searchBar" class="search-bar mb-0" placeholder="ค้นหาชื่อหนัง...">
       <div class="tab-bar-wrapper">
         <div class="tab-bar">
           <button id="onlineTab" class="tab active-tab">มีให้ชม</button>
