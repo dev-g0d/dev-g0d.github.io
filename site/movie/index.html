@@ -122,10 +122,11 @@
     }
     .popup.show { display: flex; }
     .popup-video {
-      width: 80%;
-      max-width: 800px;
-      height: auto;
-      max-height: 80vh;
+      width: 96vw;
+      max-width: 96vw;
+      height: 70vh;
+      min-height: 320px;
+      max-height: 90vh;
       object-fit: contain;
       background: none;
       border: none;
@@ -220,16 +221,6 @@
     <iframe id="popupPlayer" class="popup-video" frameborder="0" allowfullscreen></iframe>
   </div>
   <script>
-    // ตัวอย่างข้อมูล JSON
-    // movies.json
-    // [
-    //   {
-    //     "title": "final Destination: Bloodlines ทายาทโกงตาย",
-    //     "thumbnail": "https://share.com/movie.jpg",
-    //     "video": "https://youtu.be/UWMzKXsY9A4?si=RrA5yMQnbOpPb7zV",
-    //     "year": 2025
-    //   }
-    // ]
     let movies = [], series = [], coming = [];
 
     async function loadData() {
@@ -273,30 +264,26 @@
         card.innerHTML =
           `<div class="media-container" data-video="${movie.video || ''}">
             <img src="${movie.thumbnail}" alt="${movie.title}">
-            ${movie.video ?
-              `<video autoplay muted loop playsinline preload>
-                <source src="${movie.thumbnail}" type="video/webm">
-              </video>` : ''}
           </div>
           <div class="p-4">
             <div class="mb-1">${renderMovieTag("online")}</div>
             <p class="text-xl" style="color:var(--text-main) !important;">${movie.title}</p>
             <p class="text-gray-400 text-sm mb-2">${movie.year ? `ปี ${movie.year}` : ''}</p>
-            <button class="main-btn" type="button">ดูออนไลน์</button>
+            <button class="main-btn" type="button">connect</button>
           </div>
         `;
         movieGrid.appendChild(card);
 
-        // ดูออนไลน์
+        // ปุ่ม connect
         const viewBtn = card.querySelector('.main-btn');
-        if (viewBtn && movie.video) {
+        if (viewBtn && movie.connect) {
           viewBtn.addEventListener('click', function() {
-            openPopup(movie.video);
+            window.location.href = movie.connect;
           });
         } else if (viewBtn) {
           viewBtn.classList.add('disabled-btn');
         }
-        // คลิกภาพเปิด popup
+        // คลิกภาพเปิด popup (ดูตัวอย่าง/เทรลเลอร์)
         const mediaContainer = card.querySelector('.media-container');
         if (mediaContainer && movie.video) {
           mediaContainer.addEventListener('click', () => {
@@ -319,24 +306,20 @@
         card.innerHTML =
           `<div class="media-container" data-video="${movie.video || ''}">
             <img src="${movie.thumbnail}" alt="${movie.title}">
-            ${movie.video ?
-              `<video autoplay muted loop playsinline preload>
-                <source src="${movie.thumbnail}" type="video/webm">
-              </video>` : ''}
           </div>
           <div class="p-4">
             <div class="mb-1">${renderMovieTag("series")}</div>
             <p class="text-xl" style="color:var(--text-main) !important;">${movie.title}</p>
             <p class="text-gray-400 text-sm mb-2">${movie.year ? `ปี ${movie.year}` : ''}</p>
-            <button class="main-btn" type="button">ดูออนไลน์</button>
+            <button class="main-btn" type="button">connect</button>
           </div>
         `;
         seriesList.appendChild(card);
 
         const viewBtn = card.querySelector('.main-btn');
-        if (viewBtn && movie.video) {
+        if (viewBtn && movie.connect) {
           viewBtn.addEventListener('click', function() {
-            openPopup(movie.video);
+            window.location.href = movie.connect;
           });
         } else if (viewBtn) {
           viewBtn.classList.add('disabled-btn');
@@ -368,7 +351,7 @@
             <div class="mb-1">${renderMovieTag("coming")}</div>
             <p class="text-xl" style="color:var(--text-main) !important;">${movie.title}</p>
             <p class="text-gray-400 text-sm mb-2">${movie.year ? `ปี ${movie.year}` : ''}</p>
-            <button class="main-btn disabled-btn" type="button" disabled>ดูออนไลน์</button>
+            <button class="main-btn disabled-btn" type="button" disabled>connect</button>
           </div>
         `;
         comingList.appendChild(card);
@@ -414,11 +397,11 @@
     });
 
     function openPopup(videoUrl) {
-      // Support YouTube links: convert to embed if needed
+      // Support YouTube links: convert to embed and show fullscreen
       let embedUrl = videoUrl;
       if (/youtu\.be|youtube\.com/.test(videoUrl)) {
-        const vidId = videoUrl.match(/(?:youtu\.be\/|v=|\/embed\/)([\w\-]+)/);
-        embedUrl = vidId ? `https://www.youtube.com/embed/${vidId[1]}?autoplay=1` : videoUrl;
+        const vidId = videoUrl.match(/(?:youtu\.be\/|v=|\/embed\/)([a-zA-Z0-9_-]{11})/);
+        embedUrl = vidId ? `https://www.youtube.com/embed/${vidId[1]}?autoplay=1&fs=1` : videoUrl;
       }
       document.getElementById('popupPlayer').src = embedUrl;
       document.getElementById('videoPopup').style.display = 'flex';
@@ -456,15 +439,15 @@
             <div class="mb-1">${renderMovieTag(tagType)}</div>
             <p class="text-xl" style="color:var(--text-main) !important;">${movie.title}</p>
             <p class="text-gray-400 text-sm mb-2">${movie.year ? `ปี ${movie.year}` : ''}</p>
-            <button class="main-btn" type="button" ${tagType === 'coming' ? 'disabled' : ''}>ดูออนไลน์</button>
+            <button class="main-btn" type="button" ${tagType === 'coming' ? 'disabled' : ''}>connect</button>
           </div>
         `;
         movieGrid.appendChild(card);
 
         const viewBtn = card.querySelector('.main-btn');
-        if (viewBtn && movie.video && tagType !== 'coming') {
+        if (viewBtn && movie.connect && tagType !== 'coming') {
           viewBtn.addEventListener('click', function() {
-            openPopup(movie.video);
+            window.location.href = movie.connect;
           });
         } else if (viewBtn && tagType === 'coming') {
           viewBtn.classList.add('disabled-btn');
