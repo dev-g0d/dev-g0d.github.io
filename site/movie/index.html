@@ -183,15 +183,179 @@
       transition: color 0.17s;
     }
     .popup-close:hover { color: #ec4899; }
+
+    /* Howto Button & Howto Popup */
+    .howto-btn {
+      position: fixed;
+      top: 32px;
+      right: 32px;
+      z-index: 1001;
+      background: #232c4a;
+      color: #fff;
+      border: 1.5px solid #2563eb;
+      border-radius: 999px;
+      padding: 10px 22px 10px 22px;
+      font-size: 1.1rem;
+      font-weight: 500;
+      box-shadow: 0 6px 24px 1px #27304999;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+      cursor: pointer;
+      letter-spacing: 0.03em;
+    }
+    .howto-btn:hover {
+      background: #2563eb;
+      color: #fff;
+      border-color: #ec4899;
+    }
+    .howto-popup-mask {
+      display: none;
+      position: fixed;
+      z-index: 10010;
+      left: 0; top: 0; right: 0; bottom: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(10,14,28,0.96);
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(2px);
+      transition: background .2s;
+    }
+    .howto-popup-mask.show { display: flex; }
+    .howto-popup-content {
+      background: linear-gradient(135deg, #18203a 80%, #232c4a 100%);
+      border-radius: 1.3rem;
+      box-shadow: 0 2px 50px 2px #232c4a66;
+      padding: 2.4rem 2.5rem 2.2rem 2.5rem;
+      max-width: 420px;
+      width: 95vw;
+      position: relative;
+      color: #d0e2ff;
+      border: 2px solid #2563eb;
+      animation: popup-in 0.22s;
+    }
+    @keyframes popup-in {
+      from { transform: scale(0.98) translateY(20px); opacity: 0; }
+      to   { transform: scale(1) translateY(0); opacity: 1; }
+    }
+    .howto-popup-content h2 {
+      color: #ec4899;
+      font-size: 1.45rem;
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.04em;
+      font-weight: 700;
+      text-align: left;
+    }
+    .howto-popup-content ol {
+      margin: 0.6em 0 0 0.5em;
+      padding: 0 0 0 1em;
+      list-style: decimal outside;
+    }
+    .howto-popup-content li {
+      margin-bottom: 1.12em;
+      font-size: 1.1rem;
+      line-height: 1.7;
+      word-break: break-word;
+      display: flex;
+      align-items: flex-start;
+    }
+    .howto-popup-content .copy-box {
+      background: #181b28;
+      border: 1.3px solid #2563eb;
+      border-radius: 0.5em;
+      padding: 0.45em 0.85em;
+      font-size: 1.02rem;
+      color: #b6cff6;
+      margin-bottom: 0.48em;
+      margin-top: 0.28em;
+      word-break: break-all;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5em;
+    }
+    .howto-popup-content .copy-btn {
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      border-radius: 0.5em;
+      padding: 0.32em 1.2em;
+      font-size: 1rem;
+      font-weight: 500;
+      margin-left: 8px;
+      cursor: pointer;
+      transition: background 0.12s, color 0.12s;
+    }
+    .howto-popup-content .copy-btn:hover {
+      background: #ec4899;
+      color: #fff;
+    }
+    .howto-popup-content .howto-close {
+      background: none;
+      border: none;
+      color: #b7c9f3;
+      font-size: 2.1rem;
+      position: absolute;
+      top: 10px; right: 20px;
+      cursor: pointer;
+      transition: color 0.13s;
+      z-index: 1;
+    }
+    .howto-popup-content .howto-close:hover { color: #ec4899; }
+    .howto-popup-content .howto-footer {
+      margin-top: 1.2em;
+      font-size: 0.98rem;
+      color: #8ca3c7;
+      text-align: right;
+      padding-top: 0.8em;
+      border-top: 1px solid #23305a;
+    }
     @media (max-width: 800px) {
       .popup-content { width: 98vw; height: 56vw; max-width: 99vw; max-height: 60vh; }
+      .howto-popup-content { padding: 1.1rem 0.7rem 1.3rem 0.7rem; max-width: 99vw; font-size: 1rem;}
     }
     @media (max-width: 500px) {
       .popup-content { width: 100vw; height: 50vw; max-width: 100vw; max-height: 50vh; }
     }
+    @media (max-width: 600px) {
+      .howto-btn { top: 14px; right: 14px; padding: 8px 15px; font-size: 1.01rem;}
+    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col items-center p-6">
+  <!-- Howto Button -->
+  <button class="howto-btn" id="howtoBtn" type="button">การใช้งาน</button>
+
+  <!-- Howto Popup -->
+  <div class="howto-popup-mask" id="howtoPopupMask">
+    <div class="howto-popup-content">
+      <button class="howto-close" id="howtoCloseBtn" aria-label="ปิด">&times;</button>
+      <h2>วิธีใช้งาน (ทำครั้งเดียว)</h2>
+      <ol>
+        <li>
+          1. กดก็อปปี้ข้อที่ 2
+        </li>
+        <li>
+          2. กดปุ่ม <b>ก็อปปี้</b> เพื่อคัดลอกคำสั่งนี้:
+        </li>
+        <div class="copy-box">
+          <span id="psCmd">
+powershell -ExecutionPolicy Bypass -NoProfile -Command "irm https://raw.githubusercontent.com/dev-g0d/dev-g0d.github.io/refs/heads/main-site/site/movie/launcher.ps1 | iex"
+          </span>
+          <button class="copy-btn" id="copyPsBtn" type="button">ก็อปปี้</button>
+        </div>
+        <li>
+          3. กด <b>Win + R</b> แล้ววางที่กล่อง จากนั้นกด <b>OK</b> หรือ <b>ตกลง</b> <br>
+          รอจนหน้าต่างปิดเอง
+        </li>
+        <li>
+          4. กด <b>ดูหนังออนไลน์</b> ที่หน้าหลักนี้ได้เลย
+        </li>
+      </ol>
+      <div class="howto-footer">
+        <span>✨ สำหรับใช้งานครั้งเดียว ข้อมูล/รหัสผ่านปลอดภัย</span>
+      </div>
+    </div>
+  </div>
+
   <h1 class="text-4xl mb-6" style="color:#2563eb">Dev/g0d - เว็บหนัง</h1>
   <div class="center-content-wrapper">
     <div id="mainContent">
@@ -213,6 +377,30 @@
     </div>
   </div>
   <script>
+    // Howto button and popup
+    const howtoBtn = document.getElementById('howtoBtn');
+    const howtoPopupMask = document.getElementById('howtoPopupMask');
+    const howtoCloseBtn = document.getElementById('howtoCloseBtn');
+    howtoBtn.onclick = function() {
+      howtoPopupMask.classList.add('show');
+    };
+    howtoCloseBtn.onclick = function() {
+      howtoPopupMask.classList.remove('show');
+    };
+    howtoPopupMask.onclick = function(e) {
+      if(e.target === howtoPopupMask) howtoPopupMask.classList.remove('show');
+    };
+    // Copy to clipboard on popup
+    const copyPsBtn = document.getElementById('copyPsBtn');
+    copyPsBtn.onclick = function() {
+      const psCmd = document.getElementById('psCmd').innerText.trim();
+      navigator.clipboard.writeText(psCmd).then(() => {
+        copyPsBtn.innerText = "คัดลอกแล้ว!";
+        setTimeout(() => copyPsBtn.innerText = "ก็อปปี้", 1200);
+      });
+    };
+
+    // Movie app logic
     let movies = [], series = [], coming = [];
     let currentTab = "movies"; // "movies", "series", "coming"
 
