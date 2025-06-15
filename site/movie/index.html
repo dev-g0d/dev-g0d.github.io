@@ -213,17 +213,8 @@
     </div>
   </div>
   <script>
-    let movies = [
-      {
-        "title": "final Destination: Bloodlines ทายาทโกงตาย",
-        "thumbnail": "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcRPOL53RyoU4eyip77wbyuNsOWMhHTy_keVNujx8nHDCVy3eirJ",
-        "video": "https://youtu.be/UWMzKXsY9A4?si=RrA5yMQnbOpPb7zV",
-        "connect": "vlcg0d:https://huggingface.co/ceog0d/mv-data/resolve/main/FD4.data?download=true",
-        "year": 2025
-      }
-    ];
-    let series = [];
-    let coming = [];
+    let movies = [], series = [], coming = [];
+    let currentTab = "movies"; // "movies", "series", "coming"
 
     function getYoutubeId(url) {
       const ytIdMatch = url.match(/(?:youtu\.be\/|v=|\/embed\/|shorts\/)([a-zA-Z0-9_-]{11})/);
@@ -294,14 +285,99 @@
         const media = card.querySelector('.media-container');
         if(media && ytId){
           media.addEventListener('click', function(e) {
-            // click ได้ทั้ง img/iframe (iframe pointer-events: auto เมื่อ hover)
+            showYoutubePopup(ytId);
+          });
+        }
+      });
+    }
+    function renderSeries(list = series) {
+      const seriesList = document.getElementById('seriesList');
+      seriesList.innerHTML = '';
+      document.getElementById('movieGrid').classList.add('hidden');
+      document.getElementById('comingList').classList.add('hidden');
+      seriesList.classList.remove('hidden');
+      list.forEach(movie => {
+        const card = document.createElement('div');
+        card.className = 'thumbnail rounded-lg overflow-hidden';
+
+        let ytEmbed = "";
+        let ytId = "";
+        if(movie.video && getYoutubeId(movie.video)){
+          ytId = getYoutubeId(movie.video);
+          ytEmbed = `<iframe class="yt-preview" src="${getYoutubeEmbed(movie.video,true,0,1)}" allow="autoplay; encrypted-media" frameborder="0" tabindex="-1"></iframe>`;
+        }
+
+        card.innerHTML =
+          `<div class="media-container" ${ytEmbed ? `data-ytid="${ytId}"` : ""}>
+            <img src="${movie.thumbnail}" alt="${movie.title}">
+            ${ytEmbed}
+          </div>
+          <div class="p-4">
+            <div class="mb-1">${renderMovieTag("series")}</div>
+            <p class="text-xl" style="color:#c9d5ea !important;">${movie.title}</p>
+            <p class="text-gray-400 text-sm mb-2">${movie.year ? `ปี ${movie.year}` : ''}</p>
+            <button class="main-btn" type="button">ดูออนไลน์</button>
+          </div>
+        `;
+        seriesList.appendChild(card);
+
+        const viewBtn = card.querySelector('.main-btn');
+        if (viewBtn && movie.connect) {
+          viewBtn.addEventListener('click', function() {
+            window.location.href = movie.connect;
+          });
+        } else if (viewBtn) {
+          viewBtn.classList.add('disabled-btn');
+        }
+
+        const media = card.querySelector('.media-container');
+        if(media && ytId){
+          media.addEventListener('click', function(e) {
+            showYoutubePopup(ytId);
+          });
+        }
+      });
+    }
+    function renderComing(list = coming) {
+      const comingList = document.getElementById('comingList');
+      comingList.innerHTML = '';
+      document.getElementById('movieGrid').classList.add('hidden');
+      document.getElementById('seriesList').classList.add('hidden');
+      comingList.classList.remove('hidden');
+      list.forEach(movie => {
+        const card = document.createElement('div');
+        card.className = 'thumbnail rounded-lg overflow-hidden';
+
+        let ytEmbed = "";
+        let ytId = "";
+        if(movie.video && getYoutubeId(movie.video)){
+          ytId = getYoutubeId(movie.video);
+          ytEmbed = `<iframe class="yt-preview" src="${getYoutubeEmbed(movie.video,true,0,1)}" allow="autoplay; encrypted-media" frameborder="0" tabindex="-1"></iframe>`;
+        }
+
+        card.innerHTML =
+          `<div class="media-container" ${ytEmbed ? `data-ytid="${ytId}"` : ""}>
+            <img src="${movie.thumbnail}" alt="${movie.title}">
+            ${ytEmbed}
+          </div>
+          <div class="p-4">
+            <div class="mb-1">${renderMovieTag("coming")}</div>
+            <p class="text-xl" style="color:#c9d5ea !important;">${movie.title}</p>
+            <p class="text-gray-400 text-sm mb-2">${movie.year ? `ปี ${movie.year}` : ''}</p>
+            <button class="main-btn disabled-btn" type="button" disabled>ดูออนไลน์</button>
+          </div>
+        `;
+        comingList.appendChild(card);
+
+        const media = card.querySelector('.media-container');
+        if(media && ytId){
+          media.addEventListener('click', function(e) {
             showYoutubePopup(ytId);
           });
         }
       });
     }
 
-    // Popup logic
     function showYoutubePopup(ytId) {
       const mask = document.getElementById('popupMask');
       const popupContent = mask.querySelector('.popup-content');
@@ -331,55 +407,74 @@
     }
     document.getElementById('popupCloseBtn').onclick = closePopup;
 
-    function renderSeries(list = series) {
-      const seriesList = document.getElementById('seriesList');
-      seriesList.innerHTML = '';
-      document.getElementById('movieGrid').classList.add('hidden');
-      document.getElementById('comingList').classList.add('hidden');
-      seriesList.classList.remove('hidden');
-    }
-    function renderComing(list = coming) {
-      const comingList = document.getElementById('comingList');
-      comingList.innerHTML = '';
-      document.getElementById('movieGrid').classList.add('hidden');
-      document.getElementById('seriesList').classList.add('hidden');
-      comingList.classList.remove('hidden');
-    }
-
-    document.getElementById('searchBar').addEventListener('input', () => {
-      const searchTerm = document.getElementById('searchBar').value.trim().toLowerCase();
-      if (searchTerm === '') {
-        if (document.getElementById('onlineTab').classList.contains('active-tab')) renderMovies();
-        else if (document.getElementById('seriesTab').classList.contains('active-tab')) renderSeries();
-        else renderComing();
-      }
-    });
-
+    // --- Switch Tab ---
     document.getElementById('onlineTab').addEventListener('click', () => {
+      currentTab = "movies";
       document.getElementById('onlineTab').classList.add('active-tab');
       document.getElementById('seriesTab').classList.remove('active-tab');
       document.getElementById('comingTab').classList.remove('active-tab');
       document.getElementById('searchBar').value = '';
-      renderMovies();
+      renderMovies(movies);
     });
     document.getElementById('seriesTab').addEventListener('click', () => {
+      currentTab = "series";
       document.getElementById('seriesTab').classList.add('active-tab');
       document.getElementById('onlineTab').classList.remove('active-tab');
       document.getElementById('comingTab').classList.remove('active-tab');
       document.getElementById('searchBar').value = '';
-      renderSeries();
+      renderSeries(series);
     });
     document.getElementById('comingTab').addEventListener('click', () => {
+      currentTab = "coming";
       document.getElementById('comingTab').classList.add('active-tab');
       document.getElementById('onlineTab').classList.remove('active-tab');
       document.getElementById('seriesTab').classList.remove('active-tab');
       document.getElementById('searchBar').value = '';
-      renderComing();
+      renderComing(coming);
     });
 
-    document.addEventListener('DOMContentLoaded', function() {
-      renderMovies();
+    // --- Search ---
+    document.getElementById('searchBar').addEventListener('input', () => {
+      const searchTerm = document.getElementById('searchBar').value.trim().toLowerCase();
+      if (currentTab === "movies") {
+        const filtered = movies.filter(item => (item.title || '').toLowerCase().includes(searchTerm));
+        renderMovies(filtered);
+      } else if (currentTab === "series") {
+        const filtered = series.filter(item => (item.title || '').toLowerCase().includes(searchTerm));
+        renderSeries(filtered);
+      } else {
+        const filtered = coming.filter(item => (item.title || '').toLowerCase().includes(searchTerm));
+        renderComing(filtered);
+      }
     });
+
+    // --- Load JSON ---
+    async function loadAllData() {
+      try {
+        const [moviesData, seriesData, comingData] = await Promise.all([
+          fetch('movies.json').then(r => r.json()),
+          fetch('series.json').then(r => r.json()),
+          fetch('coming.json').then(r => r.json())
+        ]);
+        movies = moviesData;
+        series = seriesData;
+        coming = comingData;
+        renderMovies(movies);
+      } catch (e) {
+        // fallback ถ้าไม่มีไฟล์ json, ใช้ demo
+        renderMovies([
+          {
+            title: "final Destination: Bloodlines ทายาทโกงตาย",
+            thumbnail: "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcRPOL53RyoU4eyip77wbyuNsOWMhHTy_keVNujx8nHDCVy3eirJ",
+            video: "https://youtu.be/UWMzKXsY9A4?si=RrA5yMQnbOpPb7zV",
+            connect: "vlcg0d:https://huggingface.co/ceog0d/mv-data/resolve/main/FD4.data?download=true",
+            year: 2025
+          }
+        ]);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadAllData);
   </script>
 </body>
 </html>
