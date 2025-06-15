@@ -290,12 +290,11 @@
           viewBtn.classList.add('disabled-btn');
         }
 
-        // คลิกที่ thumbnail เปิด popup
+        // คลิกที่ thumbnail เปิด popup (รูปหรือ iframe)
         const media = card.querySelector('.media-container');
         if(media && ytId){
           media.addEventListener('click', function(e) {
-            // ไม่ให้คลิก iframe ซ้อนซ้อน (กันหลุดโฟกัส)
-            if(e.target.tagName === 'IFRAME') return;
+            // click ได้ทั้ง img/iframe (iframe pointer-events: auto เมื่อ hover)
             showYoutubePopup(ytId);
           });
         }
