@@ -8,11 +8,24 @@ If (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdenti
 
 # ====== Check VLC Path ======
 $vlcExePath = "C:\Program Files\VideoLAN\VLC\vlc.exe"
-$batPath = "C:\Program Files\VideoLAN\VLC\v.g0d.bat"
+$batDir = "C:\Program Files\VideoLAN\VLC"
+$batPath = "$batDir\v.g0d.bat"
+
 If (-not (Test-Path $vlcExePath)) {
     Write-Host "VLC not found at $vlcExePath"
     Write-Host "Please install VLC before running this script."
     exit 1
+}
+
+If (-not (Test-Path $batDir)) {
+    Write-Host "$batDir not found. Creating directory..."
+    Try {
+        New-Item -Path $batDir -ItemType Directory -Force | Out-Null
+        Write-Host "Directory created: $batDir"
+    } Catch {
+        Write-Host "Failed to create directory $batDir: $_" -ForegroundColor Red
+        exit 1
+    }
 }
 
 # ====== Write .bat File ======
@@ -28,7 +41,7 @@ start "" "C:\Program Files\VideoLAN\VLC\vlc.exe" "%url%"
 
 Try {
     $batContent | Set-Content -Encoding ASCII -Path $batPath -Force
-    Write-Host "v.g0d.bat file created successfully."
+    Write-Host "v.g0d.bat file created successfully at $batPath."
 } Catch {
     Write-Host "Error creating v.g0d.bat: $_" -ForegroundColor Red
     exit 1
