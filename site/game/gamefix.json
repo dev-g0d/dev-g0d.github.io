@@ -1,5 +1,22 @@
 [
    {
+  "title": "Pummel Party",
+  "thumbnail": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/880940/header.jpg?t=1725311353",
+  "video": "https://video.fastly.steamstatic.com/store_trailers/256729701/movie_max.mp4?t=1537457471",
+  "downloadLink": "https://dev-g0d.github.io/#H4sIAAAAAAAAA8soKSkottLXT8zOLEpMyq/QS87P1U/JdjGOzEmKzM71CdRPy8xJBQBrto4QJgAAAA==",
+  "fixLink": "",
+  "version": "1.14.1j",
+  "crackedBy": "g0d",
+  "platform": "Steam",
+  "players": "2-8",
+  "downloadEnabled": true,
+  "fixEnabled": false,
+  "officialLink": "https://store.steampowered.com/app/880940",
+  "password": "g0d",
+  "fixPassword": "",
+  "instructions": "1.แตกไฟล์ zip/rar ลงในฟอเดอร์ะติดตั้งเกมของคุณ\n2.เปิดSteam\n3.เปิดเกมผ่าน PummelParty.exe"
+   },
+   {
       "title": "Astrumis - Survive Together",
       "thumbnail": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2924860/header.jpg?t=1748278482",
       "video": "https://video.fastly.steamstatic.com/store_trailers/257129349/movie_max.mp4?t=1748278365",
