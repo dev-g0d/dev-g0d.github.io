@@ -88,18 +88,18 @@
     "title": "PEAK",
     "thumbnail": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3527290/31bac6b2eccf09b368f5e95ce510bae2baf3cfcd/header.jpg?t=1750093258",
     "video": "https://video.fastly.steamstatic.com/store_trailers/257155585/movie_max.mp4?t=1750093233",
-    "downloadLink": "",
+    "downloadLink": "https://dev-g0d.github.io/#H4sIAAAAAAAAA8soKSkottLXT8zOLEpMyq/QS87P1TfwSnc3zzLMyarKj9RPy8xJBQAy4xD9JgAAAA==",
     "fixLink": "",
-    "version": "",
-    "crackedBy": "",
+    "version": "v1.3.a",
+    "crackedBy": "g0d",
     "platform": "Steam",
     "players": "1-4 คน",
-    "downloadEnabled": false,
+    "downloadEnabled": true,
     "fixEnabled": false,
     "officialLink": "https://store.steampowered.com/app/3527290",
     "password": "",
     "fixPassword": "",
-    "instructions": "เร็วๆนี้"
+    "instructions": "1.แตกไฟล์ zip/rar ลงในฟอเดอร์ติดตั้งเกมของคุณ\n2.เปิดSteam\n3.เปิดเกมผ่าน PEAK.exe\n\n*เกิดปัญหาเข้าเกมไม่ได้ คุณต้องรออัพเดทเวอร์ชั่นเท่านั้น\n*เกมจะเปลี่ยนแมพทุกชั่วโมง"
   },
   {
     "title": "Sketchy's Contract",
