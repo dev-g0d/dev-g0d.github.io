@@ -157,17 +157,17 @@
     "thumbnail": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1222700/header.jpg?t=1730912036",
     "video": "https://video.fastly.steamstatic.com/store_trailers/256790157/movie_max.mp4?t=1592600313",
     "downloadLink": "",
-    "fixLink": "",
+    "fixLink": "https://dev-g0d.github.io/#H4sIAAAAAAAAA8soKSkottLXTynKLEvVKy1OLUrOzytJzSvRS8/PT89J1UvOz9VPyS/Py8lPTLHPTLE1jMoPzHNzDA/0sMwID3KMMKgsLioLtyw0qYxILXQ2sChSS60oyC8qsYVpUkssLckAGWxrAABFCRthbQAAAA==",
     "version": "ล่าสุดจากEA",
     "crackedBy": "g0d",
     "platform": "EA+รีโมทเพล์",
     "players": "2 คน",
     "downloadEnabled": false,
-    "fixEnabled": false,
+    "fixEnabled": true,
     "officialLink": "https://store.steampowered.com/app/1222700",
     "password": "",
     "fixPassword": "",
-    "instructions": "เร็วๆนี้\n\n*ไม่สามารถออนไลน์ผ่านเซิฟเวอร์EA"
+    "instructions": "*แก้ไขReomotePlay\n(ทำเพียงครั้งเดียวเคยทำแล้วไม่ต้องทำอีก)\n1. กด Win+R แล้วใส่ steam://install/349620\n2. ติดตั้ง BlastZone 2 Demo ที่เปิดขึ้นมา\nติดตั้ง AWayOut ผ่านแอพEA (ที่เป็น FriendsPass ฟรี)\n(สามารถหาได้จากการค้นหาเกมจะมีปุ่มรับ)\nดาวน์โหลดไฟล์แก้ไข แล้วนำไปวางในฟอเดอร์ติดตั้งเกม\nเข้าเกมผ่านEA\n\n*ไม่สามารถออนไลน์ผ่านเซิฟเวอร์EA\n*แก้ไขมีภาษาไทย"
   },
   {
     "title": "It Takes Two",
