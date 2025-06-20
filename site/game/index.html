@@ -941,10 +941,12 @@
       currentChatHistory.push({ role: "user", parts: [{ text: message }] });
 
       // Build the initial prompt with game context for the first message, or just continue conversation
-      let promptText = '';
-      if (currentChatHistory.length === 1) { // First message in this chat session
-          promptText = `คุณคือผู้ช่วย AI ที่ให้ข้อมูลเกี่ยวกับวิดีโอเกมโดยเฉพาะ ผมกำลังดูเกมชื่อ "${gameContext.title}" (เวอร์ชั่น: ${gameContext.version || 'ไม่ระบุ'}, แพลตฟอร์ม: ${gameContext.platform || 'ไม่ระบุ'}) คำถามของผมคือ: ${message}`;
-          currentChatHistory[0].parts[0].text = promptText; // Modify the first user message with context
+      // This ensures that the context about the game is always passed to the model, especially for the first query
+      let initialPromptContext = '';
+      if (currentChatHistory.length === 1) { // Only add full context on the very first message of a new chat session
+          initialPromptContext = `คุณคือผู้ช่วย AI ที่ให้ข้อมูลเกี่ยวกับวิดีโอเกมโดยเฉพาะ ให้ข้อมูลเกี่ยวกับเกม "${gameContext.title}" (เวอร์ชั่น: ${gameContext.version || 'ไม่ระบุ'}, แพลตฟอร์ม: ${gameContext.platform || 'ไม่ระบุ'}, ผู้เล่น: ${gameContext.players || 'ไม่ระบุ'}, ผู้พัฒนา: ${gameContext.crackedBy || 'ไม่ระบุ'}, ปัญหาหลัก: ${gameContext.issue || 'ไม่มี'}) `;
+          // Prepend context to the first user message in the chat history
+          currentChatHistory[0].parts[0].text = initialPromptContext + message;
       }
 
 
@@ -960,17 +962,25 @@
           });
 
           const result = await response.json();
+          console.log("Gemini API raw result:", result); // Log the raw result for debugging
 
           if (result.candidates && result.candidates.length > 0 &&
               result.candidates[0].content && result.candidates[0].content.parts &&
-              result.candidates[0].content.parts.length > 0) { // CORRECTED LINE: from result.candidates[0].content[0].parts.length to result.candidates[0].content.parts.length
+              result.candidates[0].content.parts.length > 0) {
             const geminiResponse = result.candidates[0].content.parts[0].text;
             appendChatMessage('gemini', geminiResponse);
             // Add Gemini's response to current chat history
             currentChatHistory.push({ role: "model", parts: [{ text: geminiResponse }] });
           } else {
+            // Handle cases where the response structure is unexpected or content is missing
             console.error("Gemini API returned an unexpected structure or no content.", result);
-            appendChatMessage('system', 'ขออภัย ไม่สามารถรับคำตอบจาก Gemini ได้ในขณะนี้');
+            if (result.candidates && result.candidates.length > 0 && result.candidates[0].finishReason) {
+                appendChatMessage('system', `ไม่สามารถรับคำตอบจาก Gemini ได้ (เหตุผล: ${result.candidates[0].finishReason})`);
+            } else if (result.promptFeedback && result.promptFeedback.blockReason) {
+                appendChatMessage('system', `คำถามถูกบล็อกโดย Gemini (เหตุผล: ${result.promptFeedback.blockReason})`);
+            } else {
+                appendChatMessage('system', 'ขออภัย ไม่สามารถรับคำตอบจาก Gemini ได้ในขณะนี้');
+            }
           }
       } catch (error) {
           console.error("Error calling Gemini API:", error);
