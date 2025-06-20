@@ -732,7 +732,9 @@
     // Initial content status (can be 'on' or 'off')
     const status = "on";
     const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
-    const API_KEY = ""; // Canvas will automatically provide the API key at runtime
+    // IMPORTANT: REPLACE "YOUR_GEMINI_API_KEY" WITH YOUR ACTUAL GOOGLE CLOUD API KEY
+    // Follow instructions below to obtain your API Key.
+    const API_KEY = "AIzaSyC8Ng5z4AHmjVaPeMBGMYENDHl1CSb5wR0"; 
 
     /**
      * Sets the visibility of the main content based on a status.
@@ -955,6 +957,11 @@
       };
 
       try {
+          // Check if API_KEY is set
+          if (API_KEY === "YOUR_GEMINI_API_KEY" || API_KEY === "") {
+              throw new Error("API Key ไม่ได้ถูกตั้งค่า กรุณาใส่ API Key ของคุณในโค้ด");
+          }
+
           const response = await fetch(`${GEMINI_API_URL}?key=${API_KEY}`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
@@ -978,13 +985,16 @@
                 appendChatMessage('system', `ไม่สามารถรับคำตอบจาก Gemini ได้ (เหตุผล: ${result.candidates[0].finishReason})`);
             } else if (result.promptFeedback && result.promptFeedback.blockReason) {
                 appendChatMessage('system', `คำถามถูกบล็อกโดย Gemini (เหตุผล: ${result.promptFeedback.blockReason})`);
-            } else {
+            } else if (result.error && result.error.message) {
+                appendChatMessage('system', `ข้อผิดพลาดจาก Gemini: ${result.error.message}`);
+            }
+            else {
                 appendChatMessage('system', 'ขออภัย ไม่สามารถรับคำตอบจาก Gemini ได้ในขณะนี้');
             }
           }
       } catch (error) {
           console.error("Error calling Gemini API:", error);
-          appendChatMessage('system', 'เกิดข้อผิดพลาดในการเชื่อมต่อกับ Gemini โปรดลองอีกครั้ง');
+          appendChatMessage('system', `เกิดข้อผิดพลาดในการเชื่อมต่อกับ Gemini: ${error.message}`);
       } finally {
           geminiChatSpinner.classList.remove('show'); // Hide spinner
           chatSendBtn.disabled = false; // Re-enable send button
