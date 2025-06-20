@@ -6,6 +6,7 @@
   <title>Dev/g0d</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <style>
+    /* Custom font import for SFProTH for a clean look */
     @font-face {
       font-family: 'SFProTH';
       src: url('https://raw.githubusercontent.com/dev-g0d/dev-g0d.github.io/main-site/fonts/SFProTH_regular.woff.ttf') format('truetype');
@@ -13,91 +14,139 @@
       font-style: normal;
       font-display: swap;
     }
+
+    /* Root CSS variables for a refined, relaxed dark theme */
     :root {
-      --primary-bg: #10131a;
-      --surface-dark: #181b28;
-      --surface-mid: #1e2233;
-      --surface-light: #23263b;
-      --border-color: #22273a;
-      --primary-blue: #2563eb;
-      --highlight-pink: #ec4899;
-      --text-main: #c9d5ea;
-      --text-mid: #8ca3c7;
-      --text-subtle: #556080;
-      --btn-disabled: #23263b;
-      --btn-disabled-text: #7b8ca7;
-      --tag-online: #2563eb;
-      --tag-unfix: #ec4899;
-      --tag-offline: #eab308;
-      --tag-online-bg: #232c4a;
-      --tag-unfix-bg: #3d1d2d;
-      --tag-offline-bg: #3b3218;
+      --primary-bg: #1A202C; /* Main background color: dark slate grey */
+      --surface-dark: #2D3748; /* Darker surface for cards and inputs */
+      --surface-mid: #4A5568; /* Medium surface for popups */
+      --surface-light: #718096; /* Lighter surface, less used */
+      --border-color: #3A445C; /* Border color for elements */
+      --primary-blue: #63B3ED; /* Primary action color: soft sky blue */
+      --highlight-pink: #FC8181; /* Highlight/accent color: gentle coral pink */
+      --text-main: #E2E8F0; /* Main text color: light off-white */
+      --text-mid: #CBD5E0; /* Secondary text color */
+      --text-subtle: #A0AEC0; /* Subtle text color for minor details */
+      --btn-disabled: #23263b; /* Disabled button background */
+      --btn-disabled-text: #7b8ca7; /* Disabled button text */
+      --tag-online: #2563eb; /* Online tag color */
+      --tag-unfix: #ec4899; /* Unfixable tag color */
+      --tag-offline: #eab308; /* Offline tag color */
+      --tag-online-bg: #232c4a; /* Online tag background */
+      --tag-unfix-bg: #3d1d2d; /* Unfixable tag background */
+      --tag-offline-bg: #3b3218; /* Offline tag background */
     }
+
     body {
       background-color: var(--primary-bg);
       color: var(--text-main);
       font-family: 'SFProTH', 'Segoe UI', Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1.5rem;
+      overflow-y: scroll; /* Allow scrolling for content */
+      -webkit-font-smoothing: antialiased; /* Smoother font rendering */
+      -moz-osx-font-smoothing: grayscale;
     }
+
+    /* Header styling */
+    h1 {
+      text-shadow: 0 0 8px rgba(99,179,237,0.3); /* Subtle text shadow for main title */
+    }
+
+    /* Thumbnail card styling */
     .thumbnail {
       background: var(--surface-dark);
-      border: 1.5px solid var(--border-color);
-      transition: transform 0.25s, box-shadow 0.25s;
-      box-shadow: 0 2px 10px 0 #11131a60;
+      border: 1px solid var(--border-color);
+      transition: transform 0.25s ease-out, box-shadow 0.25s ease-out, border-color 0.25s ease-out; /* Smoother transitions for hover */
+      box-shadow: 0 6px 16px rgba(0,0,0,0.1); /* Slightly more pronounced but soft shadow */
+      border-radius: 0.75rem; /* More rounded corners for a softer look */
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
     }
     .thumbnail:hover {
-      transform: translateY(-3px) scale(1.015);
-      box-shadow: 0 6px 24px 2px #27304955;
+      transform: translateY(-4px); /* Slightly more noticeable lift on hover */
+      box-shadow: 0 12px 28px rgba(0,0,0,0.2); /* Enhanced shadow on hover */
       border-color: var(--primary-blue);
     }
-    .main-btn, .download-btn, .fix-btn {
+    .thumbnail .p-4 {
+      flex-grow: 1; /* Ensures content fills remaining space in card */
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    /* General button styling */
+    .main-btn, .download-btn, .fix-btn, .gemini-btn {
       background: var(--primary-blue);
       color: #fff;
       border: none;
-      transition: background 0.17s, color 0.17s, opacity 0.15s;
+      transition: background 0.2s ease-in-out, transform 0.1s ease-out; /* Add transform transition */
       border-radius: 0.5rem;
       font-size: 1.05rem;
       letter-spacing: 0.01em;
-      box-shadow: 0 1px 3px #0002;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.15); /* Soft button shadow */
       outline: none;
-      padding: 0.5rem 1rem;
+      padding: 0.65rem 1.25rem; /* Slightly larger padding for better touch targets */
+      cursor: pointer;
     }
     .main-btn:hover:enabled,
     .download-btn:hover:enabled,
-    .fix-btn:hover:enabled {
+    .fix-btn:hover:enabled,
+    .gemini-btn:hover:enabled {
       background: var(--highlight-pink);
-      color: #fff;
+      transform: translateY(-1px); /* Slight lift on hover */
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     }
-    .disabled-btn, .download-btn[disabled], .fix-btn[disabled], .tab[disabled] {
+    .main-btn:active:enabled,
+    .download-btn:active:enabled,
+    .fix-btn:active:enabled,
+    .gemini-btn:active:enabled {
+      transform: translateY(0); /* Press down effect */
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    /* Disabled button styles */
+    .disabled-btn, .download-btn[disabled], .fix-btn[disabled], .tab[disabled], .gemini-btn[disabled] {
       background: var(--btn-disabled) !important;
       color: var(--btn-disabled-text) !important;
       cursor: not-allowed !important;
       pointer-events: none !important;
-      opacity: 1 !important;
+      opacity: 0.7 !important; /* Slightly faded for disabled state */
       border: none !important;
+      box-shadow: none !important;
     }
+
+    /* Tab navigation button styling */
     .tab {
       background: none;
-      color: #fff;
+      color: var(--text-mid); /* Tabs default to mid text color */
       border: none;
-      transition: background 0.2s, color 0.2s;
-      padding: 0.5rem 1.5rem;
-      border-radius: 0.5rem;
-      font-size: 1.05rem;
-      margin-right: 8px;
+      transition: all 0.25s ease-out; /* Smooth transition for tabs */
+      padding: 0.75rem 1.75rem; /* Increased padding */
+      border-radius: 0.6rem; /* Slightly more rounded */
+      font-size: 1.1rem; /* Slightly larger font */
+      margin-right: 0.75rem; /* Increased margin between tabs */
       text-decoration: none !important;
+      font-weight: 500;
+      cursor: pointer;
     }
     .tab:last-child { margin-right: 0; }
     .tab.active-tab {
       background: var(--primary-blue);
       color: #fff;
-      box-shadow: 0 2px 12px #1e233b33;
-      text-decoration: none !important;
+      box-shadow: 0 4px 12px rgba(99,179,237,0.3); /* Clearer active state shadow */
+      font-weight: 600;
     }
     .tab:not(.active-tab):hover {
       color: var(--highlight-pink);
-      background: none;
-      text-decoration: none !important;
+      background: rgba(var(--surface-dark), 0.5); /* Subtle background on hover */
     }
+
+    /* Media container for thumbnails (images/videos) */
     .media-container {
       position: relative;
       width: 100%;
@@ -105,124 +154,216 @@
       overflow: hidden;
       background-color: #000 !important;
       cursor: pointer;
-      border-bottom: 1.5px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .media-container img, .media-container video {
-      position: absolute; width: 100%; height: 100%;
-      object-fit: contain; top: 0; left: 0;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      object-fit: cover; /* Cover ensures no black bars, might crop image */
+      top: 0;
+      left: 0;
+      transition: opacity 0.2s ease-in-out; /* Smooth fade for video/image swap */
     }
-    .media-container video { display: none; z-index: 1;}
-    .media-container:hover video { display: block;}
-    .media-container:hover img { display: none;}
-    .popup {
-      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-      background: rgba(0,0,0,0.92);
-      display: flex; justify-content: center; align-items: center;
-      z-index: 1000; display: none;
+    .media-container video {
+      opacity: 0; /* Hidden by default with opacity */
+      z-index: 1;
     }
-    .popup.show { display: flex; }
+    .media-container:hover video {
+      opacity: 1; /* Fade in video on hover */
+    }
+    .media-container:hover img {
+      opacity: 0; /* Fade out image on hover */
+    }
+
+    /* Popup styling for videos and downloads */
+    .popup, .howto-popup, .gemini-chat-popup {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.85); /* Slightly less opaque overlay */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      visibility: hidden; /* Hidden by default for transitions */
+      opacity: 0;
+      transition: visibility 0.3s ease-out, opacity 0.3s ease-out; /* Smooth fade in/out */
+    }
+    .popup.show, .howto-popup.show, .gemini-chat-popup.show {
+      visibility: visible;
+      opacity: 1;
+    }
+
     .popup-video {
-      width: 80%;
-      max-width: 800px;
+      width: 90%; /* Wider video in popup */
+      max-width: 900px; /* Larger max width */
       height: auto;
-      max-height: 80vh;
+      max-height: 90vh; /* Taller max height */
       object-fit: contain;
       background: none;
       border: none;
       border-radius: 0;
       box-shadow: none;
       display: block;
+      transform: scale(0.9); /* Start slightly smaller for animation */
+      transition: transform 0.3s ease-out;
     }
+    .popup.show .popup-video {
+      transform: scale(1); /* Scale to normal when shown */
+    }
+
+
     .close-btn {
-      position: absolute; top: 20px; right: 20px;
-      color: var(--primary-blue); font-size: 2rem; cursor: pointer;
-      background: none; border: none; border-radius: 50%;
-      width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
-      transition: background .17s, color 0.16s;
+      position: absolute;
+      top: 1.5rem; /* Adjusted position */
+      right: 1.5rem; /* Adjusted position */
+      color: var(--primary-blue);
+      font-size: 2.5rem; /* Larger close button */
+      cursor: pointer;
+      background: rgba(255,255,255,0.1); /* Subtle background for visibility */
+      border: none;
+      border-radius: 50%;
+      width: 3.5rem; /* Larger hit area */
+      height: 3.5rem; /* Larger hit area */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .2s, color 0.2s, transform 0.1s;
     }
-    .close-btn:hover { background: #fff1; color: var(--highlight-pink);}
+    .close-btn:hover {
+      background: var(--highlight-pink); /* Highlight background on hover */
+      color: #fff;
+      transform: rotate(90deg); /* Playful rotate effect */
+    }
+
+    /* Search bar styling */
     .search-bar {
       background: var(--surface-dark);
       border: 1.5px solid var(--border-color);
       color: var(--text-main);
-      padding: 10px 14px;
+      padding: 0.75rem 1rem; /* Increased padding */
       border-radius: 10px;
-      width: 100%; max-width: 400px;
-      font-size: 16px;
-      margin: 0 auto 1.5rem auto;
+      width: 100%;
+      max-width: 500px; /* Wider search bar */
+      font-size: 1.1rem; /* Larger font size */
+      margin: 0 auto 2rem auto; /* Increased bottom margin */
       display: block;
-      transition: border .18s, box-shadow .18s;
-      /* Centered! */
+      transition: border-color .2s, box-shadow .2s;
     }
     .search-bar:focus {
       outline: none;
       border-color: var(--primary-blue);
-      box-shadow: 0 0 8px 1.5px var(--primary-blue);
+      box-shadow: 0 0 0 3px rgba(99,179,237,0.4); /* Wider, softer focus glow */
     }
+
+    /* How-to button and popup styling */
     .howto-btn {
       background: none;
       color: var(--highlight-pink);
-      text-decoration: none !important;
+      text-decoration: underline !important; /* Make it clearly a link */
       border: none;
-      border-radius: 0;
       padding: 0;
       margin: 0;
       cursor: pointer;
-      font-size: 1em;
-      transition: color 0.16s;
+      font-size: 0.95em; /* Slightly smaller relative to card text */
+      transition: color 0.16s ease-out;
       display: inline;
     }
     .howto-btn:hover { color: var(--primary-blue);}
-    .howto-popup {
-      position: fixed; left: 0; top: 0; width: 100vw; height: 100vh;
-      background: rgba(10,12,18,0.98);
-      z-index: 2000;
-      display: flex; align-items: center; justify-content: center; display: none;
-    }
+
     .howto-content {
       background: var(--surface-mid);
       color: var(--text-mid);
-      border-radius: 18px;
-      padding: 28px 24px 20px 24px;
+      border-radius: 1.25rem; /* More rounded popup */
+      padding: 2.25rem 2rem 1.5rem 2rem; /* Adjusted padding */
       max-width: 90vw;
       width: auto;
-      min-width: 200px;
-      display: inline-block;
-      box-shadow: 0 0 10px #000b;
-      font-size: 1.08rem;
+      min-width: 280px;
+      max-height: 80vh; /* Constrain height */
+      overflow-y: auto; /* Allow scrolling for long content */
+      box-shadow: 0 0 20px rgba(0,0,0,0.5); /* Stronger popup shadow */
+      font-size: 1.1rem;
       position: relative;
       line-height: 1.7;
       white-space: pre-line;
       word-break: break-word;
       border: 1.5px solid var(--primary-blue);
+      transform: scale(0.9); /* Start smaller for animation */
+      transition: transform 0.3s ease-out;
     }
+    .howto-popup.show .howto-content {
+      transform: scale(1); /* Scale to normal when shown */
+    }
+
     .howto-close-btn {
-      position: absolute; right: 16px; top: 12px; font-size: 2rem;
-      background: none; border: none; color: var(--highlight-pink); cursor: pointer;
-      transition: color .17s;
+      position: absolute;
+      right: 1rem; top: 0.75rem; /* Adjusted position */
+      font-size: 2.5rem;
+      background: none; border: none;
+      color: var(--highlight-pink);
+      cursor: pointer;
+      transition: color .2s, transform 0.1s;
     }
-    .howto-close-btn:hover { color: var(--primary-blue);}
+    .howto-close-btn:hover {
+      color: var(--primary-blue);
+      transform: rotate(-90deg); /* Playful rotate effect */
+    }
+
+    /* Download links list styling */
+    #downloadLinksList {
+      background: var(--surface-mid); /* Use surface-mid for consistency */
+      color: var(--text-main);
+      padding: 1.5rem;
+      border-radius: 0.75rem; /* More rounded */
+      max-width: 480px; /* Slightly wider */
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+      transform: scale(0.9); /* Start smaller for animation */
+      transition: transform 0.3s ease-out;
+    }
+    .download-popup.show #downloadLinksList {
+      transform: scale(1);
+    }
     #downloadLinksList a {
       background: var(--primary-blue);
       color: #fff;
       border-radius: 8px;
       display: block;
-      margin: 0.5rem 0;
-      padding: 10px 0;
+      margin: 0.65rem 0; /* Slightly more vertical spacing */
+      padding: 12px 0; /* Increased padding */
       text-align: center;
       text-decoration: none !important;
-      transition: background .14s, color .14s;
+      transition: background .17s, color .17s, transform 0.1s;
       border: 1.5px solid var(--primary-blue);
-      box-shadow: 0 1px 8px #21273a22;
+      box-shadow: 0 2px 6px rgba(33,39,58,0.2);
     }
     #downloadLinksList a:hover {
       background: var(--highlight-pink);
       color: #fff;
       border-color: var(--highlight-pink);
+      transform: translateY(-1px);
     }
+    #downloadLinksList a:active {
+      transform: translateY(0);
+    }
+
+    /* General link styling */
     a {
       text-decoration: none !important;
+      transition: color 0.15s ease-out; /* Smooth color transition for all links */
     }
+    a:hover {
+      color: var(--highlight-pink) !important; /* General link hover color */
+    }
+
+    /* Tailwind overrides for text colors to use custom variables */
     .text-gray-400, .text-gray-500, .text-gray-300, .text-gray-200 {
       color: var(--text-mid) !important;
     }
@@ -230,44 +371,54 @@
       color: var(--primary-blue) !important;
     }
     .text-red-400 { color: var(--highlight-pink) !important; }
+
+    /* Font sizing */
     .text-sm { font-size: 0.97rem; }
-    .text-xl { font-size: 1.20rem;}
+    .text-xl { font-size: 1.25rem;} /* Slightly larger card title */
+
+    /* Line height adjustments for card content */
     .thumbnail .p-4, .thumbnail .p-4 p, .thumbnail .p-4 a, .thumbnail .p-4 span {
-      line-height: 1.7;
+      line-height: 1.6; /* Slightly tighter line height for better readability in cards */
     }
+
+    /* Game tag styling */
     .game-tag {
       display: inline-block;
-      font-size: 0.73rem;
+      font-size: 0.75rem; /* Slightly larger tag font */
       font-weight: 500;
-      letter-spacing: 0.01em;
-      padding: 0.5px 8px;
+      letter-spacing: 0.02em; /* Increased letter spacing for clarity */
+      padding: 0.15rem 0.6rem; /* Adjusted padding */
       border-radius: 999px;
       margin-bottom: 0;
-      margin-right: 6px;
+      margin-right: 0.4rem; /* Adjusted margin */
       vertical-align: middle;
       user-select: none;
-      line-height: 1.6;
+      line-height: 1.5;
+      text-transform: uppercase; /* Uppercase for tags */
     }
     .tag-online {
       background: var(--tag-online-bg);
       color: var(--tag-online);
-      border: 1.2px solid var(--tag-online);
+      border: 1px solid var(--tag-online); /* Thinner border for tags */
     }
     .tag-unfix {
       background: var(--tag-unfix-bg);
       color: var(--tag-unfix);
-      border: 1.2px solid var(--tag-unfix);
+      border: 1px solid var(--tag-unfix);
     }
     .tag-offline {
       background: var(--tag-offline-bg);
       color: var(--tag-offline);
-      border: 1.2px solid var(--tag-offline);
+      border: 1px solid var(--tag-offline);
     }
+
+    /* Locked content overlay for status display */
     #lockedContent {
       position: fixed;
-      left: 0; top: 0; width: 100vw; height: 100vh;
+      left: 0; top: 0;
+      width: 100vw; height: 100vh;
       z-index: 9999;
-      background: rgba(16,19,26,0.96);
+      background: rgba(16,19,26,0.98); /* Slightly more opaque background */
       display: flex;
       align-items: center;
       justify-content: center;
@@ -275,39 +426,233 @@
       padding: 0;
       border: none;
       box-shadow: none;
+      visibility: hidden; /* Hidden by default for transitions */
+      opacity: 0;
+      transition: visibility 0.3s ease-out, opacity 0.3s ease-out;
     }
+    #lockedContent.show {
+      visibility: visible;
+      opacity: 1;
+    }
+
     #lockedContent > div {
       background: var(--surface-mid);
       color: var(--highlight-pink);
       border: 2px solid var(--highlight-pink);
       border-radius: 12px;
-      padding: 42px 24px 32px 24px;
-      font-size: 1.33rem;
+      padding: 3rem 2rem 2rem 2rem; /* Adjusted padding */
+      font-size: 1.4rem; /* Larger font size */
       text-align: center;
-      max-width: 420px;
-      box-shadow: 0 0 10px #000a;
+      max-width: 480px; /* Wider locked content box */
+      box-shadow: 0 0 15px rgba(0,0,0,0.7); /* More prominent shadow */
       margin: 0;
+      transform: translateY(-20px); /* Initial transform for animation */
+      transition: transform 0.3s ease-out;
     }
-    #lockedContent.hide { display: none !important; }
+    #lockedContent.show > div {
+      transform: translateY(0); /* Animate to original position */
+    }
     #lockedContent .icon {
-      font-size:2.2rem;
+      font-size:2.8rem; /* Larger icon */
       display: block;
-      margin-bottom: 10px;
+      margin-bottom: 0.75rem; /* Increased margin */
     }
+
+    /* Wrapper to center main content */
     .center-content-wrapper {
-      width: 100vw;
+      width: 100%; /* Use 100% width for wrapper */
+      max-width: 96rem; /* Limit max width for overall layout */
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
+      padding-top: 2rem; /* Add some top padding */
     }
+
+    /* Loading spinner styling */
+    #loadingSpinner {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 99999;
+        visibility: hidden;
+        opacity: 0;
+        transition: visibility 0.3s, opacity 0.3s;
+    }
+    #loadingSpinner.show {
+        visibility: visible;
+        opacity: 1;
+    }
+    .spinner {
+        border: 8px solid rgba(255, 255, 255, 0.3);
+        border-top: 8px solid var(--primary-blue);
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    /* Message box styling */
+    #messageBox {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: var(--surface-mid);
+        color: var(--text-main);
+        padding: 15px 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        z-index: 10000;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
+        max-width: 90%;
+        text-align: center;
+    }
+    #messageBox.show {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    /* Gemini Chat Popup Specific Styles */
+    .gemini-chat-content {
+      background: var(--surface-mid);
+      color: var(--text-main);
+      border-radius: 1.25rem;
+      padding: 1.5rem;
+      max-width: 600px;
+      width: 90vw;
+      height: 80vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+      border: 1.5px solid var(--primary-blue);
+      transform: scale(0.9);
+      transition: transform 0.3s ease-out;
+      position: relative; /* For close button positioning */
+    }
+    .gemini-chat-popup.show .gemini-chat-content {
+      transform: scale(1);
+    }
+
+    #chatHistory {
+      flex-grow: 1;
+      overflow-y: auto;
+      margin-bottom: 1rem;
+      padding-right: 0.5rem; /* Space for scrollbar */
+      scroll-behavior: smooth;
+    }
+
+    .chat-message {
+      padding: 0.75rem 1rem;
+      border-radius: 0.75rem;
+      margin-bottom: 0.5rem;
+      line-height: 1.5;
+      max-width: 85%;
+    }
+    .chat-message.user {
+      background-color: var(--primary-blue);
+      color: white;
+      align-self: flex-end; /* Align to right */
+      margin-left: auto;
+      border-bottom-right-radius: 0;
+    }
+    .chat-message.gemini {
+      background-color: var(--surface-dark);
+      color: var(--text-main);
+      align-self: flex-start; /* Align to left */
+      margin-right: auto;
+      border-bottom-left-radius: 0;
+    }
+    .chat-message.system {
+        background-color: var(--surface-light);
+        color: var(--text-subtle);
+        font-style: italic;
+        text-align: center;
+        max-width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    #chatInputContainer {
+      display: flex;
+      gap: 0.5rem;
+    }
+    #chatInput {
+      flex-grow: 1;
+      background: var(--surface-dark);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    #chatInput:focus {
+      border-color: var(--primary-blue);
+      box-shadow: 0 0 0 2px rgba(99,179,237,0.3);
+    }
+    #chatSendBtn {
+      padding: 0.75rem 1.25rem;
+      background: var(--primary-blue);
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+    #chatSendBtn:hover:enabled {
+      background: var(--highlight-pink);
+      transform: translateY(-1px);
+    }
+    #chatSendBtn:active:enabled {
+      transform: translateY(0);
+    }
+    #chatSendBtn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .gemini-loading-spinner {
+        display: none;
+        width: 30px;
+        height: 30px;
+        border: 4px solid rgba(255, 255, 255, 0.3);
+        border-top: 4px solid var(--primary-blue);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 1rem auto; /* Center the spinner */
+    }
+    .gemini-loading-spinner.show {
+        display: block;
+    }
+
   </style>
 </head>
 <body class="min-h-screen flex flex-col items-center p-6">
   <h1 class="text-4xl" style="color:var(--primary-blue);margin-bottom:0;">Dev/g0d</h1>
-  <div style="color: #8ca3c7; font-size: 1.08rem; margin-top: .5rem;">
+  <div style="color: #8ca3c7; font-size: 1.08rem; margin-top: .5rem; margin-bottom: 2rem;">
     แหล่งอ้างอิง ชุมชน <a href="https://cs.rin.ru/" target="_blank" style="color:var(--primary-blue);">cs.rin.ru</a>
   </div>
+
+  <!-- Loading Spinner Overlay -->
+  <div id="loadingSpinner">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- Locked content overlay, hidden by default -->
   <div id="lockedContent" class="hide">
     <div>
       <span class="icon">🔒</span>
@@ -315,75 +660,189 @@
       กรุณาติดต่อผู้ดูแลระบบหรือรอประกาศเพิ่มเติม
     </div>
   </div>
+
   <div class="center-content-wrapper">
-    <div id="mainContent">
-      <input type="text" id="searchBar" class="search-bar mb-6" placeholder="ค้นหา...">
-      <div class="flex space-x-4 mb-6">
+    <div id="mainContent" class="w-full">
+      <!-- Search bar -->
+      <input type="text" id="searchBar" class="search-bar mb-8" placeholder="ค้นหา...">
+
+      <!-- Tab navigation for game categories -->
+      <div class="flex flex-wrap justify-center space-x-2 sm:space-x-4 mb-8">
         <button id="allGamesTab" class="tab active-tab">แก้ไขออนไลน์</button>
         <button id="unfixableTab" class="tab">แก้ไขไม่ได้</button>
         <button id="offlineTab" class="tab">เกมออฟไลน์</button>
       </div>
-      <div id="gameGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-6xl"></div>
-      <div id="unfixableList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-6xl hidden"></div>
-      <div id="offlineList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-6xl hidden"></div>
+
+      <!-- Game grids, only one is visible at a time -->
+      <div id="gameGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 sm:gap-8 w-full max-w-7xl mx-auto"></div>
+      <div id="unfixableList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 sm:gap-8 w-full max-w-7xl mx-auto hidden"></div>
+      <div id="offlineList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 sm:gap-8 w-full max-w-7xl mx-auto hidden"></div>
+
+      <!-- No search results message -->
+      <div id="noResultsMessage" class="text-center text-gray-400 py-16 hidden">
+        <p class="text-2xl mb-4">😔</p>
+        <p class="text-xl">ไม่พบเกมที่ค้นหา</p>
+        <p class="text-lg text-gray-500 mt-2">ลองใช้คำอื่น หรือตรวจสอบตัวสะกด</p>
+      </div>
     </div>
   </div>
+
+  <!-- Video popup -->
   <div id="videoPopup" class="popup">
-    <button class="close-btn" onclick="closePopup()">×</button>
+    <button class="close-btn" onclick="closePopup('videoPopup', 'popupPlayer')">×</button>
     <video id="popupPlayer" class="popup-video" controls autoplay>
       <source id="popupSource" type="video/webm">
     </video>
   </div>
-  <div id="downloadPopup" class="popup">
-    <button class="close-btn" onclick="closeDownloadPopup()">×</button>
-    <div id="downloadLinksList" class="bg-gray-900 p-6 rounded-lg max-w-md w-full text-center"></div>
+
+  <!-- Download links popup -->
+  <div id="downloadPopup" class="popup download-popup">
+    <button class="close-btn" onclick="closePopup('downloadPopup')">×</button>
+    <div id="downloadLinksList" class="p-6 rounded-lg max-w-md w-full text-center"></div>
   </div>
+
+  <!-- How-to instructions popup -->
   <div id="howtoPopup" class="howto-popup">
+    <button class="howto-close-btn" onclick="closePopup('howtoPopup')">×</button>
     <div class="howto-content">
-      <button class="howto-close-btn" onclick="closeHowto()">×</button>
       <div id="howtoText"></div>
     </div>
   </div>
-  <script>
-    const status = "on";
 
-    function setContentStatus(status) {
-      status = (status + '').toLowerCase().trim();
+  <!-- Gemini Chat Popup -->
+  <div id="geminiChatPopup" class="popup gemini-chat-popup">
+    <div class="gemini-chat-content">
+      <button class="close-btn" onclick="closePopup('geminiChatPopup')">×</button>
+      <h3 class="text-2xl font-bold mb-4 text-center" style="color:var(--primary-blue);">✨ ถาม Gemini เกี่ยวกับเกม</h3>
+      <div id="chatHistory" class="flex flex-col flex-grow bg-gray-800 rounded-lg p-3 mb-4">
+        <!-- Chat messages will be appended here -->
+      </div>
+      <div class="gemini-loading-spinner" id="geminiChatSpinner"></div>
+      <div id="chatInputContainer">
+        <input type="text" id="chatInput" placeholder="พิมพ์คำถามของคุณที่นี่..." class="flex-grow">
+        <button id="chatSendBtn" class="main-btn">ส่ง</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Message Box -->
+  <div id="messageBox"></div>
+
+  <script>
+    // Initial content status (can be 'on' or 'off')
+    const status = "on";
+    const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+    const API_KEY = ""; // Canvas will automatically provide the API key at runtime
+
+    /**
+     * Sets the visibility of the main content based on a status.
+     * @param {string} currentStatus - 'on' to show main content, 'off' to show locked content.
+     */
+    function setContentStatus(currentStatus) {
+      currentStatus = (currentStatus + '').toLowerCase().trim();
       const mainContent = document.getElementById('mainContent');
       const lockedContent = document.getElementById('lockedContent');
-      if (status === 'on') {
-        mainContent.style.display = '';
-        lockedContent.classList.add('hide');
+      if (currentStatus === 'on') {
+        mainContent.style.display = ''; // Show main content
+        lockedContent.classList.remove('show'); // Hide locked content with transition
       } else {
-        mainContent.style.display = 'none';
-        lockedContent.classList.remove('hide');
+        mainContent.style.display = 'none'; // Hide main content
+        lockedContent.classList.add('show'); // Show locked content with transition
       }
     }
-    setContentStatus(status);
+    setContentStatus(status); // Apply initial status
 
     let games = [], unfixableGames = [], offlineGames = [];
+    let currentChatHistory = []; // Stores chat history for Gemini conversation
 
-    async function loadData() {
-      function nocache(url) {
-        const sep = url.includes('?') ? '&' : '?';
-        return url + sep + 'v=' + Date.now();
-      }
-      async function safeFetch(url) {
-        try { return await fetch(nocache(url)).then(r => r.json()); }
-        catch { return []; }
-      }
-      games = await safeFetch('gamefix.json');
-      unfixableGames = await safeFetch('gameunfix.json');
-      offlineGames = await safeFetch('gameoffline.json');
-      renderAllGames();
+    /**
+     * Appends a cache-busting parameter to a URL to prevent caching.
+     * @param {string} url - The URL to modify.
+     * @returns {string} The URL with a cache-busting parameter.
+     */
+    function nocache(url) {
+      const sep = url.includes('?') ? '&' : '?';
+      return url + sep + 'v=' + Date.now();
     }
 
+    /**
+     * Displays a temporary message box at the bottom of the screen.
+     * @param {string} message - The message to display.
+     * @param {number} duration - Duration in milliseconds for the message to be visible.
+     */
+    function showMessage(message, duration = 3000) {
+        const messageBox = document.getElementById('messageBox');
+        messageBox.innerText = message;
+        messageBox.classList.add('show');
+        setTimeout(() => {
+            messageBox.classList.remove('show');
+        }, duration);
+    }
+
+    /**
+     * Shows the loading spinner overlay.
+     */
+    function showLoadingSpinner() {
+        document.getElementById('loadingSpinner').classList.add('show');
+    }
+
+    /**
+     * Hides the loading spinner overlay.
+     */
+    function hideLoadingSpinner() {
+        document.getElementById('loadingSpinner').classList.remove('show');
+    }
+
+    /**
+     * Safely fetches JSON data from a URL.
+     * Returns an empty array if fetching fails and shows a message.
+     * @param {string} url - The URL to fetch.
+     * @returns {Promise<Array>} A promise that resolves to the JSON data or an empty array.
+     */
+    async function safeFetch(url) {
+      try {
+        const response = await fetch(nocache(url));
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return await response.json();
+      } catch (error) {
+        console.error(`Error fetching ${url}:`, error);
+        showMessage(`ไม่สามารถโหลดข้อมูลเกมจาก ${url} ได้`);
+        return [];
+      }
+    }
+
+    /**
+     * Loads game data from JSON files and renders the initial "All Games" view.
+     */
+    async function loadData() {
+      showLoadingSpinner(); // Show spinner before loading data
+      games = await safeFetch('gamefix.json'); // Data for online fixable games
+      unfixableGames = await safeFetch('gameunfix.json'); // Data for unfixable games
+      offlineGames = await safeFetch('gameoffline.json'); // Data for offline games
+      hideLoadingSpinner(); // Hide spinner after data is loaded
+      renderAllGames(); // Render the default view
+    }
+
+    /**
+     * Generates an info line HTML string.
+     * @param {string} label - The label for the info (e.g., "เวอร์ชั่น:").
+     * @param {string} value - The value to display.
+     * @param {string} [color="gray-400"] - Tailwind CSS color class for the text.
+     * @returns {string} The HTML string for the info line or an empty string if value is empty/null.
+     */
     function infoLine(label, value, color = "gray-400") {
       if (value === undefined || value === null) return '';
       if (typeof value === "string" && value.trim() === "") return '';
       return `<p class="text-${color} text-sm">${label} ${value}</p>`;
     }
 
+    /**
+     * Renders a game status tag.
+     * @param {string} type - The type of game ('online', 'unfix', 'offline').
+     * @returns {string} The HTML string for the game tag.
+     */
     function renderGameTag(type) {
       if (type === "online") {
         return '<span class="game-tag tag-online">แก้ไขออนไลน์</span>';
@@ -397,402 +856,409 @@
       return '';
     }
 
-    function showDownloadPopup(links) {
-      const downloadLinksList = document.getElementById('downloadLinksList');
-      downloadLinksList.innerHTML = links.map((link, i) =>
-        `<a href="${link}" target="_blank"
-          >พาร์ท ${i + 1}</a>`).join("");
-      document.getElementById('downloadPopup').classList.add('show');
-    }
-    function closeDownloadPopup() {
-      document.getElementById('downloadPopup').classList.remove('show');
-    }
-    function showHowtoPopup(text) {
-      document.getElementById('howtoText').innerText = text;
-      document.getElementById('howtoPopup').style.display = 'flex';
-    }
-    function closeHowto() { document.getElementById('howtoPopup').style.display = 'none'; }
-    function closePopup() {
-      document.getElementById('videoPopup').style.display = 'none';
-      document.getElementById('popupPlayer').pause();
-      document.getElementById('popupSource').src = '';
+    /**
+     * Generic function to show any popup.
+     * @param {string} popupId - The ID of the popup element.
+     * @param {string} [playerToLoadId] - Optional ID of a video player element within the popup to load.
+     * @param {string} [videoSource] - Optional video source URL if playerToLoadId is provided.
+     */
+    function showPopup(popupId, playerToLoadId = null, videoSource = null) {
+      const popup = document.getElementById(popupId);
+      if (popup) {
+        popup.classList.add('show');
+        if (playerToLoadId && videoSource) {
+          const player = document.getElementById(playerToLoadId);
+          const source = player.querySelector('source');
+          if (player && source) {
+            source.src = videoSource;
+            player.load();
+            player.play();
+          }
+        }
+      }
     }
 
-    function renderAllGames(list = games) {
-      const gameGrid = document.getElementById('gameGrid');
-      gameGrid.innerHTML = '';
-      document.getElementById('unfixableList').classList.add('hidden');
-      document.getElementById('offlineList').classList.add('hidden');
-      gameGrid.classList.remove('hidden');
+    /**
+     * Generic function to close any popup.
+     * @param {string} popupId - The ID of the popup element.
+     * @param {string} [playerToPauseId] - Optional ID of a video player element within the popup to pause.
+     */
+    function closePopup(popupId, playerToPauseId = null) {
+      const popup = document.getElementById(popupId);
+      if (popup) {
+        popup.classList.remove('show');
+        if (playerToPauseId) {
+          const player = document.getElementById(playerToPauseId);
+          if (player) {
+            player.pause();
+            player.querySelector('source').src = ''; // Clear video source
+          }
+        }
+      }
+    }
+
+    /**
+     * Appends a message to the chat history.
+     * @param {string} sender - 'user' or 'gemini'.
+     * @param {string} message - The text message.
+     */
+    function appendChatMessage(sender, message) {
+      const chatHistoryDiv = document.getElementById('chatHistory');
+      const messageElement = document.createElement('div');
+      messageElement.classList.add('chat-message', sender);
+      messageElement.innerText = message;
+      chatHistoryDiv.appendChild(messageElement);
+      chatHistoryDiv.scrollTop = chatHistoryDiv.scrollHeight; // Auto-scroll to bottom
+    }
+
+    /**
+     * Clears the chat history.
+     */
+    function clearChatHistory() {
+      document.getElementById('chatHistory').innerHTML = '';
+      currentChatHistory = [];
+    }
+
+    /**
+     * Sends a message to the Gemini API and displays the response.
+     * @param {string} message - The user's message.
+     * @param {Object} gameContext - Context about the current game.
+     */
+    async function sendMessageToGemini(message, gameContext) {
+      const chatInput = document.getElementById('chatInput');
+      const chatSendBtn = document.getElementById('chatSendBtn');
+      const geminiChatSpinner = document.getElementById('geminiChatSpinner');
+
+      if (message.trim() === "") return;
+
+      appendChatMessage('user', message);
+      chatInput.value = ''; // Clear input field
+      chatSendBtn.disabled = true; // Disable send button
+
+      geminiChatSpinner.classList.add('show'); // Show spinner
+
+      // Add user message to current chat history for context
+      currentChatHistory.push({ role: "user", parts: [{ text: message }] });
+
+      // Build the initial prompt with game context for the first message, or just continue conversation
+      let promptText = '';
+      if (currentChatHistory.length === 1) { // First message in this chat session
+          promptText = `คุณคือผู้ช่วย AI ที่ให้ข้อมูลเกี่ยวกับวิดีโอเกมโดยเฉพาะ ผมกำลังดูเกมชื่อ "${gameContext.title}" (เวอร์ชั่น: ${gameContext.version || 'ไม่ระบุ'}, แพลตฟอร์ม: ${gameContext.platform || 'ไม่ระบุ'}) คำถามของผมคือ: ${message}`;
+          currentChatHistory[0].parts[0].text = promptText; // Modify the first user message with context
+      }
+
+
+      const payload = {
+          contents: currentChatHistory,
+      };
+
+      try {
+          const response = await fetch(`${GEMINI_API_URL}?key=${API_KEY}`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload)
+          });
+
+          const result = await response.json();
+
+          if (result.candidates && result.candidates.length > 0 &&
+              result.candidates[0].content && result.candidates[0].content.parts &&
+              result.candidates[0].content.parts.length > 0) {
+            const geminiResponse = result.candidates[0].content.parts[0].text;
+            appendChatMessage('gemini', geminiResponse);
+            // Add Gemini's response to current chat history
+            currentChatHistory.push({ role: "model", parts: [{ text: geminiResponse }] });
+          } else {
+            console.error("Gemini API returned an unexpected structure or no content.", result);
+            appendChatMessage('system', 'ขออภัย ไม่สามารถรับคำตอบจาก Gemini ได้ในขณะนี้');
+          }
+      } catch (error) {
+          console.error("Error calling Gemini API:", error);
+          appendChatMessage('system', 'เกิดข้อผิดพลาดในการเชื่อมต่อกับ Gemini โปรดลองอีกครั้ง');
+      } finally {
+          geminiChatSpinner.classList.remove('show'); // Hide spinner
+          chatSendBtn.disabled = false; // Re-enable send button
+          chatInput.focus(); // Focus input for next message
+      }
+    }
+
+
+    /**
+     * Renders game cards into a specified container.
+     * @param {HTMLElement} container - The HTML element to render cards into.
+     * @param {Array<Object>} list - The list of games to render.
+     * @param {string} gameType - The type of game ('online', 'unfix', 'offline') for rendering tags.
+     */
+    function renderGameCards(container, list, gameType) {
+      container.innerHTML = ''; // Clear existing content
+      if (list.length === 0) {
+        document.getElementById('noResultsMessage').classList.remove('hidden');
+        return;
+      } else {
+        document.getElementById('noResultsMessage').classList.add('hidden');
+      }
+
       list.forEach(game => {
         const card = document.createElement('div');
         card.className = 'thumbnail rounded-lg overflow-hidden';
 
-        card.innerHTML =
-          `<div class="media-container" data-video="${game.video || ''}">
-            <img src="${game.thumbnail}" alt="${game.title}">
-            ${game.video ?
-              `<video autoplay muted loop playsinline preload>
-                <source src="${game.video}" type="video/webm">
-              </video>` : ''}
-          </div>
-          <div class="p-4">
-            <div class="mb-1">${renderGameTag("online")}</div>
-            <a href="${game.officialLink}" target="_blank" class="text-xl"
-              style="color:var(--text-main) !important;">${game.title}</a>
+        let extraInfo = '';
+        let buttonsHtml = '';
+        let howtoButton = '';
+
+        if (gameType === "online") {
+          extraInfo = `
             ${infoLine("เวอร์ชั่น:", game.version)}
             ${infoLine("ผู้เล่น:", game.players)}
             ${infoLine("แก้ไขโดย:", game.crackedBy)}
             ${infoLine("แพลตฟอร์ม:", game.platform)}
             ${infoLine("รหัสผ่าน:", game.password)}
             ${infoLine("รหัสผ่านแก้ไข:", game.fixPassword)}
-            <p class="text-sm mt-2">
-              <button class="howto-btn" type="button">วิธีแก้ไข</button>
-            </p>
-            <div class="flex space-x-4 mt-6">
+          `;
+          howtoButton = `<p class="text-sm mt-2"><button class="howto-btn" type="button">วิธีแก้ไข</button></p>`;
+          buttonsHtml = `
+            <div class="flex space-x-2 mt-6">
               <button class="download-btn main-btn flex-1 text-center" type="button" ${game.downloadEnabled ? '' : 'disabled'}>ดาวน์โหลด</button>
               <button class="fix-btn main-btn flex-1 text-center" type="button" ${game.fixEnabled ? '' : 'disabled'}>แก้ไข</button>
             </div>
-          </div>
-        `;
-        gameGrid.appendChild(card);
-
-        const mediaContainer = card.querySelector('.media-container');
-        const video = mediaContainer.querySelector('video');
-        if (video) {
-          mediaContainer.addEventListener('click', () => {
-            if (game.video) {
-              document.getElementById('popupSource').src = game.video;
-              document.getElementById('popupPlayer').load();
-              document.getElementById('videoPopup').style.display = 'flex';
-              document.getElementById('popupPlayer').play();
-            }
-          });
-        }
-
-        const downloadBtn = card.querySelector('.download-btn');
-        if (downloadBtn) {
-          if (!game.downloadEnabled) downloadBtn.classList.add('disabled-btn');
-          else {
-            const downloadLinks = [];
-            let idx = 1;
-            while (game['downloadLink'+idx]) {
-              downloadLinks.push(game['downloadLink'+idx]);
-              idx++;
-            }
-            if (downloadLinks.length > 0) {
-              downloadBtn.addEventListener('click', function() {
-                showDownloadPopup(downloadLinks);
-              });
-            } else if (game.downloadLink) {
-              downloadBtn.addEventListener('click', function() {
-                window.open(game.downloadLink, '_blank');
-              });
-            }
-          }
-        }
-        const fixBtn = card.querySelector('.fix-btn');
-        if (fixBtn) {
-          if (!game.fixEnabled) fixBtn.classList.add('disabled-btn');
-          else if (game.fixLink) {
-            fixBtn.addEventListener('click', function() {
-              window.open(game.fixLink, '_blank');
-            });
-          }
-        }
-        const howtoBtn = card.querySelector('.howto-btn');
-        if (howtoBtn) {
-          howtoBtn.addEventListener('click', () => {
-            showHowtoPopup(game.instructions || "ไม่มีวิธีแก้ไขสำหรับเกมนี้");
-          });
-        }
-      });
-    }
-
-    function renderUnfixableGames(list = unfixableGames) {
-      const unfixableList = document.getElementById('unfixableList');
-      unfixableList.innerHTML = '';
-      document.getElementById('gameGrid').classList.add('hidden');
-      document.getElementById('offlineList').classList.add('hidden');
-      unfixableList.classList.remove('hidden');
-      list.forEach(game => {
-        const card = document.createElement('div');
-        card.className = 'thumbnail rounded-lg overflow-hidden';
-        card.innerHTML =
-          `<div class="media-container" data-video="${game.video || ''}">
-            <img src="${game.thumbnail}" alt="${game.title}">
-            ${game.video ?
-              `<video autoplay muted loop playsinline preload>
-                <source src="${game.video}" type="video/webm">
-              </video>` : ''}
-          </div>
-          <div class="p-4">
-            <div class="mb-1">${renderGameTag("unfix")}</div>
-            <a href="${game.officialLink}" target="_blank" class="text-xl"
-              style="color:var(--text-main) !important;">${game.title}</a>
-            ${infoLine("ปัญหาหลัก:", game.issue, "red-400")}
-          </div>
-        `;
-        unfixableList.appendChild(card);
-
-        const mediaContainer = card.querySelector('.media-container');
-        const video = mediaContainer.querySelector('video');
-        if (video) {
-          mediaContainer.addEventListener('click', () => {
-            if (game.video) {
-              document.getElementById('popupSource').src = game.video;
-              document.getElementById('popupPlayer').load();
-              document.getElementById('videoPopup').style.display = 'flex';
-              document.getElementById('popupPlayer').play();
-            }
-          });
-        }
-      });
-    }
-
-    function renderOfflineGames(list = offlineGames) {
-      const offlineList = document.getElementById('offlineList');
-      offlineList.innerHTML = '';
-      document.getElementById('gameGrid').classList.add('hidden');
-      document.getElementById('unfixableList').classList.add('hidden');
-      offlineList.classList.remove('hidden');
-      list.forEach(game => {
-        const card = document.createElement('div');
-        card.className = 'thumbnail rounded-lg overflow-hidden';
-        card.innerHTML =
-          `<div class="media-container" data-video="${game.video || ''}">
-            <img src="${game.thumbnail}" alt="${game.title}">
-            ${game.video ?
-              `<video autoplay muted loop playsinline preload>
-                <source src="${game.video}" type="video/webm">
-              </video>` : ''}
-          </div>
-          <div class="p-4">
-            <div class="mb-1">${renderGameTag("offline")}</div>
-            <a href="${game.officialLink}" target="_blank" class="text-xl"
-              style="color:var(--text-main) !important;">${game.title}</a>
+            <div class="flex mt-2">
+                <button class="gemini-btn main-btn flex-1 text-center" type="button">✨ ถาม Gemini</button>
+            </div>
+          `;
+        } else if (gameType === "unfix") {
+          extraInfo = infoLine("ปัญหาหลัก:", game.issue, "red-400");
+          buttonsHtml = `
+            <div class="flex mt-6">
+                <button class="gemini-btn main-btn flex-1 text-center" type="button">✨ ถาม Gemini</button>
+            </div>
+          `;
+        } else if (gameType === "offline") {
+          extraInfo = `
             ${infoLine("เวอร์ชั่น:", game.version)}
             ${infoLine("ไฟล์โดย:", game.FileBy, "gray-400")}
-            <p class="text-sm mt-2">
-              <button class="howto-btn" type="button">วิธีแก้ไข</button>
-            </p>
-            <div class="flex space-x-4 mt-6">
+          `;
+          howtoButton = `<p class="text-sm mt-2"><button class="howto-btn" type="button">วิธีแก้ไข</button></p>`;
+          buttonsHtml = `
+            <div class="flex space-x-2 mt-6">
               <button class="download-btn main-btn flex-1 text-center" type="button" ${game.downloadLink ? '' : 'disabled'}>ดาวน์โหลด</button>
             </div>
+            <div class="flex mt-2">
+                <button class="gemini-btn main-btn flex-1 text-center" type="button">✨ ถาม Gemini</button>
+            </div>
+          `;
+        }
+
+        card.innerHTML =
+          `<div class="media-container" data-video="${game.video || ''}">
+            <img src="${game.thumbnail}" alt="${game.title}" onerror="this.onerror=null; this.src='https://placehold.co/400x225/2D3748/E2E8F0?text=No+Image';">
+            ${game.video ?
+              `<video autoplay muted loop playsinline preload="none">
+                <source src="${game.video}" type="video/webm">
+              </video>` : ''}
+          </div>
+          <div class="p-4">
+            <div class="mb-1">${renderGameTag(gameType)}</div>
+            <a href="${game.officialLink || '#'}" target="_blank" class="text-xl font-semibold"
+              style="color:var(--text-main) !important;">${game.title}</a>
+            ${extraInfo}
+            ${howtoButton}
+            ${buttonsHtml}
           </div>
         `;
-        offlineList.appendChild(card);
+        container.appendChild(card);
 
+        // Attach event listeners after card is added to DOM
         const mediaContainer = card.querySelector('.media-container');
-        const video = mediaContainer.querySelector('video');
-        if (video) {
+        if (mediaContainer && game.video) {
           mediaContainer.addEventListener('click', () => {
-            if (game.video) {
-              document.getElementById('popupSource').src = game.video;
-              document.getElementById('popupPlayer').load();
-              document.getElementById('videoPopup').style.display = 'flex';
-              document.getElementById('popupPlayer').play();
-            }
+            showPopup('videoPopup', 'popupPlayer', game.video);
           });
         }
 
         const downloadBtn = card.querySelector('.download-btn');
-        if (downloadBtn && game.downloadLink) {
+        if (downloadBtn && !downloadBtn.disabled) {
           downloadBtn.addEventListener('click', function() {
-            window.open(game.downloadLink, '_blank');
+            if (game.downloadLink) {
+                const downloadLinks = [];
+                let idx = 1;
+                // Check if there are multiple download links or just one
+                let hasMultipleLinks = false;
+                if (game.downloadLink1) hasMultipleLinks = true;
+
+                if (!hasMultipleLinks && game.downloadLink) { // Only one link scenario, open directly
+                    window.open(game.downloadLink, '_blank');
+                    return;
+                }
+
+                if (game.downloadLink) downloadLinks.push(game.downloadLink); // Add base link if exists
+                while (game['downloadLink'+idx]) {
+                    downloadLinks.push(game['downloadLink'+idx]);
+                    idx++;
+                }
+
+                if (downloadLinks.length > 0) {
+                    const downloadLinksList = document.getElementById('downloadLinksList');
+                    downloadLinksList.innerHTML = downloadLinks.map((link, i) =>
+                        `<a href="${link}" target="_blank">พาร์ท ${i + 1}</a>`).join("");
+                    showPopup('downloadPopup');
+                } else {
+                    showMessage("ไม่มีลิงก์ดาวน์โหลดสำหรับเกมนี้");
+                }
+            } else {
+                showMessage("ไม่สามารถดาวน์โหลดได้");
+            }
           });
         }
+
+        const fixBtn = card.querySelector('.fix-btn');
+        if (fixBtn && !fixBtn.disabled && game.fixLink) {
+          fixBtn.addEventListener('click', function() {
+            window.open(game.fixLink, '_blank');
+          });
+        }
+
         const howtoBtn = card.querySelector('.howto-btn');
         if (howtoBtn) {
           howtoBtn.addEventListener('click', () => {
-            showHowtoPopup(game.instructions || "ไม่มีวิธีแก้ไขสำหรับเกมนี้");
+            document.getElementById('howtoText').innerText = game.instructions || "ไม่มีวิธีแก้ไขสำหรับเกมนี้";
+            showPopup('howtoPopup');
+          });
+        }
+
+        const geminiBtn = card.querySelector('.gemini-btn');
+        if (geminiBtn) {
+          geminiBtn.addEventListener('click', () => {
+            clearChatHistory(); // Clear previous chat history
+            // Initial message from Gemini explaining the feature
+            appendChatMessage('gemini', `สวัสดี! ฉันคือ Gemini AI ยินดีให้ข้อมูลเกี่ยวกับเกม "${game.title}" (เวอร์ชั่น: ${game.version || 'ไม่ระบุ'}) คุณมีคำถามอะไรเกี่ยวกับเกมนี้บ้าง?`);
+            // Store game context for the chat session
+            geminiChatPopup.dataset.gameTitle = game.title;
+            geminiChatPopup.dataset.gameVersion = game.version || '';
+            geminiChatPopup.dataset.gamePlatform = game.platform || '';
+            geminiChatPopup.dataset.gamePlayers = game.players || '';
+            geminiChatPopup.dataset.gameCrackedBy = game.crackedBy || '';
+            geminiChatPopup.dataset.gameIssue = game.issue || '';
+            geminiChatPopup.dataset.gameInstructions = game.instructions || '';
+
+            showPopup('geminiChatPopup');
+            document.getElementById('chatInput').focus(); // Focus on chat input
           });
         }
       });
     }
 
+    /**
+     * Renders all games in the 'games' array.
+     */
+    function renderAllGames() {
+      // Set active tab styles
+      document.getElementById('allGamesTab').classList.add('active-tab');
+      document.getElementById('unfixableTab').classList.remove('active-tab');
+      document.getElementById('offlineTab').classList.remove('active-tab');
+
+      // Hide other lists and show gameGrid
+      document.getElementById('unfixableList').classList.add('hidden');
+      document.getElementById('offlineList').classList.add('hidden');
+      document.getElementById('gameGrid').classList.remove('hidden');
+
+      renderGameCards(document.getElementById('gameGrid'), games, 'online');
+    }
+
+    /**
+     * Renders games in the 'unfixableGames' array.
+     */
+    function renderUnfixableGames() {
+      // Set active tab styles
+      document.getElementById('unfixableTab').classList.add('active-tab');
+      document.getElementById('allGamesTab').classList.remove('active-tab');
+      document.getElementById('offlineTab').classList.remove('active-tab');
+
+      // Hide other lists and show unfixableList
+      document.getElementById('gameGrid').classList.add('hidden');
+      document.getElementById('offlineList').classList.add('hidden');
+      document.getElementById('unfixableList').classList.remove('hidden');
+
+      renderGameCards(document.getElementById('unfixableList'), unfixableGames, 'unfix');
+    }
+
+    /**
+     * Renders games in the 'offlineGames' array.
+     */
+    function renderOfflineGames() {
+      // Set active tab styles
+      document.getElementById('offlineTab').classList.add('active-tab');
+      document.getElementById('allGamesTab').classList.remove('active-tab');
+      document.getElementById('unfixableTab').classList.remove('active-tab');
+
+      // Hide other lists and show offlineList
+      document.getElementById('gameGrid').classList.add('hidden');
+      document.getElementById('unfixableList').classList.add('hidden');
+      document.getElementById('offlineList').classList.remove('hidden');
+
+      renderGameCards(document.getElementById('offlineList'), offlineGames, 'offline');
+    }
+
+    /**
+     * Renders search results by combining and filtering all game lists.
+     * @param {Array<Object>} results - The filtered list of games to render.
+     */
     function renderSearchAllResults(results) {
       const gameGrid = document.getElementById('gameGrid');
-      const unfixableList = document.getElementById('unfixableList');
-      const offlineList = document.getElementById('offlineList');
-      gameGrid.innerHTML = '';
-      unfixableList.classList.add('hidden');
-      offlineList.classList.add('hidden');
+      // Hide other lists and show gameGrid for search results
+      document.getElementById('unfixableList').classList.add('hidden');
+      document.getElementById('offlineList').classList.add('hidden');
       gameGrid.classList.remove('hidden');
 
-      if (results.length === 0) {
-        gameGrid.innerHTML = `<div class="text-center text-gray-400 py-8">ไม่พบเกมที่ค้นหา</div>`;
+      // Determine the type for each game in search results and render
+      const sortedResults = results.sort((a, b) => {
+        // Prioritize online, then unfixable, then offline for consistent display
+        if (a.hasOwnProperty('downloadEnabled') && !b.hasOwnProperty('downloadEnabled')) return -1;
+        if (!a.hasOwnProperty('downloadEnabled') && b.hasOwnProperty('downloadEnabled')) return 1;
+        if (a.hasOwnProperty('issue') && !b.hasOwnProperty('issue')) return -1;
+        if (!a.hasOwnProperty('issue') && b.hasOwnProperty('issue')) return 1;
+        return 0;
+      });
+
+      gameGrid.innerHTML = ''; // Clear content before rendering search results
+
+      if (sortedResults.length === 0) {
+        document.getElementById('noResultsMessage').classList.remove('hidden');
         return;
+      } else {
+        document.getElementById('noResultsMessage').classList.add('hidden');
       }
 
-      results.forEach(game => {
-        const card = document.createElement('div');
-        card.className = 'thumbnail rounded-lg overflow-hidden';
-        if (game.hasOwnProperty('downloadEnabled')) {
-          card.innerHTML =
-            `<div class="media-container" data-video="${game.video || ''}">
-              <img src="${game.thumbnail}" alt="${game.title}">
-              ${game.video ?
-                `<video autoplay muted loop playsinline preload>
-                  <source src="${game.video}" type="video/webm">
-                </video>` : ''}
-            </div>
-            <div class="p-4">
-              <div class="mb-1">${renderGameTag("online")}</div>
-              <a href="${game.officialLink}" target="_blank" class="text-xl"
-                style="color:var(--text-main) !important;">${game.title}</a>
-              ${infoLine("เวอร์ชั่น:", game.version)}
-              ${infoLine("ผู้เล่น:", game.players)}
-              ${infoLine("แก้ไขโดย:", game.crackedBy)}
-              ${infoLine("แพลตฟอร์ม:", game.platform)}
-              ${infoLine("รหัสผ่าน:", game.password)}
-              ${infoLine("รหัสผ่านแก้ไข:", game.fixPassword)}
-              <p class="text-sm mt-2">
-                <button class="howto-btn" type="button">วิธีแก้ไข</button>
-              </p>
-              <div class="flex space-x-4 mt-6">
-                <button class="download-btn main-btn flex-1 text-center" type="button" ${game.downloadEnabled ? '' : 'disabled'}>ดาวน์โหลด</button>
-                <button class="fix-btn main-btn flex-1 text-center" type="button" ${game.fixEnabled ? '' : 'disabled'}>แก้ไข</button>
-              </div>
-            </div>
-          `;
-          gameGrid.appendChild(card);
-          const mediaContainer = card.querySelector('.media-container');
-          const video = mediaContainer.querySelector('video');
-          if (video) {
-            mediaContainer.addEventListener('click', () => {
-              if (game.video) {
-                document.getElementById('popupSource').src = game.video;
-                document.getElementById('popupPlayer').load();
-                document.getElementById('videoPopup').style.display = 'flex';
-                document.getElementById('popupPlayer').play();
-              }
-            });
-          }
-          const downloadBtn = card.querySelector('.download-btn');
-          if (downloadBtn) {
-            if (!game.downloadEnabled) downloadBtn.classList.add('disabled-btn');
-            else {
-              const downloadLinks = [];
-              let idx = 1;
-              while (game['downloadLink'+idx]) {
-                downloadLinks.push(game['downloadLink'+idx]);
-                idx++;
-              }
-              if (downloadLinks.length > 0) {
-                downloadBtn.addEventListener('click', function() {
-                  showDownloadPopup(downloadLinks);
-                });
-              } else if (game.downloadLink) {
-                downloadBtn.addEventListener('click', function() {
-                  window.open(game.downloadLink, '_blank');
-                });
-              }
-            }
-          }
-          const fixBtn = card.querySelector('.fix-btn');
-          if (fixBtn) {
-            if (!game.fixEnabled) fixBtn.classList.add('disabled-btn');
-            else if (game.fixLink) {
-              fixBtn.addEventListener('click', function() {
-                window.open(game.fixLink, '_blank');
-              });
-            }
-          }
-          const howtoBtn = card.querySelector('.howto-btn');
-          if (howtoBtn) {
-            howtoBtn.addEventListener('click', () => {
-              showHowtoPopup(game.instructions || "ไม่มีวิธีแก้ไขสำหรับเกมนี้");
-            });
-          }
+      sortedResults.forEach(game => {
+        let gameType;
+        if (game.hasOwnProperty('downloadEnabled') || game.hasOwnProperty('fixEnabled')) {
+          gameType = 'online';
         } else if (game.hasOwnProperty('issue')) {
-          card.innerHTML =
-            `<div class="media-container" data-video="${game.video || ''}">
-              <img src="${game.thumbnail}" alt="${game.title}">
-              ${game.video ?
-                `<video autoplay muted loop playsinline preload>
-                  <source src="${game.video}" type="video/webm">
-                </video>` : ''}
-            </div>
-            <div class="p-4">
-              <div class="mb-1">${renderGameTag("unfix")}</div>
-              <a href="${game.officialLink}" target="_blank" class="text-xl"
-                style="color:var(--text-main) !important;">${game.title}</a>
-              ${infoLine("ปัญหาหลัก:", game.issue, "red-400")}
-            </div>
-          `;
-          gameGrid.appendChild(card);
-          const mediaContainer = card.querySelector('.media-container');
-          const video = mediaContainer.querySelector('video');
-          if (video) {
-            mediaContainer.addEventListener('click', () => {
-              if (game.video) {
-                document.getElementById('popupSource').src = game.video;
-                document.getElementById('popupPlayer').load();
-                document.getElementById('videoPopup').style.display = 'flex';
-                document.getElementById('popupPlayer').play();
-              }
-            });
-          }
+          gameType = 'unfix';
         } else {
-          card.innerHTML =
-            `<div class="media-container" data-video="${game.video || ''}">
-              <img src="${game.thumbnail}" alt="${game.title}">
-              ${game.video ?
-                `<video autoplay muted loop playsinline preload>
-                  <source src="${game.video}" type="video/webm">
-                </video>` : ''}
-            </div>
-            <div class="p-4">
-              <div class="mb-1">${renderGameTag("offline")}</div>
-              <a href="${game.officialLink}" target="_blank" class="text-xl"
-                style="color:var(--text-main) !important;">${game.title}</a>
-              ${infoLine("เวอร์ชั่น:", game.version)}
-              ${infoLine("ไฟล์โดย:", game.FileBy, "gray-400")}
-              <p class="text-sm mt-2">
-                <button class="howto-btn" type="button">วิธีแก้ไข</button>
-              </p>
-              <div class="flex space-x-4 mt-6">
-                <button class="download-btn main-btn flex-1 text-center" type="button" ${game.downloadLink ? '' : 'disabled'}>ดาวน์โหลด</button>
-              </div>
-            </div>
-          `;
-          gameGrid.appendChild(card);
-          const mediaContainer = card.querySelector('.media-container');
-          const video = mediaContainer.querySelector('video');
-          if (video) {
-            mediaContainer.addEventListener('click', () => {
-              if (game.video) {
-                document.getElementById('popupSource').src = game.video;
-                document.getElementById('popupPlayer').load();
-                document.getElementById('videoPopup').style.display = 'flex';
-                document.getElementById('popupPlayer').play();
-              }
-            });
-          }
-          const downloadBtn = card.querySelector('.download-btn');
-          if (downloadBtn && game.downloadLink) {
-            downloadBtn.addEventListener('click', function() {
-              window.open(game.downloadLink, '_blank');
-            });
-          }
-          const howtoBtn = card.querySelector('.howto-btn');
-          if (howtoBtn) {
-            howtoBtn.addEventListener('click', () => {
-              showHowtoPopup(game.instructions || "ไม่มีวิธีแก้ไขสำหรับเกมนี้");
-            });
-          }
+          gameType = 'offline';
+        }
+        // This is a simplified rendering path for search results,
+        // it reuses the logic from renderGameCards but targets the main gameGrid.
+        const tempDiv = document.createElement('div');
+        renderGameCards(tempDiv, [game], gameType);
+        if (tempDiv.firstElementChild) {
+          gameGrid.appendChild(tempDiv.firstElementChild);
         }
       });
     }
 
+
+    /* Event listener for the search bar input */
     document.getElementById('searchBar').addEventListener('input', () => {
       const searchTerm = document.getElementById('searchBar').value.trim().toLowerCase();
       if (searchTerm === '') {
+        // If search bar is empty, render the currently active tab
         if (document.getElementById('allGamesTab').classList.contains('active-tab')) renderAllGames();
         else if (document.getElementById('unfixableTab').classList.contains('active-tab')) renderUnfixableGames();
         else renderOfflineGames();
+        document.getElementById('noResultsMessage').classList.add('hidden'); // Hide no results message
       } else {
+        // Filter all game lists by search term
         const allResults = [
           ...games.filter(game => (game.title || '').toLowerCase().includes(searchTerm)),
           ...unfixableGames.filter(game => (game.title || '').toLowerCase().includes(searchTerm)),
@@ -802,35 +1268,62 @@
       }
     });
 
+    /* Event listeners for tab buttons */
     document.getElementById('allGamesTab').addEventListener('click', () => {
-      document.getElementById('allGamesTab').classList.add('active-tab');
-      document.getElementById('unfixableTab').classList.remove('active-tab');
-      document.getElementById('offlineTab').classList.remove('active-tab');
-      document.getElementById('searchBar').value = '';
-      renderAllGames();
-    });
-    document.getElementById('unfixableTab').addEventListener('click', () => {
-      document.getElementById('unfixableTab').classList.add('active-tab');
-      document.getElementById('allGamesTab').classList.remove('active-tab');
-      document.getElementById('offlineTab').classList.remove('active-tab');
-      document.getElementById('searchBar').value = '';
-      renderUnfixableGames();
-    });
-    document.getElementById('offlineTab').addEventListener('click', () => {
-      document.getElementById('offlineTab').classList.add('active-tab');
-      document.getElementById('allGamesTab').classList.remove('active-tab');
-      document.getElementById('unfixableTab').classList.remove('active-tab');
-      document.getElementById('searchBar').value = '';
-      renderOfflineGames();
+      document.getElementById('searchBar').value = ''; // Clear search bar
+      renderAllGames(); // Render all games
     });
 
+    document.getElementById('unfixableTab').addEventListener('click', () => {
+      document.getElementById('searchBar').value = ''; // Clear search bar
+      renderUnfixableGames(); // Render unfixable games
+    });
+
+    document.getElementById('offlineTab').addEventListener('click', () => {
+      document.getElementById('searchBar').value = ''; // Clear search bar
+      renderOfflineGames(); // Render offline games
+    });
+
+    /* Event listeners for popup backgrounds to close on click outside content */
     document.getElementById('howtoPopup').addEventListener('click', function(e) {
-      if (e.target === this) closeHowto();
+      if (e.target === this) closePopup('howtoPopup');
     });
     document.getElementById('downloadPopup').addEventListener('click', function(e) {
-      if (e.target === this) closeDownloadPopup();
+      if (e.target === this) closePopup('downloadPopup');
+    });
+    document.getElementById('videoPopup').addEventListener('click', function(e) {
+      if (e.target === this) closePopup('videoPopup', 'popupPlayer');
+    });
+    document.getElementById('geminiChatPopup').addEventListener('click', function(e) {
+      if (e.target === this) closePopup('geminiChatPopup');
     });
 
+    /* Gemini chat input and send button listeners */
+    document.getElementById('chatInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter' && !e.shiftKey) { // Send on Enter, allow Shift+Enter for new line
+        e.preventDefault();
+        document.getElementById('chatSendBtn').click();
+      }
+    });
+
+    document.getElementById('chatSendBtn').addEventListener('click', function() {
+      const chatInput = document.getElementById('chatInput');
+      const userMessage = chatInput.value.trim();
+      const geminiChatPopup = document.getElementById('geminiChatPopup');
+      const gameContext = {
+        title: geminiChatPopup.dataset.gameTitle,
+        version: geminiChatPopup.dataset.gameVersion,
+        platform: geminiChatPopup.dataset.gamePlatform,
+        players: geminiChatPopup.dataset.gamePlayers,
+        crackedBy: geminiChatPopup.dataset.gameCrackedBy,
+        issue: geminiChatPopup.dataset.gameIssue,
+        instructions: geminiChatPopup.dataset.gameInstructions
+      };
+      sendMessageToGemini(userMessage, gameContext);
+    });
+
+
+    /* Load data when the DOM is fully loaded */
     document.addEventListener('DOMContentLoaded', loadData);
   </script>
 </body>
