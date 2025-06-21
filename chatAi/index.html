@@ -29,6 +29,8 @@
             border-radius: 20px; 
             max-width: 70%; 
             word-wrap: break-word; 
+            display: flex; /* Use flexbox for message content */
+            flex-direction: column; /* Stack text and image vertically */
         }
         .user-message { 
             background-color: #4CAF50; /* Greenish for user messages */
@@ -42,9 +44,23 @@
             color: white; /* White text on blue background */
             align-self: flex-start; 
             margin-right: auto; 
+            text-align: left; /* Align AI text to left */
         }
+        .message img { /* Style for images within messages */
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            margin-top: 5px; /* Space between image and text */
+            display: block; /* Ensure image takes full width of its container */
+        }
+        .message p { /* Style for text within messages */
+            margin: 0;
+            padding: 0;
+        }
+
         #input-area { 
             display: flex; 
+            align-items: center; /* Align items vertically in the middle */
             padding: 15px; 
             border-top: 1px solid #3c4048; /* Darker border */
             background-color: #282c34; /* Dark background */
@@ -78,6 +94,33 @@
         #send-button:hover { 
             background-color: #52a0e2; /* Darker blue on hover */
         }
+        /* Style for the image upload button (SVG icon) */
+        #upload-button {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            transition: background-color 0.3s;
+            color: #abb2bf; /* Icon color */
+        }
+        #upload-button:hover {
+            background-color: #3e4451;
+        }
+        /* Style for the image preview */
+        #image-preview {
+            max-width: 80px;
+            max-height: 80px;
+            border-radius: 8px;
+            margin-right: 10px;
+            object-fit: cover; /* Cover the area, may crop */
+            display: none; /* Hidden by default */
+            border: 1px solid #555;
+        }
         .loading-dots { 
             display: inline-block; 
             animation: blink 1.4s infinite steps(1); 
@@ -93,6 +136,15 @@
 <body>
     <div id="chat-window"></div>
     <div id="input-area">
+        <!-- Image upload button (SVG icon) -->
+        <label for="image-input" id="upload-button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-image"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+        </label>
+        <!-- Hidden file input -->
+        <input type="file" id="image-input" accept="image/*" style="display:none;">
+        <!-- Image preview -->
+        <img id="image-preview" src="#" alt="Image Preview">
+
         <input type="text" id="user-input" placeholder="พิมพ์ข้อความของคุณ...">
         <button id="send-button">ส่ง</button>
     </div>
@@ -111,11 +163,15 @@
         const chatWindow = document.getElementById('chat-window');
         const userInput = document.getElementById('user-input');
         const sendButton = document.getElementById('send-button');
+        const imageInput = document.getElementById('image-input');
+        const imagePreview = document.getElementById('image-preview');
+
+        // Variable to store the selected image file
+        let selectedImageFile = null;
 
         // Initialize Generative AI client with the API Key
         const genAI = new GoogleGenerativeAI(API_KEY);
-        // Get the Gemini-Pro model (suitable for text-based conversations)
-        // Changed 'gemini-pro' to 'gemini-1.0-pro' as per the error message indicating model not found for v1beta.
+        // Get the Gemini-Flash model (supports multimodal input like text and images)
         const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" }); 
 
         // Start a chat session to maintain conversation history
@@ -125,27 +181,99 @@
             },
         });
 
-        // Function to add a message to the chat window
-        function addMessage(text, sender) {
+        // Function to add a message to the chat window, now capable of handling images
+        function addMessage(content, sender) { // content can be a string (text) or an object ({text, imageUrl})
             const messageDiv = document.createElement('div');
             messageDiv.classList.add('message');
             messageDiv.classList.add(sender === 'user' ? 'user-message' : 'ai-message');
-            // Use innerHTML to allow for dynamic content like loading dots
-            messageDiv.innerHTML = text; 
+
+            if (typeof content === 'string') { // If it's a simple text message
+                const textElement = document.createElement('p');
+                textElement.textContent = content;
+                messageDiv.appendChild(textElement);
+            } else if (typeof content === 'object' && content !== null) { // If it's an object with text and/or image
+                if (content.imageUrl) {
+                    const imgElement = document.createElement('img');
+                    imgElement.src = content.imageUrl;
+                    // Styling for image within message is handled by CSS .message img
+                    messageDiv.appendChild(imgElement);
+                }
+                if (content.text) {
+                    const textElement = document.createElement('p');
+                    textElement.textContent = content.text;
+                    messageDiv.appendChild(textElement);
+                }
+            }
             chatWindow.appendChild(messageDiv);
-            // Scroll to the bottom to show the latest message
             chatWindow.scrollTop = chatWindow.scrollHeight; 
         }
 
-        // Asynchronous function to send a message to the AI
+        // Event listener for when a file is selected via the hidden input
+        imageInput.addEventListener('change', (event) => {
+            selectedImageFile = event.target.files[0];
+            if (selectedImageFile) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block'; // Show preview
+                };
+                reader.readAsDataURL(selectedImageFile); // Read file as Data URL (Base64)
+            } else {
+                imagePreview.style.display = 'none'; // Hide preview if no file selected
+                imagePreview.src = '#'; // Clear preview source
+            }
+        });
+
+        // Asynchronous function to send a message (and potentially an image) to the AI
         async function sendMessage() {
             const userMessage = userInput.value.trim();
-            // Do nothing if the input is empty
-            if (!userMessage) return;
+            let messageParts = []; // Array to hold text and image parts for the API request
+            let displayContent = {}; // Object to hold content for displaying in the chat window (text and/or image)
 
-            addMessage(userMessage, 'user'); // Display user's message
+            // If an image is selected, process it
+            if (selectedImageFile) {
+                const reader = new FileReader();
+                // Read the file as a Data URL (Base64) asynchronously
+                const imageDataUrl = await new Promise((resolve) => {
+                    reader.onloadend = () => resolve(reader.result);
+                    reader.readAsDataURL(selectedImageFile);
+                });
+
+                // Extract base64 data and mime type for the API request
+                const base64Data = imageDataUrl.split(',')[1];
+                const mimeType = selectedImageFile.type;
+
+                // Add image part to the messageParts array
+                messageParts.push({
+                    inlineData: {
+                        data: base64Data,
+                        mimeType: mimeType
+                    }
+                });
+                displayContent.imageUrl = imageDataUrl; // Store for displaying in UI
+            }
+
+            // If there's text, add it to the messageParts array
+            if (userMessage) {
+                messageParts.push({ text: userMessage });
+                displayContent.text = userMessage; // Store for displaying in UI
+            }
+
+            // If no text and no image, do nothing
+            if (messageParts.length === 0) {
+                console.log("No message or image to send.");
+                return;
+            }
+
+            // Display user's message (which might include an image)
+            addMessage(displayContent, 'user'); 
             userInput.value = ''; // Clear the input field
-            sendButton.disabled = true; // Disable send button to prevent multiple submissions
+            imageInput.value = ''; // Clear selected file from input
+            selectedImageFile = null; // Reset selected file variable
+            imagePreview.style.display = 'none'; // Hide image preview
+            imagePreview.src = '#'; // Clear image preview source
+
+            sendButton.disabled = true; // Disable send button
             userInput.disabled = true; // Disable input field
 
             // Display loading dots while waiting for AI response
@@ -156,11 +284,11 @@
             chatWindow.scrollTop = chatWindow.scrollHeight;
 
             try {
-                // Send the message to the AI and receive a streaming response
-                const result = await chat.sendMessageStream(userMessage);
+                // Send the combined parts (text and/or image) to the AI
+                const result = await chat.sendMessageStream(messageParts);
 
                 let aiResponseText = '';
-                // Iterate over the streamed chunks of the response
+                // Iterate over the streamed chunks of the AI's response
                 for await (const chunk of result.stream) {
                     const chunkText = chunk.text();
                     aiResponseText += chunkText;
@@ -168,20 +296,20 @@
                     loadingMessageDiv.innerHTML = aiResponseText + '<span class="loading-dots">. . .</span>';
                     chatWindow.scrollTop = chatWindow.scrollHeight;
                 }
-                // Remove loading dots once the full response is received
+                // Once streaming is complete, remove loading dots
                 loadingMessageDiv.innerHTML = aiResponseText;
 
             } catch (error) {
                 // Log and display error message if API call fails
                 console.error('Error calling Gemini API:', error);
-                loadingMessageDiv.innerHTML = 'เกิดข้อผิดพลาดในการเชื่อมต่อกับ AI ลองใหม่อีกครั้ง'; // Error message in Thai
-                loadingMessageDiv.style.backgroundColor = '#ffdddd'; /* Light red for error background */
-                loadingMessageDiv.style.color = '#333'; /* Darker text for readability on light background */
+                loadingMessageDiv.innerHTML = 'เกิดข้อผิดพลาดในการเชื่อมต่อกับ AI ลองใหม่อีกครั้ง'; 
+                loadingMessageDiv.style.backgroundColor = '#ffdddd'; 
+                loadingMessageDiv.style.color = '#333'; 
             } finally {
-                // Re-enable input and button regardless of success or failure
+                // Re-enable input and button
                 sendButton.disabled = false; 
                 userInput.disabled = false; 
-                userInput.focus(); // Focus back on input for next message
+                userInput.focus(); 
             }
         }
 
