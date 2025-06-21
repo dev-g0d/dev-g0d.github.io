@@ -115,7 +115,8 @@
         // Initialize Generative AI client with the API Key
         const genAI = new GoogleGenerativeAI(API_KEY);
         // Get the Gemini-Pro model (suitable for text-based conversations)
-        const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+        // Changed 'gemini-pro' to 'gemini-1.0-pro' as per the error message indicating model not found for v1beta.
+        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" }); 
 
         // Start a chat session to maintain conversation history
         const chat = model.startChat({
