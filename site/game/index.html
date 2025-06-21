@@ -716,9 +716,8 @@
         toggleWrapper.classList.remove('hidden');
       } else {
         toggleWrapper.classList.add('hidden');
-        readyGamesToggle.checked = false; // Reset toggle state when hiding
+        // Removed: readyGamesToggle.checked = false; to preserve state
       }
-
 
       // Apply toggle filter if it's on and relevant for the current tab
       if (readyGamesToggle.checked && (gameType === "online" || gameType === "offline")) {
@@ -827,7 +826,6 @@
           }
         }
 
-        // Event listener for fix button
         const fixBtn = card.querySelector('.fix-btn');
         if (fixBtn) {
           if (!game.fixEnabled) {
@@ -839,7 +837,6 @@
           }
         }
 
-        // Event listener for how-to button
         const howtoBtn = card.querySelector('.howto-btn');
         if (howtoBtn) {
           howtoBtn.addEventListener('click', () => {
@@ -1048,9 +1045,10 @@
 
       const howtoBtn = card.querySelector('.howto-btn');
       if (howtoBtn) {
-        howtoBtn.addEventListener('click', () => {
-          showHowtoPopup(game.instructions || "ไม่มีวิธีแก้ไขสำหรับเกมนี้");
-        });
+          // Check if instructions property exists, otherwise provide a default message
+          howtoBtn.addEventListener('click', () => {
+              showHowtoPopup(game.instructions || "ไม่มีวิธีแก้ไขสำหรับเกมนี้");
+          });
       }
     }
 
