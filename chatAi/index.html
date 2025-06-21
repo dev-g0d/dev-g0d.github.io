@@ -232,7 +232,7 @@
         // Initialize Generative AI client with the API Key
         const genAI = new GoogleGenerativeAI(API_KEY);
         // Get the Gemini-Flash model (supports multimodal input like text and images/videos)
-        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+        const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
         // Start a chat session WITHOUT any system instruction to avoid API rejection issues.
         // The AI will operate based on its default programming and safety policies.
