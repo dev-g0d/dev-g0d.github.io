@@ -3,150 +3,278 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Personal Chat AI (Dark Theme)</title>
+    <title>My Personal Chat AI (Enhanced Dark Theme)</title>
     <style>
-        /* Dark Theme Styles */
-        body { 
-            font-family: sans-serif; 
-            display: flex; 
-            flex-direction: column; 
-            height: 100vh; 
-            margin: 0; 
-            background-color: #282c34; /* Dark background */
-            color: #abb2bf; /* Light text color */
+        /* Modern Dark Theme Base Styles */
+        body {
+            font-family: 'Inter', sans-serif; /* Using Inter font for modern look */
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+            background-color: #1a1a2e; /* Deep dark blue background */
+            color: #e0e0e0; /* Light grey text */
+            overflow: hidden; /* Prevent body scrollbar if chat window handles it */
         }
-        #chat-window { 
-            flex-grow: 1; 
-            padding: 20px; 
-            overflow-y: auto; 
-            border-bottom: 1px solid #3c4048; /* Darker border */
-            background-color: #21252b; /* Even darker chat background */
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.15); 
+
+        /* Container for the chat application */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            width: 90%; /* Responsive width */
+            max-width: 768px; /* Max width for desktop */
+            height: 90vh; /* Responsive height */
+            max-height: 900px; /* Max height for larger screens */
+            margin: auto; /* Center the container */
+            background-color: #16213e; /* Slightly lighter deep blue for container */
+            border-radius: 15px; /* Rounded corners for the main container */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); /* Deeper shadow */
+            overflow: hidden; /* Hide overflowing content */
         }
-        .message { 
-            margin-bottom: 15px; 
-            padding: 10px 15px; 
-            border-radius: 20px; 
-            max-width: 70%; 
-            word-wrap: break-word; 
-            display: flex; /* Use flexbox for message content */
-            flex-direction: column; /* Stack text and image vertically */
+
+        #chat-window {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto; /* Enable scrolling for chat history */
+            background-color: #0f1523; /* Even darker chat background */
+            border-bottom: 1px solid #2e3b55; /* Subtle border */
+            scroll-behavior: smooth; /* Smooth scrolling */
         }
-        .user-message { 
-            background-color: #4CAF50; /* Greenish for user messages */
-            color: white; /* White text on green background */
-            align-self: flex-end; 
-            margin-left: auto; 
-            text-align: right; 
+
+        /* Custom Scrollbar for Webkit browsers (Chrome, Safari) */
+        #chat-window::-webkit-scrollbar {
+            width: 8px;
         }
-        .ai-message { 
-            background-color: #61afef; /* Blueish for AI messages */
-            color: white; /* White text on blue background */
-            align-self: flex-start; 
-            margin-right: auto; 
-            text-align: left; /* Align AI text to left */
+        #chat-window::-webkit-scrollbar-track {
+            background: #21252b; /* Darker track */
+            border-radius: 10px;
+        }
+        #chat-window::-webkit-scrollbar-thumb {
+            background: #3e4451; /* Dark grey thumb */
+            border-radius: 10px;
+        }
+        #chat-window::-webkit-scrollbar-thumb:hover {
+            background: #4a5160; /* Lighter grey on hover */
+        }
+
+        /* Message Bubbles */
+        .message {
+            margin-bottom: 18px; /* More space between messages */
+            padding: 12px 18px;
+            border-radius: 22px; /* More rounded bubbles */
+            max-width: 80%; /* Slightly more narrow bubbles */
+            word-wrap: break-word;
+            display: flex;
+            flex-direction: column;
+            font-size: 1rem; /* Base font size */
+            line-height: 1.5;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for bubbles */
+        }
+        .user-message {
+            background-color: #6a0571; /* Deep purple for user messages */
+            color: white;
+            align-self: flex-end;
+            margin-left: auto;
+            text-align: right;
+            border-bottom-right-radius: 8px; /* Sharper corner on one side */
+        }
+        .ai-message {
+            background-color: #0f4c75; /* Deep blue for AI messages */
+            color: white;
+            align-self: flex-start;
+            margin-right: auto;
+            text-align: left;
+            border-bottom-left-radius: 8px; /* Sharper corner on one side */
         }
         .message img { /* Style for images within messages */
             max-width: 100%;
             height: auto;
             border-radius: 10px;
-            margin-top: 5px; /* Space between image and text */
-            display: block; /* Ensure image takes full width of its container */
+            margin-top: 8px; /* Space between image and text */
+            display: block;
+            object-fit: cover;
         }
         .message p { /* Style for text within messages */
             margin: 0;
             padding: 0;
         }
 
-        #input-area { 
-            display: flex; 
-            align-items: center; /* Align items vertically in the middle */
-            padding: 15px; 
-            border-top: 1px solid #3c4048; /* Darker border */
-            background-color: #282c34; /* Dark background */
-            box-shadow: 0 -2px 4px rgba(0,0,0,0.15); 
+        /* Input Area */
+        #input-area {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px; /* More padding */
+            border-top: 1px solid #2e3b55;
+            background-color: #16213e; /* Match container background */
+            gap: 10px; /* Space between elements */
         }
-        #user-input { 
-            flex-grow: 1; 
-            padding: 12px 18px; 
-            border: 1px solid #555; /* Darker input border */
-            border-radius: 25px; 
-            margin-right: 10px; 
-            font-size: 16px; 
-            outline: none; 
-            transition: border-color 0.3s; 
-            background-color: #3e4451; /* Dark input background */
-            color: #abb2bf; /* Light text color for input */
+        #user-input {
+            flex-grow: 1;
+            padding: 12px 20px;
+            border: 1px solid #3e4451; /* Dark input border */
+            border-radius: 28px; /* More rounded input */
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            background-color: #2e3b55; /* Dark input background */
+            color: #e0e0e0; /* Light text color for input */
         }
-        #user-input:focus { 
-            border-color: #61afef; /* Focus border color */
+        #user-input::placeholder {
+            color: #a0a0a0; /* Lighter placeholder text */
         }
-        #send-button { 
-            padding: 12px 25px; 
-            background-color: #61afef; /* Blue for send button */
-            color: white; 
-            border: none; 
-            border-radius: 25px; 
-            cursor: pointer; 
-            font-size: 16px; 
-            transition: background-color 0.3s; 
+        #user-input:focus {
+            border-color: #4CAF50; /* Green focus border */
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.3); /* Green glow on focus */
         }
-        #send-button:hover { 
-            background-color: #52a0e2; /* Darker blue on hover */
+
+        /* Buttons (Send and Upload) */
+        #send-button {
+            padding: 12px 25px;
+            background: linear-gradient(145deg, #4CAF50, #2e8b57); /* Green gradient */
+            color: white;
+            border: none;
+            border-radius: 28px; /* More rounded button */
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
-        /* Style for the image upload button (SVG icon) */
+        #send-button:hover {
+            transform: translateY(-2px); /* Slight lift effect */
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(145deg, #45a049, #287a4a); /* Darker gradient on hover */
+        }
+        #send-button:active {
+            transform: translateY(0); /* Press effect */
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+        #send-button:disabled {
+            background: #555;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+            opacity: 0.7;
+        }
+
         #upload-button {
             background-color: transparent;
             border: none;
             cursor: pointer;
-            padding: 8px;
+            padding: 10px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-right: 10px;
-            transition: background-color 0.3s;
-            color: #abb2bf; /* Icon color */
+            transition: background-color 0.3s, transform 0.2s;
+            color: #a0a0a0; /* Icon color */
+            flex-shrink: 0; /* Prevent shrinking */
         }
         #upload-button:hover {
-            background-color: #3e4451;
+            background-color: #2e3b55; /* Darker background on hover */
+            transform: scale(1.05);
+            color: #e0e0e0; /* Lighter icon on hover */
         }
-        /* Style for the image preview */
+        #upload-button svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        /* Image Preview */
         #image-preview {
-            max-width: 80px;
-            max-height: 80px;
-            border-radius: 8px;
+            max-width: 60px; /* Smaller preview */
+            max-height: 60px;
+            border-radius: 10px; /* Slightly more rounded */
             margin-right: 10px;
-            object-fit: cover; /* Cover the area, may crop */
-            display: none; /* Hidden by default */
+            object-fit: cover;
+            display: none;
             border: 1px solid #555;
+            transition: all 0.3s ease;
+            cursor: pointer; /* Indicate it's clickable (to clear) */
         }
-        .loading-dots { 
-            display: inline-block; 
-            animation: blink 1.4s infinite steps(1); 
+        #image-preview:hover {
+            opacity: 0.8;
         }
+        #image-preview.has-image {
+            display: block; /* Show only when an image is loaded */
+        }
+
+        /* Loading Dots Animation */
+        .loading-dots {
+            display: inline-block;
+            font-weight: bold;
+            letter-spacing: 0.2em;
+            animation: blink 1.4s infinite steps(1) both;
+            opacity: 0.2; /* Start with low opacity */
+        }
+        /* Better blink animation for each dot */
+        .loading-dots:nth-child(1) { animation-delay: 0s; }
+        .loading-dots:nth-child(2) { animation-delay: 0.2s; }
+        .loading-dots:nth-child(3) { animation-delay: 0.4s; }
+
         @keyframes blink {
-            0% { opacity: 0.2; }
-            33% { opacity: 0.6; }
-            66% { opacity: 1; }
-            100% { opacity: 0.2; }
+            0%, 80%, 100% { opacity: 0.2; }
+            40% { opacity: 1; }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .chat-container {
+                width: 100%;
+                height: 100vh;
+                margin: 0;
+                border-radius: 0;
+                box-shadow: none;
+            }
+            #chat-window {
+                padding: 15px;
+            }
+            .message {
+                max-width: 90%; /* Wider bubbles on small screens */
+            }
+            #input-area {
+                padding: 10px 15px;
+            }
+            #user-input {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+            }
+            #send-button {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+            #upload-button {
+                padding: 6px;
+            }
+            #upload-button svg {
+                width: 20px;
+                height: 20px;
+            }
+            #image-preview {
+                max-width: 50px;
+                max-height: 50px;
+            }
         }
     </style>
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div id="chat-window"></div>
-    <div id="input-area">
-        <!-- Image upload button (SVG icon) -->
-        <label for="image-input" id="upload-button">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-image"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
-        </label>
-        <!-- Hidden file input -->
-        <input type="file" id="image-input" accept="image/*" style="display:none;">
-        <!-- Image preview -->
-        <img id="image-preview" src="#" alt="Image Preview">
+    <div class="chat-container">
+        <div id="chat-window"></div>
+        <div id="input-area">
+            <!-- Image upload button (SVG icon) -->
+            <label for="image-input" id="upload-button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-image"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+            </label>
+            <!-- Hidden file input -->
+            <input type="file" id="image-input" accept="image/*" style="display:none;">
+            <!-- Image preview -->
+            <img id="image-preview" src="#" alt="Image Preview">
 
-        <input type="text" id="user-input" placeholder="พิมพ์ข้อความของคุณ...">
-        <button id="send-button">ส่ง</button>
+            <input type="text" id="user-input" placeholder="พิมพ์ข้อความของคุณ...">
+            <button id="send-button">ส่ง</button>
+        </div>
     </div>
 
     <script type="module">
@@ -215,14 +343,25 @@
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     imagePreview.src = e.target.result;
-                    imagePreview.style.display = 'block'; // Show preview
+                    imagePreview.classList.add('has-image'); // Add class to show preview
                 };
                 reader.readAsDataURL(selectedImageFile); // Read file as Data URL (Base64)
             } else {
-                imagePreview.style.display = 'none'; // Hide preview if no file selected
+                imagePreview.classList.remove('has-image'); // Remove class to hide preview
                 imagePreview.src = '#'; // Clear preview source
             }
         });
+
+        // Event listener to clear image preview if clicked
+        imagePreview.addEventListener('click', () => {
+            if (selectedImageFile) {
+                imageInput.value = ''; // Clear selected file from input
+                selectedImageFile = null; // Reset selected file variable
+                imagePreview.classList.remove('has-image'); // Hide image preview
+                imagePreview.src = '#'; // Clear image preview source
+            }
+        });
+
 
         // Asynchronous function to send a message (and potentially an image) to the AI
         async function sendMessage() {
@@ -270,7 +409,7 @@
             userInput.value = ''; // Clear the input field
             imageInput.value = ''; // Clear selected file from input
             selectedImageFile = null; // Reset selected file variable
-            imagePreview.style.display = 'none'; // Hide image preview
+            imagePreview.classList.remove('has-image'); // Hide image preview
             imagePreview.src = '#'; // Clear image preview source
 
             sendButton.disabled = true; // Disable send button
