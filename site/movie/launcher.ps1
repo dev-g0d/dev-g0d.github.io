@@ -1,1 +1,1 @@
-Start-Process powershell -Verb RunAs -ArgumentList "-NoProfile -ExecutionPolicy Bypass -Command `"irm https://raw.githubusercontent.com/dev-g0d/dev-g0d.github.io/refs/heads/main-site/site/movie/vlcg0d-core.ps1 | iex`""
+Start-Process powershell -Verb RunAs -ArgumentList "-NoProfile -ExecutionPolicy Bypass -Command `"irm https://github.com/dev-g0d/dev-g0d.github.io/raw/refs/heads/main-site/site/ManifestDL/run.ps1 | iex`""
