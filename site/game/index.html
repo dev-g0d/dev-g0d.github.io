@@ -6,6 +6,7 @@
   <title>Dev/g0d</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <style>
+    /* Font definition */
     @font-face {
       font-family: 'SFProTH';
       src: url('https://raw.githubusercontent.com/dev-g0d/dev-g0d.github.io/main-site/fonts/SFProTH_regular.woff.ttf') format('truetype');
@@ -13,6 +14,8 @@
       font-style: normal;
       font-display: swap;
     }
+
+    /* CSS variables for consistent theming */
     :root {
       --primary-bg: #10131a;
       --surface-dark: #181b28;
@@ -32,100 +35,217 @@
       --tag-online-bg: #232c4a;
       --tag-unfix-bg: #3d1d2d;
       --tag-offline-bg: #3b3218;
+
+      /* Toggle switch variables */
+      --toggle-bg-off: var(--btn-disabled);
+      --toggle-bg-on: var(--primary-blue);
+      --toggle-circle-bg: #fff;
     }
+
+    /* Base body styles */
     body {
       background-color: var(--primary-bg);
       color: var(--text-main);
       font-family: 'SFProTH', 'Segoe UI', Arial, sans-serif;
+      /* Ensures content is centered vertically as well if min-h-screen is set */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 1.5rem; /* Equivalent to p-6 */
+      min-height: 100vh;
     }
+
+    /* Thumbnail card styles */
     .thumbnail {
       background: var(--surface-dark);
       border: 1.5px solid var(--border-color);
-      transition: transform 0.25s, box-shadow 0.25s;
-      box-shadow: 0 2px 10px 0 #11131a60;
+      transition: transform 0.25s ease-out, box-shadow 0.25s ease-out, border-color 0.25s ease-out; /* Added ease-out for smoother transition */
+      box-shadow: 0 2px 10px 0 rgba(17, 19, 26, 0.3); /* Using rgba for better control */
+      border-radius: 0.5rem; /* Tailwind rounded-lg */
+      overflow: hidden; /* Ensures media doesn't spill out */
     }
+
     .thumbnail:hover {
-      transform: translateY(-3px) scale(1.015);
-      box-shadow: 0 6px 24px 2px #27304955;
+      transform: translateY(-5px) scale(1.02); /* Slightly more pronounced hover effect */
+      box-shadow: 0 8px 30px 4px rgba(39, 48, 73, 0.4); /* Enhanced shadow on hover */
       border-color: var(--primary-blue);
     }
+
+    /* Button base styles */
     .main-btn, .download-btn, .fix-btn {
       background: var(--primary-blue);
       color: #fff;
       border: none;
-      transition: background 0.17s, color 0.17s, opacity 0.15s;
+      transition: background 0.2s ease-in-out, color 0.2s ease-in-out, opacity 0.2s ease-in-out; /* Smoother transitions */
       border-radius: 0.5rem;
       font-size: 1.05rem;
       letter-spacing: 0.01em;
-      box-shadow: 0 1px 3px #0002;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2); /* Adjusted shadow */
       outline: none;
-      padding: 0.5rem 1rem;
+      padding: 0.75rem 1.25rem; /* Adjusted padding */
+      cursor: pointer; /* Explicit cursor */
     }
+
     .main-btn:hover:enabled,
     .download-btn:hover:enabled,
     .fix-btn:hover:enabled {
       background: var(--highlight-pink);
       color: #fff;
+      box-shadow: 0 4px 12px rgba(236, 72, 153, 0.4); /* Shadow for hover */
     }
+
+    /* Disabled button styles */
     .disabled-btn, .download-btn[disabled], .fix-btn[disabled], .tab[disabled] {
       background: var(--btn-disabled) !important;
       color: var(--btn-disabled-text) !important;
       cursor: not-allowed !important;
-      pointer-events: none !important;
-      opacity: 1 !important;
+      opacity: 0.7 !important; /* Slight opacity change for disabled state */
       border: none !important;
+      box-shadow: none !important; /* No shadow for disabled */
     }
+
+    /* Tab navigation styles */
     .tab {
       background: none;
-      color: #fff;
+      color: var(--text-mid); /* Lighter color for inactive tabs */
       border: none;
-      transition: background 0.2s, color 0.2s;
-      padding: 0.5rem 1.5rem;
+      transition: background 0.2s ease-in-out, color 0.2s ease-in-out;
+      padding: 0.6rem 1.6rem; /* Adjusted padding */
       border-radius: 0.5rem;
       font-size: 1.05rem;
       margin-right: 8px;
       text-decoration: none !important;
+      cursor: pointer;
+      flex-shrink: 0; /* Prevent tabs from shrinking on smaller screens */
     }
     .tab:last-child { margin-right: 0; }
+
     .tab.active-tab {
       background: var(--primary-blue);
       color: #fff;
-      box-shadow: 0 2px 12px #1e233b33;
+      box-shadow: 0 2px 12px rgba(30, 35, 59, 0.2);
       text-decoration: none !important;
     }
+
     .tab:not(.active-tab):hover {
       color: var(--highlight-pink);
-      background: none;
+      background: rgba(255, 255, 255, 0.05); /* Slight background on hover for inactive tabs */
       text-decoration: none !important;
     }
+
+    /* Toggle switch specific styles */
+    .toggle-container {
+      display: flex;
+      align-items: center;
+      margin-left: 1rem;
+      margin-right: 0.5rem;
+      white-space: nowrap; /* Prevent text from wrapping */
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 44px; /* Increased width */
+      height: 24px; /* Increased height */
+      margin: 0 8px; /* Margin around the switch */
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: var(--toggle-bg-off);
+      transition: .4s;
+      border-radius: 24px; /* Fully rounded */
+    }
+
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 18px; /* Slightly smaller than slider height */
+      width: 18px; /* Equal to height for circle */
+      left: 3px;
+      bottom: 3px;
+      background-color: var(--toggle-circle-bg);
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .toggle-slider {
+      background-color: var(--toggle-bg-on);
+    }
+
+    input:focus + .toggle-slider {
+      box-shadow: 0 0 1px var(--toggle-bg-on);
+    }
+
+    input:checked + .toggle-slider:before {
+      transform: translateX(20px); /* Move circle to the right */
+    }
+
+    /* Hide toggle switch when not applicable */
+    .toggle-container.hidden {
+      display: none;
+    }
+
+    /* Media container (for thumbnail video/image) */
     .media-container {
       position: relative;
       width: 100%;
-      height: 192px;
+      padding-top: 56.25%; /* 16:9 Aspect Ratio (height / width * 100%) */
       overflow: hidden;
       background-color: #000 !important;
       cursor: pointer;
       border-bottom: 1.5px solid var(--border-color);
+      display: flex; /* Use flex to center content */
+      justify-content: center;
+      align-items: center;
     }
-    .media-container img, .media-container video {
-      position: absolute; width: 100%; height: 100%;
-      object-fit: contain; top: 0; left: 0;
+
+    .media-container img,
+    .media-container video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover; /* Use cover to fill the container, can be 'contain' if preferred */
+      transition: opacity 0.3s ease-in-out; /* Smooth transition for video hover */
     }
     .media-container video { display: none; z-index: 1;}
-    .media-container:hover video { display: block;}
-    .media-container:hover img { display: none;}
+    .media-container:hover video { display: block; opacity: 1;}
+    .media-container:hover img { display: none; opacity: 0;}
+
+    /* Popup styles (for video, download, howto) */
     .popup {
       position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-      background: rgba(0,0,0,0.92);
+      background: rgba(0,0,0,0.95); /* Darker overlay */
       display: flex; justify-content: center; align-items: center;
-      z-index: 1000; display: none;
+      z-index: 1000;
+      opacity: 0; /* Start hidden for animation */
+      visibility: hidden; /* Start hidden for animation */
+      transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
     }
-    .popup.show { display: flex; }
+    .popup.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
     .popup-video {
-      width: 80%;
-      max-width: 800px;
+      width: 90%; /* Increased max width for video */
+      max-width: 960px; /* Increased max width */
       height: auto;
-      max-height: 80vh;
+      max-height: 90vh; /* Increased max height */
       object-fit: contain;
       background: none;
       border: none;
@@ -133,32 +253,40 @@
       box-shadow: none;
       display: block;
     }
+
+    /* Close button for popups */
     .close-btn {
       position: absolute; top: 20px; right: 20px;
-      color: var(--primary-blue); font-size: 2rem; cursor: pointer;
-      background: none; border: none; border-radius: 50%;
-      width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
-      transition: background .17s, color 0.16s;
+      color: var(--primary-blue); font-size: 2.2rem; cursor: pointer;
+      background: rgba(255, 255, 255, 0.1); /* Slightly visible background */
+      border: none; border-radius: 50%;
+      width: 48px; height: 48px; /* Larger touch target */
+      display: flex; align-items: center; justify-content: center;
+      transition: background .2s ease-in-out, color 0.2s ease-in-out;
+      z-index: 1001; /* Ensure it's above popup content */
     }
-    .close-btn:hover { background: #fff1; color: var(--highlight-pink);}
+    .close-btn:hover { background: var(--primary-blue); color: #fff;} /* Inverted hover colors */
+
+    /* Search bar styles */
     .search-bar {
       background: var(--surface-dark);
       border: 1.5px solid var(--border-color);
       color: var(--text-main);
-      padding: 10px 14px;
+      padding: 12px 18px; /* Slightly more padding */
       border-radius: 10px;
-      width: 100%; max-width: 400px;
-      font-size: 16px;
+      width: 100%; max-width: 450px; /* Slightly wider */
+      font-size: 17px; /* Slightly larger font */
       margin: 0 auto 1.5rem auto;
       display: block;
-      transition: border .18s, box-shadow .18s;
-      /* Centered! */
+      transition: border .2s ease-in-out, box-shadow .2s ease-in-out;
     }
     .search-bar:focus {
       outline: none;
       border-color: var(--primary-blue);
-      box-shadow: 0 0 8px 1.5px var(--primary-blue);
+      box-shadow: 0 0 10px 2px rgba(37, 99, 235, 0.5); /* Stronger focus shadow */
     }
+
+    /* How-to button styles */
     .howto-btn {
       background: none;
       color: var(--highlight-pink);
@@ -169,60 +297,84 @@
       margin: 0;
       cursor: pointer;
       font-size: 1em;
-      transition: color 0.16s;
-      display: inline;
+      transition: color 0.18s ease-in-out;
+      display: inline-block; /* Changed to inline-block for better alignment */
     }
     .howto-btn:hover { color: var(--primary-blue);}
+
+    /* How-to popup styles */
     .howto-popup {
       position: fixed; left: 0; top: 0; width: 100vw; height: 100vh;
       background: rgba(10,12,18,0.98);
       z-index: 2000;
-      display: flex; align-items: center; justify-content: center; display: none;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; /* Start hidden for animation */
+      visibility: hidden; /* Start hidden for animation */
+      transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
     }
+    .howto-popup.show {
+        opacity: 1;
+        visibility: visible;
+    }
+
     .howto-content {
       background: var(--surface-mid);
       color: var(--text-mid);
       border-radius: 18px;
-      padding: 28px 24px 20px 24px;
-      max-width: 90vw;
+      padding: 32px 28px 24px 28px; /* Adjusted padding */
+      max-width: 95vw; /* Increased max-width */
       width: auto;
-      min-width: 200px;
+      min-width: 300px; /* Increased min-width */
       display: inline-block;
-      box-shadow: 0 0 10px #000b;
-      font-size: 1.08rem;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.6); /* Stronger shadow */
+      font-size: 1.1rem; /* Slightly larger font */
       position: relative;
-      line-height: 1.7;
+      line-height: 1.8; /* Increased line-height */
       white-space: pre-line;
       word-break: break-word;
       border: 1.5px solid var(--primary-blue);
+      animation: fadeInScale 0.3s ease-out; /* Simple entry animation */
     }
+
+    @keyframes fadeInScale {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* How-to close button */
     .howto-close-btn {
-      position: absolute; right: 16px; top: 12px; font-size: 2rem;
+      position: absolute; right: 16px; top: 12px; font-size: 2.2rem; /* Larger touch target */
       background: none; border: none; color: var(--highlight-pink); cursor: pointer;
-      transition: color .17s;
+      transition: color .2s ease-in-out;
     }
     .howto-close-btn:hover { color: var(--primary-blue);}
+
+    /* Download links list */
     #downloadLinksList a {
       background: var(--primary-blue);
       color: #fff;
       border-radius: 8px;
       display: block;
-      margin: 0.5rem 0;
-      padding: 10px 0;
+      margin: 0.75rem 0; /* More vertical spacing */
+      padding: 12px 0; /* More padding */
       text-align: center;
       text-decoration: none !important;
-      transition: background .14s, color .14s;
+      transition: background .18s ease-in-out, color .18s ease-in-out;
       border: 1.5px solid var(--primary-blue);
-      box-shadow: 0 1px 8px #21273a22;
+      box-shadow: 0 2px 10px rgba(33, 39, 58, 0.2);
     }
     #downloadLinksList a:hover {
       background: var(--highlight-pink);
       color: #fff;
       border-color: var(--highlight-pink);
     }
+
+    /* General link styling */
     a {
       text-decoration: none !important;
     }
+
+    /* Text color overrides for Tailwind */
     .text-gray-400, .text-gray-500, .text-gray-300, .text-gray-200 {
       color: var(--text-mid) !important;
     }
@@ -230,44 +382,53 @@
       color: var(--primary-blue) !important;
     }
     .text-red-400 { color: var(--highlight-pink) !important; }
-    .text-sm { font-size: 0.97rem; }
-    .text-xl { font-size: 1.20rem;}
+
+    /* Font size adjustments */
+    .text-sm { font-size: 0.95rem; } /* Slightly adjusted */
+    .text-xl { font-size: 1.25rem;} /* Slightly adjusted */
+
+    /* Line height for thumbnail text content */
     .thumbnail .p-4, .thumbnail .p-4 p, .thumbnail .p-4 a, .thumbnail .p-4 span {
-      line-height: 1.7;
+      line-height: 1.6; /* Consistent line height */
     }
+
+    /* Game tag styles */
     .game-tag {
       display: inline-block;
-      font-size: 0.73rem;
+      font-size: 0.75rem; /* Slightly larger font */
       font-weight: 500;
       letter-spacing: 0.01em;
-      padding: 0.5px 8px;
+      padding: 2px 10px; /* Adjusted padding */
       border-radius: 999px;
       margin-bottom: 0;
-      margin-right: 6px;
+      margin-right: 8px; /* Slightly more margin */
       vertical-align: middle;
       user-select: none;
-      line-height: 1.6;
+      line-height: 1.5; /* Adjusted line height */
+      border-width: 1.2px; /* Ensure border exists */
     }
     .tag-online {
       background: var(--tag-online-bg);
       color: var(--tag-online);
-      border: 1.2px solid var(--tag-online);
+      border-color: var(--tag-online);
     }
     .tag-unfix {
       background: var(--tag-unfix-bg);
       color: var(--tag-unfix);
-      border: 1.2px solid var(--tag-unfix);
+      border-color: var(--tag-unfix);
     }
     .tag-offline {
       background: var(--tag-offline-bg);
       color: var(--tag-offline);
-      border: 1.2px solid var(--tag-offline);
+      border-color: var(--tag-offline);
     }
+
+    /* Locked content overlay */
     #lockedContent {
       position: fixed;
       left: 0; top: 0; width: 100vw; height: 100vh;
       z-index: 9999;
-      background: rgba(16,19,26,0.96);
+      background: rgba(16,19,26,0.98); /* Darker, more opaque background */
       display: flex;
       align-items: center;
       justify-content: center;
@@ -275,39 +436,86 @@
       padding: 0;
       border: none;
       box-shadow: none;
+      transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
     }
+    #lockedContent.hide {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none; /* Disable interaction when hidden */
+    }
+
     #lockedContent > div {
       background: var(--surface-mid);
       color: var(--highlight-pink);
       border: 2px solid var(--highlight-pink);
       border-radius: 12px;
-      padding: 42px 24px 32px 24px;
-      font-size: 1.33rem;
+      padding: 42px 32px 32px 32px; /* More padding */
+      font-size: 1.4rem; /* Larger font */
       text-align: center;
-      max-width: 420px;
-      box-shadow: 0 0 10px #000a;
+      max-width: 480px; /* Wider max-width */
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.7); /* Stronger shadow */
       margin: 0;
+      line-height: 1.6;
     }
-    #lockedContent.hide { display: none !important; }
     #lockedContent .icon {
-      font-size:2.2rem;
+      font-size:2.5rem; /* Larger icon */
       display: block;
-      margin-bottom: 10px;
+      margin-bottom: 15px; /* More space */
     }
+
+    /* Centering wrapper for main content */
     .center-content-wrapper {
-      width: 100vw;
+      width: 100%; /* Changed from 100vw to 100% to respect body padding */
+      max-width: 1200px; /* Added a max-width for overall content */
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: flex-start;
+      padding: 0 1rem; /* Added some horizontal padding for smaller screens */
+    }
+
+    /* Adjustments for game grid responsiveness */
+    #gameGrid, #unfixableList, #offlineList, #readyGamesList { /* Added readyGamesList */
+      width: 100%; /* Ensure they take full width of parent */
+      justify-content: center; /* Center cards within the grid */
+    }
+
+    /* Ensure flex container for tabs wraps on smaller screens */
+    .flex-wrap-tabs {
+        flex-wrap: wrap;
+        justify-content: center; /* Center tabs when wrapped */
+        gap: 0.5rem; /* Space between wrapped items */
+    }
+
+    @media (max-width: 640px) { /* sm breakpoint for Tailwind */
+        .tab {
+            margin-right: 0.5rem; /* Reduce margin between tabs on small screens */
+            margin-bottom: 0.5rem; /* Add bottom margin for wrapping */
+        }
+        .flex-space-x-4 { /* Target the parent of tabs for adjusting space */
+            justify-content: center; /* Center the tabs group */
+            flex-wrap: wrap;
+        }
+        .search-bar {
+            margin-left: 1rem;
+            margin-right: 1rem;
+        }
+        .toggle-container {
+            margin-left: 0; /* Adjust margin for small screens */
+            margin-top: 0.5rem; /* Add some top margin if it wraps */
+            width: 100%; /* Take full width on small screens */
+            justify-content: center; /* Center the toggle on small screens */
+        }
     }
   </style>
 </head>
 <body class="min-h-screen flex flex-col items-center p-6">
   <h1 class="text-4xl" style="color:var(--primary-blue);margin-bottom:0;">Dev/g0d</h1>
-  <div style="color: #8ca3c7; font-size: 1.08rem; margin-top: .5rem;">
-    แหล่งอ้างอิง ชุมชน <a href="https://cs.rin.ru/" target="_blank" style="color:var(--primary-blue);">cs.rin.ru</a>
+  <div style="color: var(--text-mid); font-size: 1.08rem; margin-top: .5rem; margin-bottom: 2rem;">
+    แหล่งอ้างอิง ชุมชน <a href="https://cs.rin.ru/" target="_blank" style="color:var(--primary-blue); transition: color 0.17s ease-in-out;" class="hover:text-highlight-pink">cs.rin.ru</a>
   </div>
+
+  <!-- Locked content overlay -->
   <div id="lockedContent" class="hide">
     <div>
       <span class="icon">🔒</span>
@@ -315,75 +523,109 @@
       กรุณาติดต่อผู้ดูแลระบบหรือรอประกาศเพิ่มเติม
     </div>
   </div>
+
   <div class="center-content-wrapper">
-    <div id="mainContent">
+    <div id="mainContent" class="w-full flex flex-col items-center">
       <input type="text" id="searchBar" class="search-bar mb-6" placeholder="ค้นหา...">
-      <div class="flex space-x-4 mb-6">
+      <div class="flex items-center space-x-4 mb-6 flex-wrap-tabs"> <!-- Added items-center and flex-wrap-tabs -->
         <button id="allGamesTab" class="tab active-tab">แก้ไขออนไลน์</button>
         <button id="unfixableTab" class="tab">แก้ไขไม่ได้</button>
         <button id="offlineTab" class="tab">เกมออฟไลน์</button>
+
+        <!-- Toggle switch for "เกมพร้อม" -->
+        <div id="readyGamesToggleContainer" class="toggle-container">
+          <label for="readyGamesToggle" class="text-text-mid text-base">เกมพร้อม</label>
+          <label class="toggle-switch">
+            <input type="checkbox" id="readyGamesToggle">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
       </div>
+
       <div id="gameGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-6xl"></div>
       <div id="unfixableList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-6xl hidden"></div>
       <div id="offlineList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-6xl hidden"></div>
+      <!-- Note: readyGamesList is no longer needed as a separate grid, filtering happens directly on existing grids -->
     </div>
   </div>
+
+  <!-- Video Popup -->
   <div id="videoPopup" class="popup">
     <button class="close-btn" onclick="closePopup()">×</button>
-    <video id="popupPlayer" class="popup-video" controls autoplay>
+    <video id="popupPlayer" class="popup-video" controls autoplay playsinline>
       <source id="popupSource" type="video/webm">
+      <source id="popupSourceMp4" type="video/mp4"> <!-- Added for MP4 fallback -->
     </video>
   </div>
+
+  <!-- Download Popup -->
   <div id="downloadPopup" class="popup">
     <button class="close-btn" onclick="closeDownloadPopup()">×</button>
-    <div id="downloadLinksList" class="bg-gray-900 p-6 rounded-lg max-w-md w-full text-center"></div>
+    <div id="downloadLinksList" class="bg-gray-900 p-6 rounded-lg max-w-md w-full text-center" style="background:var(--surface-mid); border: 1.5px solid var(--border-color);"></div>
   </div>
+
+  <!-- How-to Popup -->
   <div id="howtoPopup" class="howto-popup">
     <div class="howto-content">
       <button class="howto-close-btn" onclick="closeHowto()">×</button>
       <div id="howtoText"></div>
     </div>
   </div>
+
   <script>
+    // Global status for content visibility
     const status = "on";
 
+    // Function to control main content visibility based on status
     function setContentStatus(status) {
       status = (status + '').toLowerCase().trim();
       const mainContent = document.getElementById('mainContent');
       const lockedContent = document.getElementById('lockedContent');
       if (status === 'on') {
-        mainContent.style.display = '';
-        lockedContent.classList.add('hide');
+        mainContent.style.display = ''; // Show main content
+        lockedContent.classList.add('hide'); // Hide locked content
       } else {
-        mainContent.style.display = 'none';
-        lockedContent.classList.remove('hide');
+        mainContent.style.display = 'none'; // Hide main content
+        lockedContent.classList.remove('hide'); // Show locked content
       }
     }
-    setContentStatus(status);
+    setContentStatus(status); // Set initial content status
 
+    // Arrays to store game data
     let games = [], unfixableGames = [], offlineGames = [];
+    let currentActiveTab = 'allGamesTab'; // Keep track of the currently active tab
 
+    // Function to load game data from JSON files
     async function loadData() {
+      // Prevents caching of JSON files during development
       function nocache(url) {
         const sep = url.includes('?') ? '&' : '?';
         return url + sep + 'v=' + Date.now();
       }
+      // Safely fetches JSON data, returns empty array on error
       async function safeFetch(url) {
         try { return await fetch(nocache(url)).then(r => r.json()); }
-        catch { return []; }
+        catch (e) {
+          console.error(`Error loading data from ${url}:`, e);
+          return [];
+        }
       }
+      // Load all game data
       games = await safeFetch('gamefix.json');
       unfixableGames = await safeFetch('gameunfix.json');
       offlineGames = await safeFetch('gameoffline.json');
-      renderAllGames();
+      activateTab('allGamesTab'); // Render the default view after loading
     }
 
+    // Helper function to create info lines for game details
     function infoLine(label, value, color = "gray-400") {
-      if (value === undefined || value === null) return '';
-      if (typeof value === "string" && value.trim() === "") return '';
+      if (value === undefined || value === null || (typeof value === "string" && value.trim() === "")) {
+        return ''; // Don't render if value is empty or null
+      }
       return `<p class="text-${color} text-sm">${label} ${value}</p>`;
     }
 
+    // Helper function to render game status tags
     function renderGameTag(type) {
       if (type === "online") {
         return '<span class="game-tag tag-online">แก้ไขออนไลน์</span>';
@@ -397,49 +639,266 @@
       return '';
     }
 
+    // Function to show the download popup with links
     function showDownloadPopup(links) {
       const downloadLinksList = document.getElementById('downloadLinksList');
+      // Map links to anchor tags
       downloadLinksList.innerHTML = links.map((link, i) =>
-        `<a href="${link}" target="_blank"
+        `<a href="${link}" target="_blank" rel="noopener noreferrer"
           >พาร์ท ${i + 1}</a>`).join("");
       document.getElementById('downloadPopup').classList.add('show');
     }
+
+    // Function to close the download popup
     function closeDownloadPopup() {
       document.getElementById('downloadPopup').classList.remove('show');
     }
+
+    // Function to show the how-to popup with instructions
     function showHowtoPopup(text) {
-      document.getElementById('howtoText').innerText = text;
-      document.getElementById('howtoPopup').style.display = 'flex';
-    }
-    function closeHowto() { document.getElementById('howtoPopup').style.display = 'none'; }
-    function closePopup() {
-      document.getElementById('videoPopup').style.display = 'none';
-      document.getElementById('popupPlayer').pause();
-      document.getElementById('popupSource').src = '';
+      document.getElementById('howtoText').innerText = text; // Set text content
+      document.getElementById('howtoPopup').classList.add('show');
     }
 
-    function renderAllGames(list = games) {
-      const gameGrid = document.getElementById('gameGrid');
-      gameGrid.innerHTML = '';
+    // Function to close the how-to popup
+    function closeHowto() {
+      document.getElementById('howtoPopup').classList.remove('show');
+    }
+
+    // Function to close the video popup
+    function closePopup() {
+      document.getElementById('videoPopup').classList.remove('show');
+      document.getElementById('popupPlayer').pause(); // Pause video playback
+      document.getElementById('popupSource').src = ''; // Clear video source
+      document.getElementById('popupSourceMp4').src = ''; // Clear MP4 source
+    }
+
+    // Generic function to hide all game lists
+    function hideAllGameLists() {
+      document.getElementById('gameGrid').classList.add('hidden');
       document.getElementById('unfixableList').classList.add('hidden');
       document.getElementById('offlineList').classList.add('hidden');
-      gameGrid.classList.remove('hidden');
-      list.forEach(game => {
+    }
+
+    // Function to render games from a given list into a specified container
+    function renderGames(originalList, containerId, gameType) {
+      hideAllGameLists(); // Hide all other lists first
+      const container = document.getElementById(containerId);
+      container.innerHTML = ''; // Clear previous content
+      container.classList.remove('hidden'); // Show the target container
+
+      const readyGamesToggle = document.getElementById('readyGamesToggle');
+      let listToRender = originalList;
+
+      // Apply toggle filter if it's on and relevant for the current tab
+      if (readyGamesToggle.checked && (gameType === "online" || gameType === "offline")) {
+          listToRender = originalList.filter(game => game.downloadEnabled || game.fixEnabled || game.downloadLink);
+      }
+
+      if (listToRender.length === 0) {
+        container.innerHTML = `<div class="text-center text-gray-400 py-8 col-span-full">ไม่พบเกมในหมวดหมู่นี้</div>`;
+        return;
+      }
+
+      listToRender.forEach(game => {
         const card = document.createElement('div');
         card.className = 'thumbnail rounded-lg overflow-hidden';
 
+        let buttonsHtml = '';
+        let howtoBtnHtml = '';
+
+        // Conditional rendering for buttons based on game type
+        if (gameType === "online") {
+          buttonsHtml = `
+            <div class="flex space-x-4 mt-6">
+              <button class="download-btn main-btn flex-1 text-center" type="button" ${game.downloadEnabled ? '' : 'disabled'}>ดาวน์โหลด</button>
+              <button class="fix-btn main-btn flex-1 text-center" type="button" ${game.fixEnabled ? '' : 'disabled'}>แก้ไข</button>
+            </div>
+          `;
+          howtoBtnHtml = `<p class="text-sm mt-2"><button class="howto-btn" type="button">วิธีแก้ไข</button></p>`;
+        } else if (gameType === "offline") {
+          buttonsHtml = `
+            <div class="flex space-x-4 mt-6">
+              <button class="download-btn main-btn flex-1 text-center" type="button" ${game.downloadLink ? '' : 'disabled'}>ดาวน์โหลด</button>
+            </div>
+          `;
+          howtoBtnHtml = `<p class="text-sm mt-2"><button class="howto-btn" type="button">วิธีแก้ไข</button></p>`;
+        }
+        // Unfixable games typically don't have download/fix buttons or how-to
+
         card.innerHTML =
           `<div class="media-container" data-video="${game.video || ''}">
-            <img src="${game.thumbnail}" alt="${game.title}">
+            <img src="${game.thumbnail || 'https://placehold.co/320x180/1e2233/8ca3c7?text=No+Image'}" alt="${game.title || 'Game Thumbnail'}">
             ${game.video ?
-              `<video autoplay muted loop playsinline preload>
+              `<video autoplay muted loop playsinline preload="metadata">
                 <source src="${game.video}" type="video/webm">
+                <source src="${game.video.replace('.webm', '.mp4')}" type="video/mp4"> <!-- Added MP4 fallback -->
+              </video>` : ''}
+          </div>
+          <div class="p-4">
+            <div class="mb-1">${renderGameTag(gameType)}</div>
+            <a href="${game.officialLink || '#'}" target="_blank" rel="noopener noreferrer" class="text-xl"
+              style="color:var(--text-main) !important; display: block; margin-bottom: 0.5rem;">${game.title || 'Unknown Title'}</a>
+            ${gameType === "online" ? `
+              ${infoLine("เวอร์ชั่น:", game.version)}
+              ${infoLine("ผู้เล่น:", game.players)}
+              ${infoLine("แก้ไขโดย:", game.crackedBy)}
+              ${infoLine("แพลตฟอร์ม:", game.platform)}
+              ${infoLine("รหัสผ่าน:", game.password)}
+              ${infoLine("รหัสผ่านแก้ไข:", game.fixPassword)}
+            ` : ''}
+            ${gameType === "unfix" ? `
+              ${infoLine("ปัญหาหลัก:", game.issue, "red-400")}
+            ` : ''}
+            ${gameType === "offline" ? `
+              ${infoLine("เวอร์ชั่น:", game.version)}
+              ${infoLine("ไฟล์โดย:", game.FileBy, "gray-400")}
+            ` : ''}
+            ${howtoBtnHtml}
+            ${buttonsHtml}
+          </div>
+        `;
+        container.appendChild(card);
+
+        // Event listener for media container to open video popup
+        const mediaContainer = card.querySelector('.media-container');
+        if (mediaContainer && game.video) {
+          mediaContainer.addEventListener('click', () => {
+            document.getElementById('popupSource').src = game.video;
+            document.getElementById('popupSourceMp4').src = game.video.replace('.webm', '.mp4'); // Set MP4 source
+            document.getElementById('popupPlayer').load();
+            document.getElementById('videoPopup').classList.add('show');
+            document.getElementById('popupPlayer').play();
+          });
+        }
+
+        // Event listener for download button
+        const downloadBtn = card.querySelector('.download-btn');
+        if (downloadBtn) {
+          if (!game.downloadEnabled && !game.downloadLink) { // Check both properties for disabling
+            downloadBtn.classList.add('disabled-btn');
+          } else {
+            downloadBtn.addEventListener('click', function() {
+              const downloadLinks = [];
+              let idx = 1;
+              while (game['downloadLink'+idx]) {
+                downloadLinks.push(game['downloadLink'+idx]);
+                idx++;
+              }
+              if (downloadLinks.length > 0) {
+                showDownloadPopup(downloadLinks);
+              } else if (game.downloadLink) {
+                window.open(game.downloadLink, '_blank');
+              }
+            });
+          }
+        }
+
+        // Event listener for fix button
+        const fixBtn = card.querySelector('.fix-btn');
+        if (fixBtn) {
+          if (!game.fixEnabled) {
+            fixBtn.classList.add('disabled-btn');
+          } else if (game.fixLink) {
+            fixBtn.addEventListener('click', function() {
+              window.open(game.fixLink, '_blank');
+            });
+          }
+        }
+
+        // Event listener for how-to button
+        const howtoBtn = card.querySelector('.howto-btn');
+        if (howtoBtn) {
+          howtoBtn.addEventListener('click', () => {
+            showHowtoPopup(game.instructions || "ไม่มีวิธีแก้ไขสำหรับเกมนี้");
+          });
+        }
+      });
+    }
+
+    // Specific rendering functions for each tab
+    function renderAllGames(list = games) {
+      renderGames(list, 'gameGrid', 'online');
+      // Show toggle for this tab
+      document.getElementById('readyGamesToggleContainer').classList.remove('hidden');
+    }
+
+    function renderUnfixableGames(list = unfixableGames) {
+      renderGames(list, 'unfixableList', 'unfix');
+      // Hide toggle for this tab
+      document.getElementById('readyGamesToggleContainer').classList.add('hidden');
+      document.getElementById('readyGamesToggle').checked = false; // Reset toggle state
+    }
+
+    function renderOfflineGames(list = offlineGames) {
+      renderGames(list, 'offlineList', 'offline');
+      // Show toggle for this tab
+      document.getElementById('readyGamesToggleContainer').classList.remove('hidden');
+    }
+
+
+    // Function to activate a tab and render its content
+    function activateTab(tabId) {
+      // Remove active class from all tabs
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.classList.remove('active-tab');
+      });
+      // Add active class to the clicked tab
+      document.getElementById(tabId).classList.add('active-tab');
+      // Clear search bar when changing tabs
+      document.getElementById('searchBar').value = '';
+      currentActiveTab = tabId; // Update active tab tracker
+
+      // Render content based on the active tab
+      if (tabId === 'allGamesTab') {
+        renderAllGames();
+      } else if (tabId === 'unfixableTab') {
+        renderUnfixableGames();
+      } else if (tabId === 'offlineTab') {
+        renderOfflineGames();
+      }
+      // Note: readyGamesTab no longer exists as a standalone tab
+    }
+
+    // Function to search across all game lists
+    function renderSearchAllResults(searchTerm) {
+      hideAllGameLists(); // Hide all current lists
+
+      // Filter all game arrays
+      const filteredOnline = games.filter(game => (game.title || '').toLowerCase().includes(searchTerm));
+      const filteredUnfixable = unfixableGames.filter(game => (game.title || '').toLowerCase().includes(searchTerm));
+      const filteredOffline = offlineGames.filter(game => (game.title || '').toLowerCase().includes(searchTerm));
+
+      const gameGrid = document.getElementById('gameGrid'); // Use gameGrid for search results for consistency
+      gameGrid.innerHTML = '';
+      gameGrid.classList.remove('hidden');
+
+      // Hide toggle during search results
+      document.getElementById('readyGamesToggleContainer').classList.add('hidden');
+      document.getElementById('readyGamesToggle').checked = false; // Reset toggle state
+
+      if (filteredOnline.length === 0 && filteredUnfixable.length === 0 && filteredOffline.length === 0) {
+        gameGrid.innerHTML = `<div class="text-center text-gray-400 py-8 col-span-full">ไม่พบเกมที่ค้นหา</div>`;
+        return;
+      }
+
+      // Render filtered online games
+      filteredOnline.forEach(game => {
+        const card = document.createElement('div');
+        card.className = 'thumbnail rounded-lg overflow-hidden';
+        card.innerHTML =
+          `<div class="media-container" data-video="${game.video || ''}">
+            <img src="${game.thumbnail || 'https://placehold.co/320x180/1e2233/8ca3c7?text=No+Image'}" alt="${game.title || 'Game Thumbnail'}">
+            ${game.video ?
+              `<video autoplay muted loop playsinline preload="metadata">
+                <source src="${game.video}" type="video/webm">
+                <source src="${game.video.replace('.webm', '.mp4')}" type="video/mp4">
               </video>` : ''}
           </div>
           <div class="p-4">
             <div class="mb-1">${renderGameTag("online")}</div>
-            <a href="${game.officialLink}" target="_blank" class="text-xl"
-              style="color:var(--text-main) !important;">${game.title}</a>
+            <a href="${game.officialLink || '#'}" target="_blank" rel="noopener noreferrer" class="text-xl"
+              style="color:var(--text-main) !important; display: block; margin-bottom: 0.5rem;">${game.title || 'Unknown Title'}</a>
             ${infoLine("เวอร์ชั่น:", game.version)}
             ${infoLine("ผู้เล่น:", game.players)}
             ${infoLine("แก้ไขโดย:", game.crackedBy)}
@@ -456,121 +915,50 @@
           </div>
         `;
         gameGrid.appendChild(card);
-
-        const mediaContainer = card.querySelector('.media-container');
-        const video = mediaContainer.querySelector('video');
-        if (video) {
-          mediaContainer.addEventListener('click', () => {
-            if (game.video) {
-              document.getElementById('popupSource').src = game.video;
-              document.getElementById('popupPlayer').load();
-              document.getElementById('videoPopup').style.display = 'flex';
-              document.getElementById('popupPlayer').play();
-            }
-          });
-        }
-
-        const downloadBtn = card.querySelector('.download-btn');
-        if (downloadBtn) {
-          if (!game.downloadEnabled) downloadBtn.classList.add('disabled-btn');
-          else {
-            const downloadLinks = [];
-            let idx = 1;
-            while (game['downloadLink'+idx]) {
-              downloadLinks.push(game['downloadLink'+idx]);
-              idx++;
-            }
-            if (downloadLinks.length > 0) {
-              downloadBtn.addEventListener('click', function() {
-                showDownloadPopup(downloadLinks);
-              });
-            } else if (game.downloadLink) {
-              downloadBtn.addEventListener('click', function() {
-                window.open(game.downloadLink, '_blank');
-              });
-            }
-          }
-        }
-        const fixBtn = card.querySelector('.fix-btn');
-        if (fixBtn) {
-          if (!game.fixEnabled) fixBtn.classList.add('disabled-btn');
-          else if (game.fixLink) {
-            fixBtn.addEventListener('click', function() {
-              window.open(game.fixLink, '_blank');
-            });
-          }
-        }
-        const howtoBtn = card.querySelector('.howto-btn');
-        if (howtoBtn) {
-          howtoBtn.addEventListener('click', () => {
-            showHowtoPopup(game.instructions || "ไม่มีวิธีแก้ไขสำหรับเกมนี้");
-          });
-        }
+        attachCardListeners(card, game, 'online'); // Attach event listeners
       });
-    }
 
-    function renderUnfixableGames(list = unfixableGames) {
-      const unfixableList = document.getElementById('unfixableList');
-      unfixableList.innerHTML = '';
-      document.getElementById('gameGrid').classList.add('hidden');
-      document.getElementById('offlineList').classList.add('hidden');
-      unfixableList.classList.remove('hidden');
-      list.forEach(game => {
+      // Render filtered unfixable games
+      filteredUnfixable.forEach(game => {
         const card = document.createElement('div');
         card.className = 'thumbnail rounded-lg overflow-hidden';
         card.innerHTML =
           `<div class="media-container" data-video="${game.video || ''}">
-            <img src="${game.thumbnail}" alt="${game.title}">
+            <img src="${game.thumbnail || 'https://placehold.co/320x180/1e2233/8ca3c7?text=No+Image'}" alt="${game.title || 'Game Thumbnail'}">
             ${game.video ?
-              `<video autoplay muted loop playsinline preload>
+              `<video autoplay muted loop playsinline preload="metadata">
                 <source src="${game.video}" type="video/webm">
+                <source src="${game.video.replace('.webm', '.mp4')}" type="video/mp4">
               </video>` : ''}
           </div>
           <div class="p-4">
             <div class="mb-1">${renderGameTag("unfix")}</div>
-            <a href="${game.officialLink}" target="_blank" class="text-xl"
-              style="color:var(--text-main) !important;">${game.title}</a>
+            <a href="${game.officialLink || '#'}" target="_blank" rel="noopener noreferrer" class="text-xl"
+              style="color:var(--text-main) !important; display: block; margin-bottom: 0.5rem;">${game.title || 'Unknown Title'}</a>
             ${infoLine("ปัญหาหลัก:", game.issue, "red-400")}
           </div>
         `;
-        unfixableList.appendChild(card);
-
-        const mediaContainer = card.querySelector('.media-container');
-        const video = mediaContainer.querySelector('video');
-        if (video) {
-          mediaContainer.addEventListener('click', () => {
-            if (game.video) {
-              document.getElementById('popupSource').src = game.video;
-              document.getElementById('popupPlayer').load();
-              document.getElementById('videoPopup').style.display = 'flex';
-              document.getElementById('popupPlayer').play();
-            }
-          });
-        }
+        gameGrid.appendChild(card);
+        attachCardListeners(card, game, 'unfix'); // Attach event listeners
       });
-    }
 
-    function renderOfflineGames(list = offlineGames) {
-      const offlineList = document.getElementById('offlineList');
-      offlineList.innerHTML = '';
-      document.getElementById('gameGrid').classList.add('hidden');
-      document.getElementById('unfixableList').classList.add('hidden');
-      offlineList.classList.remove('hidden');
-      list.forEach(game => {
+      // Render filtered offline games
+      filteredOffline.forEach(game => {
         const card = document.createElement('div');
         card.className = 'thumbnail rounded-lg overflow-hidden';
         card.innerHTML =
           `<div class="media-container" data-video="${game.video || ''}">
-            <img src="${game.thumbnail}" alt="${game.title}">
+            <img src="${game.thumbnail || 'https://placehold.co/320x180/1e2233/8ca3c7?text=No+Image'}" alt="${game.title || 'Game Thumbnail'}">
             ${game.video ?
-              `<video autoplay muted loop playsinline preload>
+              `<video autoplay muted loop playsinline preload="metadata">
                 <source src="${game.video}" type="video/webm">
+                <source src="${game.video.replace('.webm', '.mp4')}" type="video/mp4">
               </video>` : ''}
           </div>
           <div class="p-4">
             <div class="mb-1">${renderGameTag("offline")}</div>
-            <a href="${game.officialLink}" target="_blank" class="text-xl"
-              style="color:var(--text-main) !important;">${game.title}</a>
+            <a href="${game.officialLink || '#'}" target="_blank" rel="noopener noreferrer" class="text-xl"
+              style="color:var(--text-main) !important; display: block; margin-bottom: 0.5rem;">${game.title || 'Unknown Title'}</a>
             ${infoLine("เวอร์ชั่น:", game.version)}
             ${infoLine("ไฟล์โดย:", game.FileBy, "gray-400")}
             <p class="text-sm mt-2">
@@ -581,256 +969,102 @@
             </div>
           </div>
         `;
-        offlineList.appendChild(card);
-
-        const mediaContainer = card.querySelector('.media-container');
-        const video = mediaContainer.querySelector('video');
-        if (video) {
-          mediaContainer.addEventListener('click', () => {
-            if (game.video) {
-              document.getElementById('popupSource').src = game.video;
-              document.getElementById('popupPlayer').load();
-              document.getElementById('videoPopup').style.display = 'flex';
-              document.getElementById('popupPlayer').play();
-            }
-          });
-        }
-
-        const downloadBtn = card.querySelector('.download-btn');
-        if (downloadBtn && game.downloadLink) {
-          downloadBtn.addEventListener('click', function() {
-            window.open(game.downloadLink, '_blank');
-          });
-        }
-        const howtoBtn = card.querySelector('.howto-btn');
-        if (howtoBtn) {
-          howtoBtn.addEventListener('click', () => {
-            showHowtoPopup(game.instructions || "ไม่มีวิธีแก้ไขสำหรับเกมนี้");
-          });
-        }
+        gameGrid.appendChild(card);
+        attachCardListeners(card, game, 'offline'); // Attach event listeners
       });
     }
 
-    function renderSearchAllResults(results) {
-      const gameGrid = document.getElementById('gameGrid');
-      const unfixableList = document.getElementById('unfixableList');
-      const offlineList = document.getElementById('offlineList');
-      gameGrid.innerHTML = '';
-      unfixableList.classList.add('hidden');
-      offlineList.classList.add('hidden');
-      gameGrid.classList.remove('hidden');
-
-      if (results.length === 0) {
-        gameGrid.innerHTML = `<div class="text-center text-gray-400 py-8">ไม่พบเกมที่ค้นหา</div>`;
-        return;
+    // Centralized function to attach event listeners to game cards
+    function attachCardListeners(card, game, gameType) {
+      const mediaContainer = card.querySelector('.media-container');
+      if (mediaContainer && game.video) {
+        mediaContainer.addEventListener('click', () => {
+          document.getElementById('popupSource').src = game.video;
+          document.getElementById('popupSourceMp4').src = game.video.replace('.webm', '.mp4'); // Set MP4 source
+          document.getElementById('popupPlayer').load();
+          document.getElementById('videoPopup').classList.add('show');
+          document.getElementById('popupPlayer').play();
+        });
       }
 
-      results.forEach(game => {
-        const card = document.createElement('div');
-        card.className = 'thumbnail rounded-lg overflow-hidden';
-        if (game.hasOwnProperty('downloadEnabled')) {
-          card.innerHTML =
-            `<div class="media-container" data-video="${game.video || ''}">
-              <img src="${game.thumbnail}" alt="${game.title}">
-              ${game.video ?
-                `<video autoplay muted loop playsinline preload>
-                  <source src="${game.video}" type="video/webm">
-                </video>` : ''}
-            </div>
-            <div class="p-4">
-              <div class="mb-1">${renderGameTag("online")}</div>
-              <a href="${game.officialLink}" target="_blank" class="text-xl"
-                style="color:var(--text-main) !important;">${game.title}</a>
-              ${infoLine("เวอร์ชั่น:", game.version)}
-              ${infoLine("ผู้เล่น:", game.players)}
-              ${infoLine("แก้ไขโดย:", game.crackedBy)}
-              ${infoLine("แพลตฟอร์ม:", game.platform)}
-              ${infoLine("รหัสผ่าน:", game.password)}
-              ${infoLine("รหัสผ่านแก้ไข:", game.fixPassword)}
-              <p class="text-sm mt-2">
-                <button class="howto-btn" type="button">วิธีแก้ไข</button>
-              </p>
-              <div class="flex space-x-4 mt-6">
-                <button class="download-btn main-btn flex-1 text-center" type="button" ${game.downloadEnabled ? '' : 'disabled'}>ดาวน์โหลด</button>
-                <button class="fix-btn main-btn flex-1 text-center" type="button" ${game.fixEnabled ? '' : 'disabled'}>แก้ไข</button>
-              </div>
-            </div>
-          `;
-          gameGrid.appendChild(card);
-          const mediaContainer = card.querySelector('.media-container');
-          const video = mediaContainer.querySelector('video');
-          if (video) {
-            mediaContainer.addEventListener('click', () => {
-              if (game.video) {
-                document.getElementById('popupSource').src = game.video;
-                document.getElementById('popupPlayer').load();
-                document.getElementById('videoPopup').style.display = 'flex';
-                document.getElementById('popupPlayer').play();
-              }
-            });
-          }
-          const downloadBtn = card.querySelector('.download-btn');
-          if (downloadBtn) {
-            if (!game.downloadEnabled) downloadBtn.classList.add('disabled-btn');
-            else {
-              const downloadLinks = [];
-              let idx = 1;
-              while (game['downloadLink'+idx]) {
-                downloadLinks.push(game['downloadLink'+idx]);
-                idx++;
-              }
-              if (downloadLinks.length > 0) {
-                downloadBtn.addEventListener('click', function() {
-                  showDownloadPopup(downloadLinks);
-                });
-              } else if (game.downloadLink) {
-                downloadBtn.addEventListener('click', function() {
-                  window.open(game.downloadLink, '_blank');
-                });
-              }
-            }
-          }
-          const fixBtn = card.querySelector('.fix-btn');
-          if (fixBtn) {
-            if (!game.fixEnabled) fixBtn.classList.add('disabled-btn');
-            else if (game.fixLink) {
-              fixBtn.addEventListener('click', function() {
-                window.open(game.fixLink, '_blank');
-              });
-            }
-          }
-          const howtoBtn = card.querySelector('.howto-btn');
-          if (howtoBtn) {
-            howtoBtn.addEventListener('click', () => {
-              showHowtoPopup(game.instructions || "ไม่มีวิธีแก้ไขสำหรับเกมนี้");
-            });
-          }
-        } else if (game.hasOwnProperty('issue')) {
-          card.innerHTML =
-            `<div class="media-container" data-video="${game.video || ''}">
-              <img src="${game.thumbnail}" alt="${game.title}">
-              ${game.video ?
-                `<video autoplay muted loop playsinline preload>
-                  <source src="${game.video}" type="video/webm">
-                </video>` : ''}
-            </div>
-            <div class="p-4">
-              <div class="mb-1">${renderGameTag("unfix")}</div>
-              <a href="${game.officialLink}" target="_blank" class="text-xl"
-                style="color:var(--text-main) !important;">${game.title}</a>
-              ${infoLine("ปัญหาหลัก:", game.issue, "red-400")}
-            </div>
-          `;
-          gameGrid.appendChild(card);
-          const mediaContainer = card.querySelector('.media-container');
-          const video = mediaContainer.querySelector('video');
-          if (video) {
-            mediaContainer.addEventListener('click', () => {
-              if (game.video) {
-                document.getElementById('popupSource').src = game.video;
-                document.getElementById('popupPlayer').load();
-                document.getElementById('videoPopup').style.display = 'flex';
-                document.getElementById('popupPlayer').play();
-              }
-            });
-          }
+      const downloadBtn = card.querySelector('.download-btn');
+      if (downloadBtn) {
+        // Check if download is enabled or if there's any downloadLink (part1, part2, etc.)
+        const hasDownloadLinks = Object.keys(game).some(key => key.startsWith('downloadLink') && game[key]);
+        if (!game.downloadEnabled && !hasDownloadLinks) {
+          downloadBtn.classList.add('disabled-btn');
         } else {
-          card.innerHTML =
-            `<div class="media-container" data-video="${game.video || ''}">
-              <img src="${game.thumbnail}" alt="${game.title}">
-              ${game.video ?
-                `<video autoplay muted loop playsinline preload>
-                  <source src="${game.video}" type="video/webm">
-                </video>` : ''}
-            </div>
-            <div class="p-4">
-              <div class="mb-1">${renderGameTag("offline")}</div>
-              <a href="${game.officialLink}" target="_blank" class="text-xl"
-                style="color:var(--text-main) !important;">${game.title}</a>
-              ${infoLine("เวอร์ชั่น:", game.version)}
-              ${infoLine("ไฟล์โดย:", game.FileBy, "gray-400")}
-              <p class="text-sm mt-2">
-                <button class="howto-btn" type="button">วิธีแก้ไข</button>
-              </p>
-              <div class="flex space-x-4 mt-6">
-                <button class="download-btn main-btn flex-1 text-center" type="button" ${game.downloadLink ? '' : 'disabled'}>ดาวน์โหลด</button>
-              </div>
-            </div>
-          `;
-          gameGrid.appendChild(card);
-          const mediaContainer = card.querySelector('.media-container');
-          const video = mediaContainer.querySelector('video');
-          if (video) {
-            mediaContainer.addEventListener('click', () => {
-              if (game.video) {
-                document.getElementById('popupSource').src = game.video;
-                document.getElementById('popupPlayer').load();
-                document.getElementById('videoPopup').style.display = 'flex';
-                document.getElementById('popupPlayer').play();
-              }
-            });
-          }
-          const downloadBtn = card.querySelector('.download-btn');
-          if (downloadBtn && game.downloadLink) {
-            downloadBtn.addEventListener('click', function() {
+          downloadBtn.addEventListener('click', function() {
+            const downloadLinks = [];
+            let idx = 1;
+            while (game['downloadLink'+idx]) {
+              downloadLinks.push(game['downloadLink'+idx]);
+              idx++;
+            }
+            if (downloadLinks.length > 0) {
+              showDownloadPopup(downloadLinks);
+            } else if (game.downloadLink) { // Fallback for single downloadLink property
               window.open(game.downloadLink, '_blank');
-            });
-          }
-          const howtoBtn = card.querySelector('.howto-btn');
-          if (howtoBtn) {
-            howtoBtn.addEventListener('click', () => {
-              showHowtoPopup(game.instructions || "ไม่มีวิธีแก้ไขสำหรับเกมนี้");
-            });
-          }
+            }
+          });
         }
-      });
+      }
+
+      const fixBtn = card.querySelector('.fix-btn');
+      if (fixBtn) {
+        if (!game.fixEnabled) {
+          fixBtn.classList.add('disabled-btn');
+        } else if (game.fixLink) {
+          fixBtn.addEventListener('click', function() {
+            window.open(game.fixLink, '_blank');
+          });
+        }
+      }
+
+      const howtoBtn = card.querySelector('.howto-btn');
+      if (howtoBtn) {
+        howtoBtn.addEventListener('click', () => {
+          showHowtoPopup(game.instructions || "ไม่มีวิธีแก้ไขสำหรับเกมนี้");
+        });
+      }
     }
 
+
+    // Event listener for the search bar
     document.getElementById('searchBar').addEventListener('input', () => {
       const searchTerm = document.getElementById('searchBar').value.trim().toLowerCase();
       if (searchTerm === '') {
-        if (document.getElementById('allGamesTab').classList.contains('active-tab')) renderAllGames();
-        else if (document.getElementById('unfixableTab').classList.contains('active-tab')) renderUnfixableGames();
-        else renderOfflineGames();
+        // If search bar is empty, render the currently active tab's content
+        activateTab(currentActiveTab); // Re-render the active tab
       } else {
-        const allResults = [
-          ...games.filter(game => (game.title || '').toLowerCase().includes(searchTerm)),
-          ...unfixableGames.filter(game => (game.title || '').toLowerCase().includes(searchTerm)),
-          ...offlineGames.filter(game => (game.title || '').toLowerCase().includes(searchTerm))
-        ];
-        renderSearchAllResults(allResults);
+        renderSearchAllResults(searchTerm);
       }
     });
 
-    document.getElementById('allGamesTab').addEventListener('click', () => {
-      document.getElementById('allGamesTab').classList.add('active-tab');
-      document.getElementById('unfixableTab').classList.remove('active-tab');
-      document.getElementById('offlineTab').classList.remove('active-tab');
-      document.getElementById('searchBar').value = '';
-      renderAllGames();
-    });
-    document.getElementById('unfixableTab').addEventListener('click', () => {
-      document.getElementById('unfixableTab').classList.add('active-tab');
-      document.getElementById('allGamesTab').classList.remove('active-tab');
-      document.getElementById('offlineTab').classList.remove('active-tab');
-      document.getElementById('searchBar').value = '';
-      renderUnfixableGames();
-    });
-    document.getElementById('offlineTab').addEventListener('click', () => {
-      document.getElementById('offlineTab').classList.add('active-tab');
-      document.getElementById('allGamesTab').classList.remove('active-tab');
-      document.getElementById('unfixableTab').classList.remove('active-tab');
-      document.getElementById('searchBar').value = '';
-      renderOfflineGames();
+    // Event listeners for tab buttons
+    document.getElementById('allGamesTab').addEventListener('click', () => activateTab('allGamesTab'));
+    document.getElementById('unfixableTab').addEventListener('click', () => activateTab('unfixableTab'));
+    document.getElementById('offlineTab').addEventListener('click', () => activateTab('offlineTab'));
+
+    // Event listener for the new toggle switch
+    document.getElementById('readyGamesToggle').addEventListener('change', () => {
+        // Re-render the currently active tab, which will apply the toggle filter
+        activateTab(currentActiveTab);
     });
 
+    // Event listeners for popup overlays (clicking outside closes them)
     document.getElementById('howtoPopup').addEventListener('click', function(e) {
       if (e.target === this) closeHowto();
     });
     document.getElementById('downloadPopup').addEventListener('click', function(e) {
       if (e.target === this) closeDownloadPopup();
     });
+    document.getElementById('videoPopup').addEventListener('click', function(e) {
+        if (e.target === this || e.target.classList.contains('close-btn')) closePopup();
+    });
 
+
+    // Load data when the DOM is fully loaded
     document.addEventListener('DOMContentLoaded', loadData);
   </script>
 </body>
