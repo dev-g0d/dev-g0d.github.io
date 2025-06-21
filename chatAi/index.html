@@ -243,7 +243,7 @@
         // The AI will operate based on its default programming and safety policies.
         const chat = model.startChat({
             generationConfig: {
-                maxOutputTokens: 2000, // Moderate token limit
+                maxOutputTokens: 100000, // Moderate token limit
                 temperature: 0.7,     // Default temperature for balanced creativity
                 topP: 0.9,            // Default topP
             },
