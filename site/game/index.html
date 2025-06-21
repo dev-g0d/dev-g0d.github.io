@@ -701,38 +701,28 @@
     }
 
     // Function to render games from a given list into a specified container
+    // This function now renders ALL games for the given list, and applies data attributes.
+    // Filtering based on toggle is handled by applyToggleFilter.
     function renderGames(originalList, containerId, gameType) {
       hideAllGameLists(); // Hide all other lists first
       const container = document.getElementById(containerId);
       container.innerHTML = ''; // Clear previous content
       container.classList.remove('hidden'); // Show the target container
 
-      const readyGamesToggle = document.getElementById('readyGamesToggle');
-      const toggleWrapper = document.getElementById('readyGamesToggleContainerWrapper');
-      let listToRender = originalList;
-
-      // Show/Hide toggle wrapper based on current tab
-      if (gameType === "online" || gameType === "offline") {
-        toggleWrapper.classList.remove('hidden');
-      } else {
-        toggleWrapper.classList.add('hidden');
-        // Removed: readyGamesToggle.checked = false; to preserve state
-      }
-
-      // Apply toggle filter if it's on and relevant for the current tab
-      if (readyGamesToggle.checked && (gameType === "online" || gameType === "offline")) {
-          // Filter for games that have either download enabled, fix enabled, or a downloadLink (for offline games)
-          listToRender = originalList.filter(game => game.downloadEnabled || game.fixEnabled || game.downloadLink);
-      }
-
-      if (listToRender.length === 0) {
-        container.innerHTML = `<div class="text-center text-gray-400 py-8 col-span-full">ไม่พบเกมในหมวดหมู่นี้</div>`;
+      if (originalList.length === 0) {
+        container.innerHTML = `<div class="text-center text-gray-400 py-8 col-span-full no-games-message">ไม่พบเกมในหมวดหมู่นี้</div>`;
         return;
       }
 
-      listToRender.forEach(game => {
+      originalList.forEach(game => {
         const card = document.createElement('div');
         card.className = 'thumbnail rounded-lg overflow-hidden';
+
+        // Store filter relevant data directly on the card for quick access during filtering
+        card.dataset.gameDownloadEnabled = game.downloadEnabled ? 'true' : 'false';
+        card.dataset.gameFixEnabled = game.fixEnabled ? 'true' : 'false';
+        card.dataset.gameHasDownloadLink = (game.downloadLink || Object.keys(game).some(key => key.startsWith('downloadLink') && game[key])) ? 'true' : 'false';
+        card.dataset.gameType = gameType; // Also store game type
 
         let buttonsHtml = '';
         let howtoBtnHtml = '';
@@ -789,62 +779,86 @@
           </div>
         `;
         container.appendChild(card);
-
-        // Event listener for media container to open video popup
-        const mediaContainer = card.querySelector('.media-container');
-        if (mediaContainer && game.video) {
-          mediaContainer.addEventListener('click', () => {
-            document.getElementById('popupSource').src = game.video;
-            document.getElementById('popupSourceMp4').src = game.video.replace('.webm', '.mp4'); // Set MP4 source
-            document.getElementById('popupPlayer').load();
-            document.getElementById('videoPopup').classList.add('show');
-            document.getElementById('popupPlayer').play();
-          });
-        }
-
-        // Event listener for download button
-        const downloadBtn = card.querySelector('.download-btn');
-        if (downloadBtn) {
-          // Check if download is enabled or if there's any downloadLink (part1, part2, etc.)
-          const hasDownloadLinks = Object.keys(game).some(key => key.startsWith('downloadLink') && game[key]);
-          if (!game.downloadEnabled && !hasDownloadLinks) {
-            downloadBtn.classList.add('disabled-btn');
-          } else {
-            downloadBtn.addEventListener('click', function() {
-              const downloadLinks = [];
-              let idx = 1;
-              while (game['downloadLink'+idx]) {
-                downloadLinks.push(game['downloadLink'+idx]);
-                idx++;
-              }
-              if (downloadLinks.length > 0) {
-                showDownloadPopup(downloadLinks);
-              } else if (game.downloadLink) { // Fallback for single downloadLink property
-                window.open(game.downloadLink, '_blank');
-              }
-            });
-          }
-        }
-
-        const fixBtn = card.querySelector('.fix-btn');
-        if (fixBtn) {
-          if (!game.fixEnabled) {
-            fixBtn.classList.add('disabled-btn');
-          } else if (game.fixLink) {
-            fixBtn.addEventListener('click', function() {
-              window.open(game.fixLink, '_blank');
-            });
-          }
-        }
-
-        const howtoBtn = card.querySelector('.howto-btn');
-        if (howtoBtn) {
-          howtoBtn.addEventListener('click', () => {
-            showHowtoPopup(game.instructions || "ไม่มีวิธีแก้ไขสำหรับเกมนี้");
-          });
-        }
+        attachCardListeners(card, game, gameType);
       });
+
+      // After rendering all cards, apply the toggle filter based on its current state
+      applyToggleFilter();
     }
+
+    // Function to apply filtering based on the toggle switch state
+    function applyToggleFilter() {
+        const readyGamesToggle = document.getElementById('readyGamesToggle');
+        const toggleIsChecked = readyGamesToggle.checked;
+        const toggleWrapper = document.getElementById('readyGamesToggleContainerWrapper');
+
+        let activeContainerId;
+        let activeGameType;
+
+        // Determine the currently active container and game type
+        if (currentActiveTab === 'allGamesTab') {
+            activeContainerId = 'gameGrid';
+            activeGameType = 'online';
+        } else if (currentActiveTab === 'offlineTab') {
+            activeContainerId = 'offlineList';
+            activeGameType = 'offline';
+        } else { // For unfixableTab or search results, toggle is hidden and not relevant
+            toggleWrapper.classList.add('hidden'); // Ensure hidden
+            return;
+        }
+
+        // Show toggle if applicable for current tab
+        toggleWrapper.classList.remove('hidden');
+
+        const container = document.getElementById(activeContainerId);
+        let visibleCount = 0;
+
+        Array.from(container.children).forEach(card => {
+            // Check if this card is a "no games message" or an actual game card
+            if (card.classList.contains('no-games-message')) {
+                card.style.display = 'none'; // Always hide the message while filtering actual games
+                return;
+            }
+
+            const isDownloadEnabled = card.dataset.gameDownloadEnabled === 'true';
+            const isFixEnabled = card.dataset.gameFixEnabled === 'true';
+            const hasDownloadLink = card.dataset.gameHasDownloadLink === 'true';
+            const cardGameType = card.dataset.gameType; // Get game type from card's data attribute
+
+            let shouldShow = false;
+
+            // Apply filter only if toggle is checked
+            if (toggleIsChecked) {
+                if (cardGameType === "online") {
+                    shouldShow = isDownloadEnabled || isFixEnabled;
+                } else if (cardGameType === "offline") {
+                    shouldShow = hasDownloadLink;
+                }
+            } else {
+                // If toggle is not checked, show all cards for this tab type
+                shouldShow = true;
+            }
+
+            card.style.display = shouldShow ? 'block' : 'none';
+            if (shouldShow) {
+                visibleCount++;
+            }
+        });
+
+        // After applying display styles, check if any games are visible
+        // And manage the "No games found" message
+        const existingNoGamesMessage = container.querySelector('.no-games-message');
+        if (visibleCount === 0) {
+            if (!existingNoGamesMessage) {
+                 container.innerHTML = `<div class="text-center text-gray-400 py-8 col-span-full no-games-message">ไม่พบเกมในหมวดหมู่นี้</div>`;
+            }
+        } else {
+            if (existingNoGamesMessage) {
+                existingNoGamesMessage.remove(); // Remove message if games are now visible
+            }
+        }
+    }
+
 
     // Specific rendering functions for each tab
     function renderAllGames(list = games) {
@@ -872,13 +886,23 @@
       document.getElementById('searchBar').value = '';
       currentActiveTab = tabId; // Update active tab tracker
 
+      const toggleWrapper = document.getElementById('readyGamesToggleContainerWrapper');
+      // Show/Hide toggle wrapper based on active tab
+      if (tabId === 'allGamesTab' || tabId === 'offlineTab') {
+        toggleWrapper.classList.remove('hidden');
+      } else { // unfixableTab or search results state
+        toggleWrapper.classList.add('hidden');
+        // Do NOT change readyGamesToggle.checked here to preserve its state
+      }
+
+
       // Render content based on the active tab
       if (tabId === 'allGamesTab') {
-        renderAllGames();
+        renderAllGames(); // This will call renderGames, which then calls applyToggleFilter
       } else if (tabId === 'unfixableTab') {
-        renderUnfixableGames();
+        renderUnfixableGames(); // This will call renderGames, which will hide toggle via applyToggleFilter
       } else if (tabId === 'offlineTab') {
-        renderOfflineGames();
+        renderOfflineGames(); // This will call renderGames, which then calls applyToggleFilter
       }
     }
 
@@ -887,6 +911,7 @@
       hideAllGameLists(); // Hide all current lists
 
       // Filter all game arrays
+      // Note: Search results are not filtered by the "ready" toggle
       const filteredOnline = games.filter(game => (game.title || '').toLowerCase().includes(searchTerm));
       const filteredUnfixable = unfixableGames.filter(game => (game.title || '').toLowerCase().includes(searchTerm));
       const filteredOffline = offlineGames.filter(game => (game.title || '').toLowerCase().includes(searchTerm));
@@ -895,19 +920,23 @@
       gameGrid.innerHTML = '';
       gameGrid.classList.remove('hidden');
 
-      // Hide toggle during search results
+      // Hide toggle during search results and reset its visual state (but not localStorage)
       document.getElementById('readyGamesToggleContainerWrapper').classList.add('hidden');
-      document.getElementById('readyGamesToggle').checked = false; // Reset toggle state
+      // No need to set readyGamesToggle.checked = false; as the filter isn't applied.
 
       if (filteredOnline.length === 0 && filteredUnfixable.length === 0 && filteredOffline.length === 0) {
-        gameGrid.innerHTML = `<div class="text-center text-gray-400 py-8 col-span-full">ไม่พบเกมที่ค้นหา</div>`;
+        gameGrid.innerHTML = `<div class="text-center text-gray-400 py-8 col-span-full no-games-message">ไม่พบเกมที่ค้นหา</div>`;
         return;
       }
 
-      // Render filtered online games
+      // Render filtered online games for search results
       filteredOnline.forEach(game => {
         const card = document.createElement('div');
         card.className = 'thumbnail rounded-lg overflow-hidden';
+        card.dataset.gameType = 'online'; // Add game type for consistent data structure
+        card.dataset.gameDownloadEnabled = game.downloadEnabled ? 'true' : 'false';
+        card.dataset.gameFixEnabled = game.fixEnabled ? 'true' : 'false';
+        card.dataset.gameHasDownloadLink = (game.downloadLink || Object.keys(game).some(key => key.startsWith('downloadLink') && game[key])) ? 'true' : 'false';
         card.innerHTML =
           `<div class="media-container" data-video="${game.video || ''}">
             <img src="${game.thumbnail || 'https://placehold.co/320x180/1e2233/8ca3c7?text=No+Image'}" alt="${game.title || 'Game Thumbnail'}">
@@ -940,10 +969,14 @@
         attachCardListeners(card, game, 'online'); // Attach event listeners
       });
 
-      // Render filtered unfixable games
+      // Render filtered unfixable games for search results
       filteredUnfixable.forEach(game => {
         const card = document.createElement('div');
         card.className = 'thumbnail rounded-lg overflow-hidden';
+        card.dataset.gameType = 'unfix'; // Add game type
+        card.dataset.gameDownloadEnabled = game.downloadEnabled ? 'true' : 'false';
+        card.dataset.gameFixEnabled = game.fixEnabled ? 'true' : 'false';
+        card.dataset.gameHasDownloadLink = (game.downloadLink || Object.keys(game).some(key => key.startsWith('downloadLink') && game[key])) ? 'true' : 'false';
         card.innerHTML =
           `<div class="media-container" data-video="${game.video || ''}">
             <img src="${game.thumbnail || 'https://placehold.co/320x180/1e2233/8ca3c7?text=No+Image'}" alt="${game.title || 'Game Thumbnail'}">
@@ -964,10 +997,14 @@
         attachCardListeners(card, game, 'unfix'); // Attach event listeners
       });
 
-      // Render filtered offline games
+      // Render filtered offline games for search results
       filteredOffline.forEach(game => {
         const card = document.createElement('div');
         card.className = 'thumbnail rounded-lg overflow-hidden';
+        card.dataset.gameType = 'offline'; // Add game type
+        card.dataset.gameDownloadEnabled = game.downloadEnabled ? 'true' : 'false';
+        card.dataset.gameFixEnabled = game.fixEnabled ? 'true' : 'false';
+        card.dataset.gameHasDownloadLink = (game.downloadLink || Object.keys(game).some(key => key.startsWith('downloadLink') && game[key])) ? 'true' : 'false';
         card.innerHTML =
           `<div class="media-container" data-video="${game.video || ''}">
             <img src="${game.thumbnail || 'https://placehold.co/320x180/1e2233/8ca3c7?text=No+Image'}" alt="${game.title || 'Game Thumbnail'}">
@@ -1073,8 +1110,8 @@
     document.getElementById('readyGamesToggle').addEventListener('change', () => {
         // Save the current state to localStorage
         localStorage.setItem('readyGamesToggleState', document.getElementById('readyGamesToggle').checked);
-        // Re-render the currently active tab, which will apply the toggle filter
-        activateTab(currentActiveTab);
+        // Apply the filter based on the new toggle state (without re-rendering the whole grid)
+        applyToggleFilter();
     });
 
     // Event listeners for popup overlays (clicking outside closes them)
