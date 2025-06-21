@@ -98,44 +98,56 @@
     </div>
 
     <script type="module">
-        // *** สำคัญมาก: API Key ของคุณที่นี่ ***
-        // *** โปรดทราบว่าการใส่ Key ตรงนี้ไม่ปลอดภัยสำหรับการใช้งานจริงจัง และแนะนำให้จำกัดการใช้งาน Key นี้ใน Google Cloud Console ***
+        // IMPORTANT: Your API Key is placed here.
+        // Please be aware that exposing your API Key directly in frontend code is NOT secure for production applications.
+        // It's highly recommended to restrict this key's usage in Google Cloud Console.
         const API_KEY = "AIzaSyC8Ng5z4AHmjVaPeMBGMYENDHl1CSb5wR0"; 
         
-        // โหลด Generative AI SDK จาก CDN
+        // Load the Generative AI SDK from CDN
+        // This provides the necessary functions to interact with Gemini API.
         import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
 
+        // Get references to HTML elements
         const chatWindow = document.getElementById('chat-window');
         const userInput = document.getElementById('user-input');
         const sendButton = document.getElementById('send-button');
 
+        // Initialize Generative AI client with the API Key
         const genAI = new GoogleGenerativeAI(API_KEY);
+        // Get the Gemini-Pro model (suitable for text-based conversations)
         const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
+        // Start a chat session to maintain conversation history
         const chat = model.startChat({
             generationConfig: {
-                maxOutputTokens: 200, 
+                maxOutputTokens: 200, // Limit the length of AI responses
             },
         });
 
+        // Function to add a message to the chat window
         function addMessage(text, sender) {
             const messageDiv = document.createElement('div');
             messageDiv.classList.add('message');
             messageDiv.classList.add(sender === 'user' ? 'user-message' : 'ai-message');
+            // Use innerHTML to allow for dynamic content like loading dots
             messageDiv.innerHTML = text; 
             chatWindow.appendChild(messageDiv);
+            // Scroll to the bottom to show the latest message
             chatWindow.scrollTop = chatWindow.scrollHeight; 
         }
 
+        // Asynchronous function to send a message to the AI
         async function sendMessage() {
             const userMessage = userInput.value.trim();
+            // Do nothing if the input is empty
             if (!userMessage) return;
 
-            addMessage(userMessage, 'user'); 
-            userInput.value = ''; 
-            sendButton.disabled = true; 
-            userInput.disabled = true; 
+            addMessage(userMessage, 'user'); // Display user's message
+            userInput.value = ''; // Clear the input field
+            sendButton.disabled = true; // Disable send button to prevent multiple submissions
+            userInput.disabled = true; // Disable input field
 
+            // Display loading dots while waiting for AI response
             const loadingMessageDiv = document.createElement('div');
             loadingMessageDiv.classList.add('message', 'ai-message');
             loadingMessageDiv.innerHTML = '<span class="loading-dots">. . .</span>';
@@ -143,37 +155,46 @@
             chatWindow.scrollTop = chatWindow.scrollHeight;
 
             try {
+                // Send the message to the AI and receive a streaming response
                 const result = await chat.sendMessageStream(userMessage);
 
                 let aiResponseText = '';
+                // Iterate over the streamed chunks of the response
                 for await (const chunk of result.stream) {
                     const chunkText = chunk.text();
                     aiResponseText += chunkText;
+                    // Update the loading message div with streamed content and loading dots
                     loadingMessageDiv.innerHTML = aiResponseText + '<span class="loading-dots">. . .</span>';
                     chatWindow.scrollTop = chatWindow.scrollHeight;
                 }
+                // Remove loading dots once the full response is received
                 loadingMessageDiv.innerHTML = aiResponseText;
 
             } catch (error) {
+                // Log and display error message if API call fails
                 console.error('Error calling Gemini API:', error);
-                loadingMessageDiv.innerHTML = 'เกิดข้อผิดพลาดในการเชื่อมต่อกับ AI ลองใหม่อีกครั้ง';
-                loadingMessageDiv.style.backgroundColor = '#ffdddd'; /* สีแดงอ่อนสำหรับข้อผิดพลาด */
-                loadingMessageDiv.style.color = '#333'; /* ตัวหนังสือเข้มขึ้นจะได้เห็น */
+                loadingMessageDiv.innerHTML = 'เกิดข้อผิดพลาดในการเชื่อมต่อกับ AI ลองใหม่อีกครั้ง'; // Error message in Thai
+                loadingMessageDiv.style.backgroundColor = '#ffdddd'; /* Light red for error background */
+                loadingMessageDiv.style.color = '#333'; /* Darker text for readability on light background */
             } finally {
+                // Re-enable input and button regardless of success or failure
                 sendButton.disabled = false; 
                 userInput.disabled = false; 
-                userInput.focus(); 
+                userInput.focus(); // Focus back on input for next message
             }
         }
 
+        // Event listener for send button click
         sendButton.addEventListener('click', sendMessage);
+        // Event listener for 'Enter' key press in the input field
         userInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 sendMessage();
             }
         });
 
-        addMessage('สวัสดีครับ มีอะไรให้ผมช่วยไหม?', 'ai');
+        // Initial welcome message from AI
+        addMessage('สวัสดีครับ มีอะไรให้ผมช่วยไหม?', 'ai'); // Welcome message in Thai
 
     </script>
 </body>
