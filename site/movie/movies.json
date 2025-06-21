@@ -5,5 +5,12 @@
     "video": "https://youtu.be/UWMzKXsY9A4?si=RrA5yMQnbOpPb7zV",
     "connect": "vlcg0d:https://huggingface.co/ceog0d/mv2-data/resolve/main/FDB_6.data?download=true",
     "year": 2025
-  }
+  },
+  {
+    "title": "Companion (2025) คอมแพเนียน เขย่าขวัญ",
+    "thumbnail": "https://m.media-amazon.com/images/M/MV5BODczNjU4NGItZjUxOC00MzFiLTk5MzItNjlmNWYyNTMyYTcxXkEyXkFqcGc@._V1_FMjpg_UY4096_.jpg",
+    "video": "https://youtu.be/Qr_kX0D3DNA?si=Tf0D7Goke5wGTF7x",
+    "connect": "vlcg0d:https://huggingface.co/ceog0d/mv2-data/resolve/main/cp2025.data?download=true",
+    "year": 2025
+  },
 ]
