@@ -138,9 +138,16 @@
     .toggle-container {
       display: flex;
       align-items: center;
-      margin-left: 1rem;
-      margin-right: 0.5rem;
+      /* Removed margin-left/right to allow parent to center it */
       white-space: nowrap; /* Prevent text from wrapping */
+    }
+    /* New wrapper for the toggle to put it on a new line and center it */
+    .toggle-wrapper {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        margin-bottom: 1.5rem; /* Spacing below the toggle */
+        margin-top: 1rem; /* Spacing above the toggle */
     }
 
     .toggle-switch {
@@ -194,7 +201,7 @@
     }
 
     /* Hide toggle switch when not applicable */
-    .toggle-container.hidden {
+    .toggle-wrapper.hidden { /* Applied to the wrapper now */
       display: none;
     }
 
@@ -500,11 +507,11 @@
             margin-left: 1rem;
             margin-right: 1rem;
         }
-        .toggle-container {
-            margin-left: 0; /* Adjust margin for small screens */
-            margin-top: 0.5rem; /* Add some top margin if it wraps */
-            width: 100%; /* Take full width on small screens */
-            justify-content: center; /* Center the toggle on small screens */
+        .toggle-wrapper { /* Adjust for new wrapper */
+            margin-left: 0;
+            margin-right: 0;
+            margin-top: 0.5rem;
+            margin-bottom: 1rem; /* Less space on small screens */
         }
     }
   </style>
@@ -531,8 +538,10 @@
         <button id="allGamesTab" class="tab active-tab">แก้ไขออนไลน์</button>
         <button id="unfixableTab" class="tab">แก้ไขไม่ได้</button>
         <button id="offlineTab" class="tab">เกมออฟไลน์</button>
+      </div>
 
-        <!-- Toggle switch for "แสดงเฉพาะที่พร้อม" -->
+      <!-- Toggle switch for "แสดงเฉพาะที่พร้อม" - now on a new line -->
+      <div id="readyGamesToggleContainerWrapper" class="toggle-wrapper">
         <div id="readyGamesToggleContainer" class="toggle-container">
           <label for="readyGamesToggle" class="text-text-mid text-sm">แสดงเฉพาะที่พร้อม</label>
           <label class="toggle-switch">
@@ -699,7 +708,17 @@
       container.classList.remove('hidden'); // Show the target container
 
       const readyGamesToggle = document.getElementById('readyGamesToggle');
+      const toggleWrapper = document.getElementById('readyGamesToggleContainerWrapper');
       let listToRender = originalList;
+
+      // Show/Hide toggle wrapper based on current tab
+      if (gameType === "online" || gameType === "offline") {
+        toggleWrapper.classList.remove('hidden');
+      } else {
+        toggleWrapper.classList.add('hidden');
+        readyGamesToggle.checked = false; // Reset toggle state when hiding
+      }
+
 
       // Apply toggle filter if it's on and relevant for the current tab
       if (readyGamesToggle.checked && (gameType === "online" || gameType === "offline")) {
@@ -833,21 +852,14 @@
     // Specific rendering functions for each tab
     function renderAllGames(list = games) {
       renderGames(list, 'gameGrid', 'online');
-      // Show toggle for this tab
-      document.getElementById('readyGamesToggleContainer').classList.remove('hidden');
     }
 
     function renderUnfixableGames(list = unfixableGames) {
       renderGames(list, 'unfixableList', 'unfix');
-      // Hide toggle for this tab
-      document.getElementById('readyGamesToggleContainer').classList.add('hidden');
-      document.getElementById('readyGamesToggle').checked = false; // Reset toggle state when hiding
     }
 
     function renderOfflineGames(list = offlineGames) {
       renderGames(list, 'offlineList', 'offline');
-      // Show toggle for this tab
-      document.getElementById('readyGamesToggleContainer').classList.remove('hidden');
     }
 
 
@@ -887,7 +899,7 @@
       gameGrid.classList.remove('hidden');
 
       // Hide toggle during search results
-      document.getElementById('readyGamesToggleContainer').classList.add('hidden');
+      document.getElementById('readyGamesToggleContainerWrapper').classList.add('hidden');
       document.getElementById('readyGamesToggle').checked = false; // Reset toggle state
 
       if (filteredOnline.length === 0 && filteredUnfixable.length === 0 && filteredOffline.length === 0) {
