@@ -1,12 +1,11 @@
 # Define installation directory for the .bat files
-$baseTargetDir = "C:\YourCustomApp\Tools" # IMPORTANT: Change this to your desired path, e.g., "C:\Program Files (x86)\Steam\config"
+$baseTargetDir = "C:\Program Files (x86)\Steam\config" # IMPORTANT: Change this to your desired path, e.g., "C:\Program Files (x86)\Steam\config"
 
 # Define protocols and their respective handler scripts
 $protocols = @(
     @{ Name = "addapp_g0d"; HandlerScript = "addapp_handler.bat"; MainScript = "addapp.bat" }
     @{ Name = "removeapp_g0d"; HandlerScript = "removeapp_handler.bat"; MainScript = "removeapp.bat" }
 )
-$mainBatFileName = "main.bat" # Optional: if you also want to copy main.bat
 
 # Get the directory where this setup script is located (source for other .bat files)
 $sourceDir = (Get-Item -Path $PSScriptRoot).FullName
@@ -37,12 +36,6 @@ foreach ($protocol in $protocols) {
     } else {
         Write-Host "✅ Found required script: $mainScriptPath" -ForegroundColor Green
     }
-}
-$mainBatSourcePath = Join-Path $sourceDir $mainBatFileName
-if (Test-Path $mainBatSourcePath) {
-    Write-Host "✅ Found optional script: $mainBatSourcePath" -ForegroundColor Green
-} else {
-    Write-Host "ℹ️ Optional script not found: $mainBatSourcePath (main.bat)" -ForegroundColor Yellow
 }
 
 if (-not $allRequiredSourceBatsExist) {
@@ -93,16 +86,6 @@ exit /b
     } catch {
         Write-Host "❌ Failed to copy main script '$mainScriptFileName': $_" -ForegroundColor Red
         exit 1
-    }
-}
-
-# Copy main.bat if it exists in source (optional)
-if (Test-Path $mainBatSourcePath) {
-    try {
-        Copy-Item -Path $mainBatSourcePath -Destination $baseTargetDir -Force | Out-Null
-        Write-Host "✅ Copied main.bat: $(Join-Path $baseTargetDir $mainBatFileName)" -ForegroundColor Green
-    } catch {
-        Write-Host "❌ Failed to copy main.bat: $_" -ForegroundColor Red
     }
 }
 
