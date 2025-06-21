@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dev/g0d - Steam Style</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    /* Font definition */
+    @font-face {
+      font-family: 'SFProTH';
+      src: url('https://raw.githubusercontent.com/dev-g0d/dev-g0d.github.io/main-site/fonts/SFProTH_regular.woff.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    /* CSS variables for consistent theming */
+    :root {
+      /* Darker Steam-like color palette for better contrast */
+      --primary-bg: #121212; /* Even darker background, almost black */
+      --surface-dark: #1F2228; /* Darker grey for cards/surfaces */
+      --surface-mid: #2C3038; /* Darker grey, common for panels */
+      --surface-light: #3A4048; /* Darker for input fields/subtle borders */
+      --border-color: #4D5660; /* Clearer, slightly lighter dark blue-grey border */
+      
+      /* Colors for Dev/g0d title, main links, How-to button text, pop-up close button */
+      --primary-blue: #66C0F4; /* Bright Steam blue */
+      --highlight-pink: #91CBDB; /* Muted teal/blue for secondary highlights/hovers */
+
+      /* Text colors */
+      --text-main: #E0E0E0; /* Lighter grey for main text, higher contrast */
+      --text-mid: #B0B0B0; /* Medium grey for secondary text, improved readability */
+      --text-subtle: #7A8590; /* Darker grey for subtle details, still visible */
+      
+      /* Button specific colors - darker as requested */
+      --button-default-bg: #2B4A65; /* Darker blue for default button background */
+      --button-hover-bg: #3C5C7B; /* Darker blue for button hover background */
+      --btn-disabled: #202631; /* Even darker disabled button background */
+      --btn-disabled-text: #5C6B7B; /* Muted text for disabled buttons, but legible */
+
+      /* Tag colors adjusted to fit the new palette */
+      --tag-online: #66C0F4; /* Primary blue for online */
+      --tag-unfix: #FF8585; /* Brighter red for unfix, more noticeable */
+      --tag-offline: #FFD700; /* Bright gold for offline, more noticeable */
+      --tag-online-bg: rgba(102, 192, 244, 0.2); /* Slightly more opaque background */
+      --tag-unfix-bg: rgba(255, 133, 133, 0.2);
+      --tag-offline-bg: rgba(255, 215, 0, 0.2);
+    }
+
+    /* Base body styles */
+    body {
+      background-color: var(--primary-bg);
+      color: var(--text-main);
+      font-family: 'SFProTH', 'Segoe UI', Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 1.5rem; /* Equivalent to p-6 */
+      min-height: 100vh;
+    }
+
+    /* Thumbnail card styles (adjusted for Steam feel) */
+    .thumbnail {
+      background: var(--surface-dark); /* Using existing surface-dark */
+      border: 1.5px solid var(--border-color);
+      transition: transform 0.25s ease-out, box-shadow 0.25s ease-out, border-color 0.25s ease-out;
+      box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.5); /* Darker shadow for deeper look */
+      border-radius: 0.5rem;
+      overflow: hidden;
+      display: flex; /* Make card content flex for better layout within card */
+      flex-direction: column;
+      cursor: pointer; /* Indicate clickable */
+    }
+
+    .thumbnail:hover {
+      transform: translateY(-5px) scale(1.02);
+      box-shadow: 0 8px 30px 4px rgba(0, 0, 0, 0.7); /* Enhanced shadow on hover */
+      border-color: var(--primary-blue); /* Highlight with Steam blue on hover */
+    }
+
+    /* Media container (for thumbnail video/image) */
+    .media-container {
+      position: relative;
+      width: 100%;
+      padding-top: 56.25%; /* 16:9 Aspect Ratio */
+      overflow: hidden;
+      background-color: #000 !important;
+      border-bottom: 1.5px solid var(--border-color);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .media-container img,
+    .media-container video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: opacity 0.3s ease-in-out;
+    }
+    .media-container video { display: none; z-index: 1;}
+    .media-container:hover video { display: block; opacity: 1;}
+    .media-container:hover img { display: none; opacity: 0;}
+
+    /* Card content area */
+    .thumbnail-content {
+        padding: 1rem; /* p-4 in Tailwind */
+        flex-grow: 1; /* Allows content to take available space */
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between; /* Pushes buttons to bottom */
+    }
+
+    .thumbnail-content .game-title {
+        color: var(--text-main) !important;
+        font-size: 1.25rem; /* text-xl */
+        font-weight: 600; /* semibold */
+        margin-bottom: 0.5rem;
+        display: block; /* Ensure it takes full width */
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis; /* Add ellipsis for long titles */
+    }
+
+    .thumbnail-content p {
+        color: var(--text-mid);
+        font-size: 0.95rem; /* text-sm */
+        line-height: 1.4;
+    }
+
+    /* Button base styles - adjusted for smaller size */
+    .main-btn, .download-btn, .fix-btn, .delete-btn {
+      background: var(--button-default-bg);
+      color: #fff;
+      border: none;
+      transition: background 0.2s ease-in-out, color 0.2s ease-in-out, opacity 0.2s ease-in-out;
+      border-radius: 0.25rem;
+      font-size: 0.95rem; /* Smaller font size */
+      letter-spacing: 0.01em;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+      outline: none;
+      padding: 0.5rem 0.8rem; /* Smaller padding */
+      cursor: pointer;
+      flex-grow: 1; /* Allows buttons to share space evenly in a flex row */
+      min-width: 0; /* Allows buttons to shrink */
+    }
+
+    .main-btn:hover:enabled,
+    .download-btn:hover:enabled,
+    .fix-btn:hover:enabled,
+    .delete-btn:hover:enabled {
+      background: var(--button-hover-bg);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Disabled button styles */
+    .disabled-btn, .download-btn[disabled], .fix-btn[disabled], .delete-btn[disabled] {
+      background: var(--btn-disabled) !important;
+      color: var(--btn-disabled-text) !important;
+      cursor: not-allowed !important;
+      opacity: 0.7 !important;
+      border: none !important;
+      box-shadow: none !important;
+    }
+
+    /* Popup styles (for video, download, howto) - unchanged */
+    .popup {
+      position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.95);
+      display: flex; justify-content: center; align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+    }
+    .popup.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .popup-video {
+      width: 90%;
+      max-width: 960px;
+      height: auto;
+      max-height: 90vh;
+      object-fit: contain;
+      background: none;
+      border: none;
+      border-radius: 0;
+      box-shadow: none;
+      display: block;
+    }
+
+    /* Close button for popups */
+    .close-btn {
+      position: absolute; top: 20px; right: 20px;
+      color: var(--primary-blue); /* Uses primary-blue (lighter) */
+      font-size: 2.2rem; cursor: pointer;
+      background: rgba(255, 255, 255, 0.1);
+      border: none; border-radius: 50%;
+      width: 48px; height: 48px;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .2s ease-in-out, color 0.2s ease-in-out;
+      z-index: 1001;
+    }
+    .close-btn:hover { background: var(--primary-blue); color: #fff;}
+
+    /* Search bar styles */
+    .search-bar {
+      background: var(--surface-dark);
+      border: 1.5px solid var(--border-color);
+      color: var(--text-main);
+      padding: 12px 18px;
+      border-radius: 10px;
+      width: 100%; max-width: 450px;
+      font-size: 17px;
+      margin: 0 auto 1.5rem auto;
+      display: block;
+      transition: border .2s ease-in-out, box-shadow .2s ease-in-out;
+    }
+    .search-bar:focus {
+      outline: none;
+      border-color: var(--primary-blue);
+      box-shadow: 0 0 10px 2px rgba(102, 192, 244, 0.5);
+    }
+
+    /* How-to button styles */
+    .howto-btn {
+      background: none;
+      color: var(--primary-blue);
+      text-decoration: underline !important;
+      border: none;
+      border-radius: 0;
+      padding: 0;
+      margin: 0;
+      cursor: pointer;
+      font-size: 0.95em;
+      transition: color 0.18s ease-in-out;
+      display: inline-block;
+    }
+    .howto-btn:hover { color: var(--highlight-pink);}
+
+    /* How-to popup styles */
+    .howto-popup {
+      position: fixed; left: 0; top: 0; width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.98);
+      z-index: 2000;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+    }
+    .howto-popup.show {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .howto-content {
+      background: var(--surface-mid);
+      color: var(--text-main);
+      border-radius: 18px;
+      padding: 32px 28px 24px 28px;
+      max-width: 95vw;
+      width: auto;
+      min-width: 300px;
+      display: inline-block;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
+      font-size: 1.1rem;
+      position: relative;
+      line-height: 1.8;
+      white-space: pre-line;
+      word-break: break-word;
+      border: 1.5px solid var(--primary-blue);
+      animation: fadeInScale 0.3s ease-out;
+    }
+
+    @keyframes fadeInScale {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* How-to close button */
+    .howto-close-btn {
+      position: absolute; right: 16px; top: 12px; font-size: 2.2rem;
+      background: none; border: none; color: var(--primary-blue);
+      cursor: pointer;
+      transition: color .2s ease-in-out;
+    }
+    .howto-close-btn:hover { color: var(--highlight-pink);}
+
+    /* Download links list */
+    #downloadLinksList a {
+      background: var(--primary-blue);
+      color: #fff;
+      border-radius: 0.25rem;
+      display: block;
+      margin: 0.75rem 0;
+      padding: 12px 0;
+      text-align: center;
+      text-decoration: none !important;
+      transition: background .18s ease-in-out, color .18s ease-in-out;
+      border: 1.5px solid var(--primary-blue);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+    #downloadLinksList a:hover {
+      background: var(--highlight-pink);
+      color: #fff;
+      border-color: var(--highlight-pink);
+    }
+
+    /* General link styling */
+    a {
+      text-decoration: none !important;
+    }
+
+    /* Text color overrides for Tailwind */
+    .text-gray-400, .text-gray-500, .text-gray-300, .text-gray-200 {
+      color: var(--text-mid) !important;
+    }
+    .text-blue-300, .text-blue-400, .text-blue-500 {
+      color: var(--primary-blue) !important;
+    }
+    .text-red-400 { color: var(--tag-unfix) !important; }
+
+    /* Font size adjustments */
+    .text-sm { font-size: 0.95rem; }
+    .text-xl { font-size: 1.25rem;}
+
+    /* Line height for thumbnail text content */
+    .thumbnail .p-4, .thumbnail .p-4 p, .thumbnail .p-4 a, .thumbnail .p-4 span {
+      line-height: 1.6;
+    }
+
+    /* Game tag styles - (kept for future potential use, though not displayed) */
+    .game-tag {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+      padding: 1px 8px;
+      border-radius: 999px;
+      margin-bottom: 0;
+      margin-right: 6px;
+      vertical-align: middle;
+      user-select: none;
+      line-height: 1.5;
+      border-width: 1px;
+    }
+    .tag-online {
+      background: var(--tag-online-bg);
+      color: var(--tag-online);
+      border-color: var(--tag-online);
+    }
+    .tag-unfix {
+      background: var(--tag-unfix-bg);
+      color: var(--tag-unfix);
+      border-color: var(--tag-unfix);
+    }
+    .tag-offline {
+      background: var(--tag-offline-bg);
+      color: var(--tag-offline);
+      border-color: var(--tag-offline);
+    }
+
+    /* Locked content overlay */
+    #lockedContent {
+      position: fixed;
+      left: 0; top: 0; width: 100vw; height: 100vh;
+      z-index: 9999;
+      background: rgba(0,0,0,0.98);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+      padding: 0;
+      border: none;
+      box-shadow: none;
+      transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+    }
+    #lockedContent.hide {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    #lockedContent > div {
+      background: var(--surface-mid);
+      color: var(--tag-unfix);
+      border: 2px solid var(--tag-unfix);
+      border-radius: 12px;
+      padding: 42px 32px 32px 32px;
+      font-size: 1.4rem;
+      text-align: center;
+      max-width: 480px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
+      margin: 0;
+      line-height: 1.6;
+    }
+    #lockedContent .icon {
+      font-size:2.5rem;
+      display: block;
+      margin-bottom: 15px;
+    }
+
+    /* Centering wrapper for main content */
+    .center-content-wrapper {
+      width: 100%;
+      max-width: 1200px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 0 1rem;
+    }
+
+    /* Adjustments for game grid responsiveness */
+    #gameListings {
+      width: 100%;
+      justify-content: center;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 640px) { /* sm breakpoint for Tailwind */
+        .search-bar {
+            margin-left: 1rem;
+            margin-right: 1rem;
+        }
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center p-6">
+  <h1 class="text-4xl" style="color:var(--primary-blue);margin-bottom:0;">Dev/g0d</h1>
+  <div style="color: var(--text-mid); font-size: 1.08rem; margin-top: .5rem; margin-bottom: 2rem;">
+    ภายใต้ <a href="https://cs.rin.ru/" target="_blank" style="color:var(--primary-blue); transition: color 0.17s ease-in-out;" class="hover:text-highlight-pink">cs.rin.ru</a> & <a href="https://www.reddit.com/r/Piracy/" target="_blank" style="color:var(--primary-blue); transition: color 0.17s ease-in-out;" class="hover:text-highlight-pink">r/Piracy</a>
+  </div>
+
+  <!-- Locked content overlay -->
+  <div id="lockedContent" class="hide">
+    <div>
+      <span class="icon">🔒</span>
+      <b>คู่มือแก้ไข ถูกปิดการใช้งาน</b><br>
+      กรุณาติดต่อผู้ดูแลระบบหรือรอประกาศเพิ่มเติม
+    </div>
+  </div>
+
+  <div class="center-content-wrapper">
+    <div id="mainContent" class="w-full flex flex-col items-center">
+      <input type="text" id="searchBar" class="search-bar mb-6" placeholder="ค้นหาเกม...">
+      
+      <!-- Combined grid for all game listings -->
+      <div id="gameListings" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-6xl"></div>
+    </div>
+  </div>
+
+  <!-- Video Popup -->
+  <div id="videoPopup" class="popup">
+    <button class="close-btn" onclick="closePopup()">×</button>
+    <video id="popupPlayer" class="popup-video" controls autoplay playsinline>
+      <source id="popupSource" type="video/webm">
+      <source id="popupSourceMp4" type="video/mp4">
+    </video>
+  </div>
+
+  <!-- Download Popup -->
+  <div id="downloadPopup" class="popup">
+    <button class="close-btn" onclick="closeDownloadPopup()">×</button>
+    <div id="downloadLinksList" class="bg-gray-900 p-6 rounded-lg max-w-md w-full text-center" style="background:var(--surface-mid); border: 1.5px solid var(--border-color);"></div>
+  </div>
+
+  <!-- How-to Popup -->
+  <div id="howtoPopup" class="howto-popup">
+    <div class="howto-content">
+      <button class="howto-close-btn" onclick="closeHowto()">×</button>
+      <div id="howtoText"></div>
+    </div>
+  </div>
+
+  <script>
+    // Global status for content visibility
+    const status = "on";
+
+    // Function to control main content visibility based on status
+    function setContentStatus(status) {
+      status = (status + '').toLowerCase().trim();
+      const mainContent = document.getElementById('mainContent');
+      const lockedContent = document.getElementById('lockedContent');
+      if (status === 'on') {
+        mainContent.style.display = ''; // Show main content
+        lockedContent.classList.add('hide'); // Hide locked content
+      } else {
+        mainContent.style.display = 'none'; // Hide main content
+        lockedContent.classList.remove('hide'); // Show locked content
+      }
+    }
+    setContentStatus(status); // Set initial content status
+
+    // Array to hold all combined games (only one dummy game for now)
+    let allCombinedGames = []; 
+
+    // Function to load game data (now includes only one dummy game)
+    async function loadData() {
+      // Dummy Data - For demonstration purposes, only one game as requested
+      const dummyGames = [
+        {
+          "title": "Cyberpunk 2077",
+          "appId": "1091500",
+          "releaseDate": "10 ธ.ค. 2020",
+          "thumbnail": "https://placehold.co/320x180/2a313c/66C0F4?text=Cyberpunk+2077",
+          "video": "https://cdn.cloudflare.steamstatic.com/steam/apps/256740880/movie480_vp9.webm?t=1607519961",
+          "officialLink": "https://store.steampowered.com/app/1091500/Cyberpunk_2077/",
+          "downloadEnabled": true,
+          "fixEnabled": true, /* Now used for Fix button */
+          "version": "v2.1",
+          "players": "Singleplayer",
+          "crackedBy": "RUNE",
+          "platform": "PC",
+          "password": "none",
+          "fixPassword": "none",
+          "instructions": "1. ติดตั้งเกม\n2. ติดตั้ง Fix\n3. เล่น!",
+          "downloadLink1": "https://example.com/cyberpunk_part1",
+          "downloadLink2": "https://example.com/cyberpunk_part2",
+          "fixLink": "https://example.com/cyberpunk_fix",
+          "type": "online" // Type is still relevant for data structure, but not for display
+        }
+      ];
+
+      allCombinedGames = dummyGames; // Use dummy data directly
+      renderGameListings(allCombinedGames); // Render the single game card
+    }
+
+    // Helper function to create info lines for game details
+    // This function is still used for APP ID and Release Date
+    function infoLine(label, value, color = "gray-400") {
+      if (value === undefined || value === null || (typeof value === "string" && value.trim() === "")) {
+        return ''; // Don't render if value is empty or null
+      }
+      return `<p class="text-${color} text-sm">${label} ${value}</p>`;
+    }
+
+    // Helper function to render game status tags (now removed from cards)
+    function renderGameTag(type) {
+      return ''; // No tags on cards anymore as per request
+    }
+
+    // Function to show the download popup with links
+    function showDownloadPopup(links) {
+      const downloadLinksList = document.getElementById('downloadLinksList');
+      // Map links to anchor tags
+      downloadLinksList.innerHTML = links.map((link, i) =>
+        `<a href="${link}" target="_blank" rel="noopener noreferrer"
+          >พาร์ท ${i + 1}</a>`).join("");
+      document.getElementById('downloadPopup').classList.add('show');
+    }
+
+    // Function to close the download popup
+    function closeDownloadPopup() {
+      document.getElementById('downloadPopup').classList.remove('show');
+    }
+
+    // Function to show the how-to popup with instructions
+    function showHowtoPopup(text) {
+      document.getElementById('howtoText').innerText = text; // Set text content
+      document.getElementById('howtoPopup').classList.add('show');
+    }
+
+    // Function to close the how-to popup
+    function closeHowto() {
+      document.getElementById('howtoPopup').classList.remove('show');
+    }
+
+    // Function to close the video popup
+    function closePopup() {
+      document.getElementById('videoPopup').classList.remove('show');
+      document.getElementById('popupPlayer').pause(); // Pause video playback
+      document.getElementById('popupSource').src = ''; // Clear video source
+      document.getElementById('popupSourceMp4').src = ''; // Clear MP4 source
+    }
+
+    // Function to render all game listings
+    function renderGameListings(listToRender) {
+      const container = document.getElementById('gameListings');
+      container.innerHTML = ''; // Clear previous content
+
+      if (listToRender.length === 0) {
+        container.innerHTML = `<div class="text-center text-gray-400 py-8 col-span-full">ไม่พบเกมที่ค้นหา</div>`;
+        return;
+      }
+
+      listToRender.forEach(game => {
+        const card = document.createElement('div');
+        card.className = 'thumbnail rounded-lg overflow-hidden flex flex-col';
+
+        let buttonsHtml = '';
+        let howtoBtnHtml = '';
+
+        // "รับเกม", "ลบเกม", "แก้ไข" buttons in a row
+        buttonsHtml += `
+          <div class="flex space-x-2 mt-6"> <!-- Use flex row with spacing -->
+            <button class="download-btn main-btn text-center" type="button" ${game.downloadEnabled ? '' : 'disabled'}>รับเกม</button>
+            <button class="delete-btn main-btn text-center" type="button">ลบเกม</button>
+            <button class="fix-btn main-btn text-center" type="button" ${game.fixEnabled ? '' : 'disabled'}>แก้ไข</button>
+          </div>
+        `;
+        
+        // How-to button only if instructions exist
+        if (game.instructions) {
+          howtoBtnHtml = `<p class="text-sm mt-2"><button class="howto-btn" type="button">วิธีแก้ไข</button></p>`;
+        }
+        
+        card.innerHTML =
+          `<div class="media-container" data-video="${game.video || ''}">
+            <img src="${game.thumbnail || 'https://placehold.co/320x180/2a313c/66C0F4?text=No+Image'}" alt="${game.title || 'Game Thumbnail'}">
+            ${game.video ?
+              `<video autoplay muted loop playsinline preload="metadata">
+                <source src="${game.video}" type="video/webm">
+                <source src="${game.video.replace('.webm', '.mp4')}" type="video/mp4">
+              </video>` : ''}
+          </div>
+          <div class="thumbnail-content">
+            <div>
+                <a href="${game.officialLink || '#'}" target="_blank" rel="noopener noreferrer" class="game-title">
+                    ${game.title || 'Unknown Title'}
+                </a>
+                ${infoLine("APP ID:", game.appId)}
+                ${infoLine("วันวางจำหน่าย:", game.releaseDate)}
+                ${howtoBtnHtml} <!-- Placed how-to button here -->
+            </div>
+            ${buttonsHtml}
+          </div>
+        `;
+        container.appendChild(card);
+        attachCardListeners(card, game); // Pass game object directly
+      });
+    }
+
+    // Centralized function to attach event listeners to game cards
+    function attachCardListeners(card, game) {
+      const mediaContainer = card.querySelector('.media-container');
+      if (mediaContainer && game.video) {
+        mediaContainer.addEventListener('click', () => {
+          document.getElementById('popupSource').src = game.video;
+          document.getElementById('popupSourceMp4').src = game.video.replace('.webm', '.mp4');
+          document.getElementById('popupPlayer').load();
+          document.getElementById('videoPopup').classList.add('show');
+          document.getElementById('popupPlayer').play();
+        });
+      }
+
+      const downloadBtn = card.querySelector('.download-btn');
+      if (downloadBtn) {
+        const hasDownloadLinks = Object.keys(game).some(key => key.startsWith('downloadLink') && game[key]);
+        if (!game.downloadEnabled && !hasDownloadLinks) {
+          downloadBtn.classList.add('disabled-btn');
+        } else {
+          downloadBtn.addEventListener('click', function(event) {
+            event.stopPropagation(); // Prevent card click from opening video
+            const downloadLinks = [];
+            let idx = 1;
+            while (game['downloadLink'+idx]) {
+              downloadLinks.push(game['downloadLink'+idx]);
+              idx++;
+            }
+            if (downloadLinks.length > 0) {
+              showDownloadPopup(downloadLinks);
+            } else if (game.downloadLink) {
+              window.open(game.downloadLink, '_blank');
+            }
+          });
+        }
+      }
+
+      // "ลบเกม" button logic
+      const deleteBtn = card.querySelector('.delete-btn');
+      if (deleteBtn) {
+        deleteBtn.addEventListener('click', function(event) {
+          event.stopPropagation(); // Prevent card click from opening video
+          // Placeholder for delete action
+          alert("ฟังก์ชัน 'ลบเกม' ยังไม่พร้อมใช้งาน"); // Use a custom modal in a real app
+        });
+      }
+
+      // Re-implemented fixBtn logic
+      const fixBtn = card.querySelector('.fix-btn');
+      if (fixBtn) {
+        if (!game.fixEnabled) {
+          fixBtn.classList.add('disabled-btn');
+        } else if (game.fixLink) {
+          fixBtn.addEventListener('click', function(event) {
+            event.stopPropagation(); // Prevent card click from opening video
+            window.open(game.fixLink, '_blank');
+          });
+        }
+      }
+
+      const howtoBtn = card.querySelector('.howto-btn');
+      if (howtoBtn) {
+          howtoBtn.addEventListener('click', function(event) {
+              event.stopPropagation(); // Prevent card click from opening video
+              showHowtoPopup(game.instructions || "ไม่มีวิธีแก้ไขสำหรับเกมนี้");
+          });
+      }
+    }
+
+
+    // Event listener for the search bar
+    document.getElementById('searchBar').addEventListener('input', () => {
+      const searchTerm = document.getElementById('searchBar').value.trim().toLowerCase();
+      const filteredGames = allCombinedGames.filter(game => {
+        const titleMatch = (game.title || '').toLowerCase().includes(searchTerm);
+        const appIdMatch = (game.appId || '').toString().toLowerCase().includes(searchTerm);
+        return titleMatch || appIdMatch;
+      });
+      renderGameListings(filteredGames);
+    });
+
+    // Event listeners for popup overlays (clicking outside closes them)
+    document.getElementById('howtoPopup').addEventListener('click', function(e) {
+      if (e.target === this) closeHowto();
+    });
+    document.getElementById('downloadPopup').addEventListener('click', function(e) {
+      if (e.target === this) closeDownloadPopup();
+    });
+    document.getElementById('videoPopup').addEventListener('click', function(e) {
+        if (e.target === this || e.target.classList.contains('close-btn')) closePopup();
+    });
+
+
+    // Load data when the DOM is fully loaded
+    document.addEventListener('DOMContentLoaded', loadData);
+  </script>
+</body>
+</html>
