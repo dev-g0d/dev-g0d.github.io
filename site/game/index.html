@@ -475,7 +475,7 @@
     }
 
     /* Adjustments for game grid responsiveness */
-    #gameGrid, #unfixableList, #offlineList, #readyGamesList { /* Added readyGamesList */
+    #gameGrid, #unfixableList, #offlineList {
       width: 100%; /* Ensure they take full width of parent */
       justify-content: center; /* Center cards within the grid */
     }
@@ -527,14 +527,14 @@
   <div class="center-content-wrapper">
     <div id="mainContent" class="w-full flex flex-col items-center">
       <input type="text" id="searchBar" class="search-bar mb-6" placeholder="ค้นหา...">
-      <div class="flex items-center space-x-4 mb-6 flex-wrap-tabs"> <!-- Added items-center and flex-wrap-tabs -->
+      <div class="flex items-center space-x-4 mb-6 flex-wrap-tabs">
         <button id="allGamesTab" class="tab active-tab">แก้ไขออนไลน์</button>
         <button id="unfixableTab" class="tab">แก้ไขไม่ได้</button>
         <button id="offlineTab" class="tab">เกมออฟไลน์</button>
 
-        <!-- Toggle switch for "เกมพร้อม" -->
+        <!-- Toggle switch for "แสดงเฉพาะที่พร้อม" -->
         <div id="readyGamesToggleContainer" class="toggle-container">
-          <label for="readyGamesToggle" class="text-text-mid text-base">เกมพร้อม</label>
+          <label for="readyGamesToggle" class="text-text-mid text-sm">แสดงเฉพาะที่พร้อม</label>
           <label class="toggle-switch">
             <input type="checkbox" id="readyGamesToggle">
             <span class="toggle-slider"></span>
@@ -545,7 +545,6 @@
       <div id="gameGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-6xl"></div>
       <div id="unfixableList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-6xl hidden"></div>
       <div id="offlineList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 w-full max-w-6xl hidden"></div>
-      <!-- Note: readyGamesList is no longer needed as a separate grid, filtering happens directly on existing grids -->
     </div>
   </div>
 
@@ -554,7 +553,7 @@
     <button class="close-btn" onclick="closePopup()">×</button>
     <video id="popupPlayer" class="popup-video" controls autoplay playsinline>
       <source id="popupSource" type="video/webm">
-      <source id="popupSourceMp4" type="video/mp4"> <!-- Added for MP4 fallback -->
+      <source id="popupSourceMp4" type="video/mp4">
     </video>
   </div>
 
@@ -614,7 +613,19 @@
       games = await safeFetch('gamefix.json');
       unfixableGames = await safeFetch('gameunfix.json');
       offlineGames = await safeFetch('gameoffline.json');
-      activateTab('allGamesTab'); // Render the default view after loading
+
+      const readyGamesToggle = document.getElementById('readyGamesToggle');
+      const savedToggleState = localStorage.getItem('readyGamesToggleState');
+
+      if (savedToggleState !== null) {
+        // Convert string to boolean
+        readyGamesToggle.checked = (savedToggleState === 'true');
+      } else {
+        // If no saved state, default to checked (true) as requested
+        readyGamesToggle.checked = true;
+      }
+
+      activateTab('allGamesTab'); // Render the default view after loading, applying the initial toggle state
     }
 
     // Helper function to create info lines for game details
@@ -692,6 +703,7 @@
 
       // Apply toggle filter if it's on and relevant for the current tab
       if (readyGamesToggle.checked && (gameType === "online" || gameType === "offline")) {
+          // Filter for games that have either download enabled, fix enabled, or a downloadLink (for offline games)
           listToRender = originalList.filter(game => game.downloadEnabled || game.fixEnabled || game.downloadLink);
       }
 
@@ -775,7 +787,9 @@
         // Event listener for download button
         const downloadBtn = card.querySelector('.download-btn');
         if (downloadBtn) {
-          if (!game.downloadEnabled && !game.downloadLink) { // Check both properties for disabling
+          // Check if download is enabled or if there's any downloadLink (part1, part2, etc.)
+          const hasDownloadLinks = Object.keys(game).some(key => key.startsWith('downloadLink') && game[key]);
+          if (!game.downloadEnabled && !hasDownloadLinks) {
             downloadBtn.classList.add('disabled-btn');
           } else {
             downloadBtn.addEventListener('click', function() {
@@ -787,7 +801,7 @@
               }
               if (downloadLinks.length > 0) {
                 showDownloadPopup(downloadLinks);
-              } else if (game.downloadLink) {
+              } else if (game.downloadLink) { // Fallback for single downloadLink property
                 window.open(game.downloadLink, '_blank');
               }
             });
@@ -827,7 +841,7 @@
       renderGames(list, 'unfixableList', 'unfix');
       // Hide toggle for this tab
       document.getElementById('readyGamesToggleContainer').classList.add('hidden');
-      document.getElementById('readyGamesToggle').checked = false; // Reset toggle state
+      document.getElementById('readyGamesToggle').checked = false; // Reset toggle state when hiding
     }
 
     function renderOfflineGames(list = offlineGames) {
@@ -857,7 +871,6 @@
       } else if (tabId === 'offlineTab') {
         renderOfflineGames();
       }
-      // Note: readyGamesTab no longer exists as a standalone tab
     }
 
     // Function to search across all game lists
@@ -1048,6 +1061,8 @@
 
     // Event listener for the new toggle switch
     document.getElementById('readyGamesToggle').addEventListener('change', () => {
+        // Save the current state to localStorage
+        localStorage.setItem('readyGamesToggleState', document.getElementById('readyGamesToggle').checked);
         // Re-render the currently active tab, which will apply the toggle filter
         activateTab(currentActiveTab);
     });
