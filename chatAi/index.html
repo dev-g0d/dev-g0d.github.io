@@ -168,6 +168,11 @@
                     <video id="video-preview" src="#" controls muted class="max-w-[60px] max-h-[60px] rounded-lg object-cover border border-[#555] transition-all duration-300 cursor-pointer"></video>
                     <button type="button" class="remove-media-button" data-media-type="video">X</button>
                 </div>
+                <!-- File Preview Wrapper (for general files) -->
+                <div id="file-preview-wrapper" class="media-preview-wrapper hidden flex items-center gap-1 p-1 pr-2 rounded-lg bg-gray-700 text-gray-200 text-sm overflow-hidden whitespace-nowrap">
+                    <span id="file-preview-text" class="flex-grow overflow-hidden text-ellipsis"></span>
+                    <button type="button" class="remove-media-button !static !top-auto !right-auto !bg-transparent !text-gray-400 hover:!bg-gray-600 hover:!text-white !border-none !shadow-none">X</button>
+                </div>
             </div>
 
             <!-- Image Upload Button -->
@@ -181,6 +186,13 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-video w-6 h-6"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="1" y="6" rx="2" ry="2"/></svg>
             </label>
             <input type="file" id="video-input" accept="video/*" class="hidden">
+
+            <!-- General File Upload Button -->
+            <label for="file-input" class="upload-button bg-transparent border-none cursor-pointer p-2 rounded-full flex items-center justify-center transition-colors duration-300 transform hover:bg-[#2e3b55] hover:scale-105 text-[#a0a0a0] flex-shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-text w-6 h-6"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
+            </label>
+            <input type="file" id="file-input" accept="*/*" class="hidden">
+
 
             <!-- Clear Chat Button -->
             <button id="clear-chat-button" class="upload-button bg-transparent border-none cursor-pointer p-2 rounded-full flex items-center justify-center transition-colors duration-300 transform hover:bg-[#2e3b55] hover:scale-105 text-[#a0a0a0] flex-shrink-0" title="Clear Chat">
@@ -219,10 +231,16 @@
         const videoPreview = document.getElementById('video-preview');
         const removeVideoButton = videoPreviewWrapper.querySelector('.remove-media-button');
 
+        // New elements for general file upload
+        const fileInput = document.getElementById('file-input');
+        const filePreviewWrapper = document.getElementById('file-preview-wrapper');
+        const filePreviewText = document.getElementById('file-preview-text');
+        const removeFileButton = filePreviewWrapper.querySelector('.remove-media-button');
+
         const clearChatButton = document.getElementById('clear-chat-button');
         const messageBox = document.getElementById('message-box');
 
-        // Variable to store the selected media file (can be image or video)
+        // Variable to store the selected media file (can be image, video, or general file)
         let selectedMediaFile = null;
 
         // Initialize Generative AI client with the API Key
@@ -282,42 +300,37 @@
          */
         function addMessage(content, sender) {
             const messageDiv = document.createElement('div');
-            // Removed Tailwind classes related to padding, border-radius, and shadow from the base message class
             messageDiv.classList.add('message', 'mb-4', 'text-base');
             
             if (sender === 'user') {
-                // Add bubble styling only for user messages
                 messageDiv.classList.add('user-message', 'p-3', 'rounded-3xl', 'shadow-md');
             } else {
-                // Keep AI messages plain
                 messageDiv.classList.add('ai-message');
             }
-
 
             if (typeof content === 'string') { // If content is plain text
                 const textElement = document.createElement('p');
                 textElement.textContent = content;
                 messageDiv.appendChild(textElement);
-            } else if (typeof content === 'object' && content !== null) { // If content is an object (might contain media)
+            } else if (typeof content === 'object' && content !== null) { // If content is an object (might contain media or just text for display)
                 if (content.imageUrl) {
                     const imgElement = document.createElement('img');
                     imgElement.src = content.imageUrl;
                     messageDiv.appendChild(imgElement);
-                } else if (content.videoUrl) { // Handle video display in chat bubble
+                } else if (content.videoUrl) {
                     const videoElement = document.createElement('video');
                     videoElement.src = content.videoUrl;
-                    videoElement.controls = true; // Add controls for playback (play/pause, volume)
-                    videoElement.muted = true; // Mute video by default in chat
+                    videoElement.controls = true;
+                    videoElement.muted = true;
                     messageDiv.appendChild(videoElement);
                 }
-                if (content.text) { // If there's accompanying text
+                if (content.text) { // If there's accompanying text (including file names)
                     const textElement = document.createElement('p');
                     textElement.textContent = content.text;
                     messageDiv.appendChild(textElement);
                 }
             }
             chatWindow.appendChild(messageDiv);
-            // Scroll to bottom to show new message smoothly
             chatWindow.scrollTop = chatWindow.scrollHeight;
         }
 
@@ -339,6 +352,11 @@
             videoPreview.load(); // Reload the video element to clear its source
             videoInput.value = ''; // Clear the file input
 
+            // Hide and clear general file preview
+            filePreviewWrapper.classList.add('hidden');
+            filePreviewText.textContent = '';
+            fileInput.value = ''; // Clear the file input
+
             console.log("Media preview reset complete.");
         }
 
@@ -348,26 +366,25 @@
             const file = event.target.files[0];
 
             if (file) {
-                // First, reset any existing media preview
-                resetMediaPreview();
-                selectedMediaFile = file; // Store the selected file
+                resetMediaPreview(); // Clear any existing media first
+                selectedMediaFile = file;
 
                 console.log("Image file selected:", selectedMediaFile.name, selectedMediaFile.type);
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     imagePreview.src = e.target.result;
-                    imagePreviewWrapper.classList.remove('hidden'); // Show the image preview wrapper
+                    imagePreviewWrapper.classList.remove('hidden');
                     console.log("Image preview updated (first 50 chars of Data URL):", imagePreview.src.substring(0, 50) + "...");
                 };
                 reader.onerror = (e) => {
                     console.error("FileReader error for image:", e);
                     showMessageBox("เกิดข้อผิดพลาดในการอ่านไฟล์รูปภาพ: " + e.message, 'error');
-                    resetMediaPreview(); // Clear preview on error
+                    resetMediaPreview();
                 };
                 reader.readAsDataURL(selectedMediaFile);
             } else {
                 console.log("No image file selected from input.");
-                resetMediaPreview(); // Ensure previous selection is cleared if user cancels file dialog
+                resetMediaPreview();
             }
         });
 
@@ -377,61 +394,88 @@
             const file = event.target.files[0];
 
             if (file) {
-                // First, reset any existing media preview
-                resetMediaPreview();
-                selectedMediaFile = file; // Store the selected file
+                resetMediaPreview(); // Clear any existing media first
+                selectedMediaFile = file;
 
                 console.log("Video file selected:", selectedMediaFile.name, selectedMediaFile.type);
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     videoPreview.src = e.target.result;
-                    videoPreviewWrapper.classList.remove('hidden'); // Show the video preview wrapper
-                    videoPreview.load(); // Load the video to ensure it's ready for playback
+                    videoPreviewWrapper.classList.remove('hidden');
+                    videoPreview.load();
                     videoPreview.play().catch(error => {
                         console.log("Video autoplay blocked or failed:", error);
-                        // No need for alert, just log. User can manually play.
                     });
                     console.log("Video preview updated (first 50 chars of Data URL):", videoPreview.src.substring(0, 50) + "...");
                 };
                 reader.onerror = (e) => {
                     console.error("FileReader error for video:", e);
                     showMessageBox("เกิดข้อผิดพลาดในการอ่านไฟล์วิดีโอ: " + e.message, 'error');
-                    resetMediaPreview(); // Clear preview on error
+                    resetMediaPreview();
                 };
                 reader.readAsDataURL(selectedMediaFile);
             } else {
                 console.log("No video file selected from input.");
-                resetMediaPreview(); // Ensure previous selection is cleared if user cancels file dialog
+                resetMediaPreview();
             }
         });
+
+        // Event listener for general file input change
+        fileInput.addEventListener('change', (event) => {
+            console.log("File input changed. Processing file...");
+            const file = event.target.files[0];
+
+            if (file) {
+                resetMediaPreview(); // Clear any existing media first
+                selectedMediaFile = file;
+
+                if (!file.type.startsWith('image/') && !file.type.startsWith('video/')) {
+                    filePreviewText.textContent = file.name;
+                    filePreviewWrapper.classList.remove('hidden');
+                    showMessageBox(`ไฟล์ถูกเลือก: ${file.name}`, 'info');
+                    console.log("General file selected:", selectedMediaFile.name, selectedMediaFile.type);
+                } else {
+                    // If an image/video is selected via the general file input, route it to the correct preview handler
+                    if (file.type.startsWith('image/')) {
+                        imageInput.files = event.target.files; // Assign to image input
+                        imageInput.dispatchEvent(new Event('change')); // Trigger its change listener
+                    } else if (file.type.startsWith('video/')) {
+                        videoInput.files = event.target.files; // Assign to video input
+                        videoInput.dispatchEvent(new Event('change')); // Trigger its change listener
+                    }
+                }
+            } else {
+                console.log("No file selected from input.");
+                resetMediaPreview();
+            }
+        });
+
 
         // Event listeners to clear media preview using the 'X' buttons
         removeImageButton.addEventListener('click', resetMediaPreview);
         removeVideoButton.addEventListener('click', resetMediaPreview);
+        removeFileButton.addEventListener('click', resetMediaPreview); // New: for general file 'X' button
 
         /**
          * Clears all messages from the chat window and adds the initial AI greeting.
          */
         function clearChat() {
             chatWindow.innerHTML = ''; // Clear all messages
-            addMessage('คุณอยากให้ผมชื่ออะไร? 😁', 'ai');
+            addMessage('สวัสดีครับ มีอะไรให้ผมช่วยไหม? (รองรับข้อความ, รูปภาพ, วิดีโอ, และไฟล์ทั่วไป)', 'ai');
             showMessageBox('ล้างประวัติแชทแล้ว!', 'info');
             console.log("Chat history cleared.");
         }
 
         // Asynchronous function to send a message (and potentially media) to the AI
         async function sendMessage() {
-            const userMessage = userInput.value.trim();
-            let messageParts = [];
-            let displayContent = {};
+            const userMessageText = userInput.value.trim();
+            let messagePartsForAPI = []; // Parts to send to Gemini API
+            let displayContentForUI = {}; // Content to display in the chat UI
 
-            console.log("Attempting to send message...");
-
-            // Process selected media file if one exists
-            if (selectedMediaFile) {
-                console.log("Processing selected media file:", selectedMediaFile.name);
+            // Handle media (image or video) - these go directly to inlineData for Gemini API
+            if (selectedMediaFile && (selectedMediaFile.type.startsWith('image/') || selectedMediaFile.type.startsWith('video/'))) {
+                console.log("Processing media (image/video) for API:", selectedMediaFile.name);
                 const reader = new FileReader();
-                // Read the file as a Data URL (Base64) asynchronously
                 const mediaDataUrl = await new Promise((resolve, reject) => {
                     reader.onloadend = () => resolve(reader.result);
                     reader.onerror = (e) => reject(e);
@@ -445,15 +489,12 @@
                     return null;
                 });
 
-                if (!mediaDataUrl) {
-                    console.log("Media Data URL is null, likely due to a reading error. Aborting send.");
-                    return;
-                }
+                if (!mediaDataUrl) return;
 
                 const base64Data = mediaDataUrl.split(',')[1];
                 const mimeType = selectedMediaFile.type;
 
-                messageParts.push({
+                messagePartsForAPI.push({
                     inlineData: {
                         data: base64Data,
                         mimeType: mimeType
@@ -461,31 +502,32 @@
                 });
 
                 if (mimeType.startsWith('image/')) {
-                    displayContent.imageUrl = mediaDataUrl;
-                    console.log("Added image to message parts for API.");
+                    displayContentForUI.imageUrl = mediaDataUrl;
                 } else if (mimeType.startsWith('video/')) {
-                    displayContent.videoUrl = mediaDataUrl;
-                    console.log("Added video to message parts for API.");
+                    displayContentForUI.videoUrl = mediaDataUrl;
                 }
             }
 
-            // Add user's text message if it exists
-            if (userMessage) {
-                messageParts.push({ text: userMessage });
-                displayContent.text = userMessage;
-                console.log("Added text to message parts.");
+            // Handle text or general files - these are combined into a text part for Gemini API
+            if (userMessageText || (selectedMediaFile && !selectedMediaFile.type.startsWith('image/') && !selectedMediaFile.type.startsWith('video/'))) {
+                let finalTextMessage = userMessageText;
+                if (selectedMediaFile && !selectedMediaFile.type.startsWith('image/') && !selectedMediaFile.type.startsWith('video/')) {
+                    // Prepend file name for general files
+                    finalTextMessage = `(ไฟล์แนบ: ${selectedMediaFile.name})${userMessageText ? '\n' + userMessageText : ''}`;
+                }
+                messagePartsForAPI.push({ text: finalTextMessage });
+                displayContentForUI.text = finalTextMessage; // Always set text for UI display
             }
 
-            // If no text and no media, do nothing and log a warning
-            if (messageParts.length === 0) {
+            // Check if anything is to be sent
+            if (messagePartsForAPI.length === 0) {
                 console.log("No message or media to send. Aborting sendMessage.");
                 return;
             }
 
-            // Display user's message (which might include media) in the chat window
-            addMessage(displayContent, 'user');
+            // Display user's message (which might include media or general file info) in the chat window
+            addMessage(displayContentForUI, 'user');
             userInput.value = ''; // Clear the text input field
-            // No need to clear imageInput.value/videoInput.value here as resetMediaPreview will do it
             resetMediaPreview(); // Clear any displayed media previews after sending
 
             // Disable input and button to prevent multiple submissions while waiting for AI
@@ -494,7 +536,6 @@
 
             // Display loading dots while waiting for AI response
             const loadingMessageDiv = document.createElement('div');
-            // Ensure loading dots also don't have bubble styling
             loadingMessageDiv.classList.add('message', 'ai-message');
             loadingMessageDiv.innerHTML = '<span class="loading-dots">. . .</span>';
             chatWindow.appendChild(loadingMessageDiv);
@@ -503,7 +544,7 @@
 
             try {
                 // Send the combined parts (text and/or media) to the AI model
-                const result = await chat.sendMessageStream(messageParts);
+                const result = await chat.sendMessageStream(messagePartsForAPI);
 
                 let aiResponseText = '';
                 for await (const chunk of result.stream) {
@@ -541,7 +582,7 @@
         clearChatButton.addEventListener('click', clearChat);
 
         // Initial AI greeting message
-        addMessage('คุณอยากให้ผมชื่ออะไร? 😁', 'ai');
+        addMessage('สวัสดีครับ มีอะไรให้ผมช่วยไหม? (รองรับข้อความ, รูปภาพ, วิดีโอ, และไฟล์ทั่วไป)', 'ai');
     </script>
 </body>
 </html>
