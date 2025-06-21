@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Personal Chat AI (Standard + Video Debug)</title>
+    <title>Dev/g0d Ai</title>
     <!-- Tailwind CSS CDN for modern styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
@@ -431,7 +431,7 @@
          */
         function clearChat() {
             chatWindow.innerHTML = ''; // Clear all messages
-            addMessage('สวัสดีครับ มีอะไรให้ผมช่วยไหม? (รองรับข้อความ, รูปภาพ, วิดีโอ)', 'ai');
+            addMessage('สวัสดีครับ อยากให้ช่วยอะไรครับ?', 'ai');
             showMessageBox('ล้างประวัติแชทแล้ว!', 'info');
             console.log("Chat history cleared.");
         }
@@ -549,7 +549,7 @@
         clearChatButton.addEventListener('click', clearChat);
 
         // Initial AI greeting message (with initial textarea height adjustment)
-        addMessage('สวัสดีครับ มีอะไรให้ผมช่วยไหม? (รองรับข้อความ, รูปภาพ, วิดีโอ)', 'ai');
+        addMessage('สวัสดีครับ อยากให้ช่วยอะไรครับ?', 'ai');
         adjustTextareaHeight(); // Adjust textarea height on initial load
     </script>
 </body>
