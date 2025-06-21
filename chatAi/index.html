@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Personal Chat AI (Dark Theme)</title>
+    <style>
+        /* Dark Theme Styles */
+        body { 
+            font-family: sans-serif; 
+            display: flex; 
+            flex-direction: column; 
+            height: 100vh; 
+            margin: 0; 
+            background-color: #282c34; /* Dark background */
+            color: #abb2bf; /* Light text color */
+        }
+        #chat-window { 
+            flex-grow: 1; 
+            padding: 20px; 
+            overflow-y: auto; 
+            border-bottom: 1px solid #3c4048; /* Darker border */
+            background-color: #21252b; /* Even darker chat background */
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.15); 
+        }
+        .message { 
+            margin-bottom: 15px; 
+            padding: 10px 15px; 
+            border-radius: 20px; 
+            max-width: 70%; 
+            word-wrap: break-word; 
+        }
+        .user-message { 
+            background-color: #4CAF50; /* Greenish for user messages */
+            color: white; /* White text on green background */
+            align-self: flex-end; 
+            margin-left: auto; 
+            text-align: right; 
+        }
+        .ai-message { 
+            background-color: #61afef; /* Blueish for AI messages */
+            color: white; /* White text on blue background */
+            align-self: flex-start; 
+            margin-right: auto; 
+        }
+        #input-area { 
+            display: flex; 
+            padding: 15px; 
+            border-top: 1px solid #3c4048; /* Darker border */
+            background-color: #282c34; /* Dark background */
+            box-shadow: 0 -2px 4px rgba(0,0,0,0.15); 
+        }
+        #user-input { 
+            flex-grow: 1; 
+            padding: 12px 18px; 
+            border: 1px solid #555; /* Darker input border */
+            border-radius: 25px; 
+            margin-right: 10px; 
+            font-size: 16px; 
+            outline: none; 
+            transition: border-color 0.3s; 
+            background-color: #3e4451; /* Dark input background */
+            color: #abb2bf; /* Light text color for input */
+        }
+        #user-input:focus { 
+            border-color: #61afef; /* Focus border color */
+        }
+        #send-button { 
+            padding: 12px 25px; 
+            background-color: #61afef; /* Blue for send button */
+            color: white; 
+            border: none; 
+            border-radius: 25px; 
+            cursor: pointer; 
+            font-size: 16px; 
+            transition: background-color 0.3s; 
+        }
+        #send-button:hover { 
+            background-color: #52a0e2; /* Darker blue on hover */
+        }
+        .loading-dots { 
+            display: inline-block; 
+            animation: blink 1.4s infinite steps(1); 
+        }
+        @keyframes blink {
+            0% { opacity: 0.2; }
+            33% { opacity: 0.6; }
+            66% { opacity: 1; }
+            100% { opacity: 0.2; }
+        }
+    </style>
+</head>
+<body>
+    <div id="chat-window"></div>
+    <div id="input-area">
+        <input type="text" id="user-input" placeholder="พิมพ์ข้อความของคุณ...">
+        <button id="send-button">ส่ง</button>
+    </div>
+
+    <script type="module">
+        // *** สำคัญมาก: API Key ของคุณที่นี่ ***
+        // *** โปรดทราบว่าการใส่ Key ตรงนี้ไม่ปลอดภัยสำหรับการใช้งานจริงจัง และแนะนำให้จำกัดการใช้งาน Key นี้ใน Google Cloud Console ***
+        const API_KEY = "AIzaSyC8Ng5z4AHmjVaPeMBGMYENDHl1CSb5wR0"; 
+        
+        // โหลด Generative AI SDK จาก CDN
+        import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
+
+        const chatWindow = document.getElementById('chat-window');
+        const userInput = document.getElementById('user-input');
+        const sendButton = document.getElementById('send-button');
+
+        const genAI = new GoogleGenerativeAI(API_KEY);
+        const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+
+        const chat = model.startChat({
+            generationConfig: {
+                maxOutputTokens: 200, 
+            },
+        });
+
+        function addMessage(text, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message');
+            messageDiv.classList.add(sender === 'user' ? 'user-message' : 'ai-message');
+            messageDiv.innerHTML = text; 
+            chatWindow.appendChild(messageDiv);
+            chatWindow.scrollTop = chatWindow.scrollHeight; 
+        }
+
+        async function sendMessage() {
+            const userMessage = userInput.value.trim();
+            if (!userMessage) return;
+
+            addMessage(userMessage, 'user'); 
+            userInput.value = ''; 
+            sendButton.disabled = true; 
+            userInput.disabled = true; 
+
+            const loadingMessageDiv = document.createElement('div');
+            loadingMessageDiv.classList.add('message', 'ai-message');
+            loadingMessageDiv.innerHTML = '<span class="loading-dots">. . .</span>';
+            chatWindow.appendChild(loadingMessageDiv);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+
+            try {
+                const result = await chat.sendMessageStream(userMessage);
+
+                let aiResponseText = '';
+                for await (const chunk of result.stream) {
+                    const chunkText = chunk.text();
+                    aiResponseText += chunkText;
+                    loadingMessageDiv.innerHTML = aiResponseText + '<span class="loading-dots">. . .</span>';
+                    chatWindow.scrollTop = chatWindow.scrollHeight;
+                }
+                loadingMessageDiv.innerHTML = aiResponseText;
+
+            } catch (error) {
+                console.error('Error calling Gemini API:', error);
+                loadingMessageDiv.innerHTML = 'เกิดข้อผิดพลาดในการเชื่อมต่อกับ AI ลองใหม่อีกครั้ง';
+                loadingMessageDiv.style.backgroundColor = '#ffdddd'; /* สีแดงอ่อนสำหรับข้อผิดพลาด */
+                loadingMessageDiv.style.color = '#333'; /* ตัวหนังสือเข้มขึ้นจะได้เห็น */
+            } finally {
+                sendButton.disabled = false; 
+                userInput.disabled = false; 
+                userInput.focus(); 
+            }
+        }
+
+        sendButton.addEventListener('click', sendMessage);
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        addMessage('สวัสดีครับ มีอะไรให้ผมช่วยไหม?', 'ai');
+
+    </script>
+</body>
+</html>
