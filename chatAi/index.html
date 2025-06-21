@@ -98,6 +98,39 @@
             z-index: 1000;
             display: none; /* Hidden by default */
         }
+
+        /* Style for media preview containers with remove button */
+        .media-preview-wrapper {
+            position: relative;
+            display: inline-block; /* To contain the absolute positioned button */
+        }
+
+        .remove-media-button {
+            position: absolute;
+            top: -5px; /* Adjust as needed */
+            right: -5px; /* Adjust as needed */
+            background-color: #f00; /* Red background for visibility */
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: bold;
+            cursor: pointer;
+            border: 1px solid white; /* Small white border */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            transition: background-color 0.2s, transform 0.2s;
+            line-height: 1; /* Ensure 'x' is centered vertically */
+            padding: 0; /* Remove default padding */
+        }
+
+        .remove-media-button:hover {
+            background-color: #c00;
+            transform: scale(1.1);
+        }
     </style>
 </head>
 <body class="flex flex-col h-screen m-0 bg-[#1a1a2e] text-[#e0e0e0]">
@@ -108,8 +141,16 @@
 
         <div id="input-area" class="flex items-center p-4 border-t border-[#2e3b55] bg-[#16213e] gap-3">
             <div id="media-preview-container" class="flex items-center gap-2 mr-2">
-                <img id="image-preview" src="#" alt="Image Preview" class="max-w-[60px] max-h-[60px] rounded-lg object-cover hidden border border-[#555] transition-all duration-300 cursor-pointer">
-                <video id="video-preview" src="#" controls muted class="max-w-[60px] max-h-[60px] rounded-lg object-cover hidden border border-[#555] transition-all duration-300 cursor-pointer"></video>
+                <!-- Image Preview Wrapper -->
+                <div id="image-preview-wrapper" class="media-preview-wrapper hidden">
+                    <img id="image-preview" src="#" alt="Image Preview" class="max-w-[60px] max-h-[60px] rounded-lg object-cover border border-[#555] transition-all duration-300 cursor-pointer">
+                    <button type="button" class="remove-media-button" data-media-type="image">X</button>
+                </div>
+                <!-- Video Preview Wrapper -->
+                <div id="video-preview-wrapper" class="media-preview-wrapper hidden">
+                    <video id="video-preview" src="#" controls muted class="max-w-[60px] max-h-[60px] rounded-lg object-cover border border-[#555] transition-all duration-300 cursor-pointer"></video>
+                    <button type="button" class="remove-media-button" data-media-type="video">X</button>
+                </div>
             </div>
 
             <!-- Image Upload Button -->
@@ -150,10 +191,17 @@
         const chatWindow = document.getElementById('chat-window');
         const userInput = document.getElementById('user-input');
         const sendButton = document.getElementById('send-button');
+
         const imageInput = document.getElementById('image-input');
+        const imagePreviewWrapper = document.getElementById('image-preview-wrapper');
         const imagePreview = document.getElementById('image-preview');
+        const removeImageButton = imagePreviewWrapper.querySelector('.remove-media-button');
+
         const videoInput = document.getElementById('video-input');
+        const videoPreviewWrapper = document.getElementById('video-preview-wrapper');
         const videoPreview = document.getElementById('video-preview');
+        const removeVideoButton = videoPreviewWrapper.querySelector('.remove-media-button');
+
         const clearChatButton = document.getElementById('clear-chat-button');
         const messageBox = document.getElementById('message-box');
 
@@ -253,15 +301,15 @@
             selectedMediaFile = null;
 
             // Hide and clear image preview
-            imagePreview.classList.remove('has-media');
+            imagePreviewWrapper.classList.add('hidden');
             imagePreview.src = '#';
-            imagePreview.style.display = 'none';
+            imageInput.value = ''; // Clear the file input
 
             // Hide and clear video preview
-            videoPreview.classList.remove('has-media');
+            videoPreviewWrapper.classList.add('hidden');
             videoPreview.src = '#';
             videoPreview.load(); // Reload the video element to clear its source
-            videoPreview.style.display = 'none';
+            videoInput.value = ''; // Clear the file input
 
             console.log("Media preview reset complete.");
         }
@@ -280,8 +328,7 @@
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     imagePreview.src = e.target.result;
-                    imagePreview.style.display = 'block'; // Show the image preview
-                    imagePreview.classList.add('has-media');
+                    imagePreviewWrapper.classList.remove('hidden'); // Show the image preview wrapper
                     console.log("Image preview updated (first 50 chars of Data URL):", imagePreview.src.substring(0, 50) + "...");
                 };
                 reader.onerror = (e) => {
@@ -310,8 +357,7 @@
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     videoPreview.src = e.target.result;
-                    videoPreview.style.display = 'block'; // Show the video preview
-                    videoPreview.classList.add('has-media');
+                    videoPreviewWrapper.classList.remove('hidden'); // Show the video preview wrapper
                     videoPreview.load(); // Load the video to ensure it's ready for playback
                     videoPreview.play().catch(error => {
                         console.log("Video autoplay blocked or failed:", error);
@@ -331,9 +377,9 @@
             }
         });
 
-        // Event listeners to clear media preview if clicked (user wants to remove the preview)
-        imagePreview.addEventListener('click', resetMediaPreview);
-        videoPreview.addEventListener('click', resetMediaPreview);
+        // Event listeners to clear media preview using the 'X' buttons
+        removeImageButton.addEventListener('click', resetMediaPreview);
+        removeVideoButton.addEventListener('click', resetMediaPreview);
 
         /**
          * Clears all messages from the chat window and adds the initial AI greeting.
@@ -411,8 +457,7 @@
             // Display user's message (which might include media) in the chat window
             addMessage(displayContent, 'user');
             userInput.value = ''; // Clear the text input field
-            imageInput.value = ''; // Clear file input (important for re-uploading the same file)
-            videoInput.value = ''; // Clear file input
+            // No need to clear imageInput.value/videoInput.value here as resetMediaPreview will do it
             resetMediaPreview(); // Clear any displayed media previews after sending
 
             // Disable input and button to prevent multiple submissions while waiting for AI
