@@ -37,7 +37,8 @@
             display: flex;
             flex-direction: column;
             line-height: 1.5;
-            max-width: 90%; /* Adjusted from 80% to 90% for wider bubbles */
+            width: fit-content; /* Make message bubble fit its content width */
+            max-width: 80%; /* Revert to a more common chat bubble width, allowing more side margin */
         }
         .user-message {
             background-color: #6a0571; /* Deep purple for user messages */
@@ -136,7 +137,7 @@
         /* Responsive adjustments */
         @media (max-width: 600px) {
             .message {
-                max-width: 95%; /* Adjusted from 90% to 95% for wider bubbles on mobile */
+                max-width: 90%; /* Keep it slightly wider on mobile but not full width */
             }
         }
     </style>
@@ -271,7 +272,8 @@
          */
         function addMessage(content, sender) {
             const messageDiv = document.createElement('div');
-            messageDiv.classList.add('message', 'p-3', 'rounded-3xl', 'max-w-[80%]', 'text-base', 'mb-4', 'shadow-md');
+            // Reverted max-width to 80% and added width: fit-content for better sizing
+            messageDiv.classList.add('message', 'p-3', 'rounded-3xl', 'text-base', 'mb-4', 'shadow-md');
             messageDiv.classList.add(sender === 'user' ? 'user-message' : 'ai-message');
 
             if (typeof content === 'string') { // If content is plain text
