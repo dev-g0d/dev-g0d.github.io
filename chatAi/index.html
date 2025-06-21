@@ -147,6 +147,9 @@
             .message {
                 max-width: 90%; /* Keep it slightly wider on mobile but not full width */
             }
+            #user-input {
+                font-size: 1rem; /* Slightly smaller font on mobile for input */
+            }
         }
     </style>
 </head>
@@ -168,11 +171,6 @@
                     <video id="video-preview" src="#" controls muted class="max-w-[60px] max-h-[60px] rounded-lg object-cover border border-[#555] transition-all duration-300 cursor-pointer"></video>
                     <button type="button" class="remove-media-button" data-media-type="video">X</button>
                 </div>
-                <!-- File Preview Wrapper (for general files) -->
-                <div id="file-preview-wrapper" class="media-preview-wrapper hidden flex items-center gap-1 p-1 pr-2 rounded-lg bg-gray-700 text-gray-200 text-sm overflow-hidden whitespace-nowrap">
-                    <span id="file-preview-text" class="flex-grow overflow-hidden text-ellipsis"></span>
-                    <button type="button" class="remove-media-button !static !top-auto !right-auto !bg-transparent !text-gray-400 hover:!bg-gray-600 hover:!text-white !border-none !shadow-none">X</button>
-                </div>
             </div>
 
             <!-- Image Upload Button -->
@@ -187,19 +185,13 @@
             </label>
             <input type="file" id="video-input" accept="video/*" class="hidden">
 
-            <!-- General File Upload Button -->
-            <label for="file-input" class="upload-button bg-transparent border-none cursor-pointer p-2 rounded-full flex items-center justify-center transition-colors duration-300 transform hover:bg-[#2e3b55] hover:scale-105 text-[#a0a0a0] flex-shrink-0">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-file-text w-6 h-6"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg>
-            </label>
-            <input type="file" id="file-input" accept="*/*" class="hidden">
-
 
             <!-- Clear Chat Button -->
             <button id="clear-chat-button" class="upload-button bg-transparent border-none cursor-pointer p-2 rounded-full flex items-center justify-center transition-colors duration-300 transform hover:bg-[#2e3b55] hover:scale-105 text-[#a0a0a0] flex-shrink-0" title="Clear Chat">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-broom w-6 h-6"><path d="M9 13v-3.5a2.5 2.5 0 0 1 5 0V13"/><path d="M12 13v8"/><path d="M20 5H9.5a2.5 2.5 0 0 1 0-5H22v8a2 2 0 0 1-2 2Z"/><path d="M8 10H5a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h3"/><path d="M17 14h2a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3"/></svg>
             </button>
 
-            <input type="text" id="user-input" placeholder="พิมพ์ข้อความของคุณ..." class="flex-grow px-5 py-3 border border-[#3e4451] rounded-3xl text-base outline-none transition-all duration-300 bg-[#2e3b55] text-[#e0e0e0] placeholder-[#a0a0a0] focus:border-[#4CAF50] focus:shadow-[0_0_0_3px_rgba(76,175,80,0.3)]">
+            <textarea id="user-input" placeholder="พิมพ์ข้อความของคุณ..." rows="1" class="flex-grow px-5 py-3 border border-[#3e4451] rounded-3xl text-lg outline-none transition-all duration-300 bg-[#2e3b55] text-[#e0e0e0] placeholder-[#a0a0a0] focus:border-[#4CAF50] focus:shadow-[0_0_0_3px_rgba(76,175,80,0.3)] resize-none overflow-y-auto min-h-[48px]"></textarea>
             <button id="send-button" class="px-6 py-3 bg-gradient-to-br from-[#4CAF50] to-[#2e8b57] text-white border-none rounded-3xl cursor-pointer text-base font-bold transition-all duration-200 ease-in-out shadow-lg hover:translate-y-[-2px] hover:shadow-xl hover:from-[#45a049] hover:to-[#287a4a] active:translate-y-0 active:shadow-md disabled:bg-gray-600 disabled:cursor-not-allowed disabled:opacity-70 disabled:transform-none disabled:shadow-none">
                 ส่ง
             </button>
@@ -231,16 +223,10 @@
         const videoPreview = document.getElementById('video-preview');
         const removeVideoButton = videoPreviewWrapper.querySelector('.remove-media-button');
 
-        // New elements for general file upload
-        const fileInput = document.getElementById('file-input');
-        const filePreviewWrapper = document.getElementById('file-preview-wrapper');
-        const filePreviewText = document.getElementById('file-preview-text');
-        const removeFileButton = filePreviewWrapper.querySelector('.remove-media-button');
-
         const clearChatButton = document.getElementById('clear-chat-button');
         const messageBox = document.getElementById('message-box');
 
-        // Variable to store the selected media file (can be image, video, or general file)
+        // Variable to store the selected media file (can be image or video)
         let selectedMediaFile = null;
 
         // Initialize Generative AI client with the API Key
@@ -324,7 +310,7 @@
                     videoElement.muted = true;
                     messageDiv.appendChild(videoElement);
                 }
-                if (content.text) { // If there's accompanying text (including file names)
+                if (content.text) { // If there's accompanying text
                     const textElement = document.createElement('p');
                     textElement.textContent = content.text;
                     messageDiv.appendChild(textElement);
@@ -351,11 +337,6 @@
             videoPreview.src = '#';
             videoPreview.load(); // Reload the video element to clear its source
             videoInput.value = ''; // Clear the file input
-
-            // Hide and clear general file preview
-            filePreviewWrapper.classList.add('hidden');
-            filePreviewText.textContent = '';
-            fileInput.value = ''; // Clear the file input
 
             console.log("Media preview reset complete.");
         }
@@ -420,48 +401,16 @@
             }
         });
 
-        // Event listener for general file input change
-        fileInput.addEventListener('change', (event) => {
-            console.log("File input changed. Processing file...");
-            const file = event.target.files[0];
-
-            if (file) {
-                resetMediaPreview(); // Clear any existing media first
-                selectedMediaFile = file;
-
-                if (!file.type.startsWith('image/') && !file.type.startsWith('video/')) {
-                    filePreviewText.textContent = file.name;
-                    filePreviewWrapper.classList.remove('hidden');
-                    showMessageBox(`ไฟล์ถูกเลือก: ${file.name}`, 'info');
-                    console.log("General file selected:", selectedMediaFile.name, selectedMediaFile.type);
-                } else {
-                    // If an image/video is selected via the general file input, route it to the correct preview handler
-                    if (file.type.startsWith('image/')) {
-                        imageInput.files = event.target.files; // Assign to image input
-                        imageInput.dispatchEvent(new Event('change')); // Trigger its change listener
-                    } else if (file.type.startsWith('video/')) {
-                        videoInput.files = event.target.files; // Assign to video input
-                        videoInput.dispatchEvent(new Event('change')); // Trigger its change listener
-                    }
-                }
-            } else {
-                console.log("No file selected from input.");
-                resetMediaPreview();
-            }
-        });
-
-
         // Event listeners to clear media preview using the 'X' buttons
         removeImageButton.addEventListener('click', resetMediaPreview);
         removeVideoButton.addEventListener('click', resetMediaPreview);
-        removeFileButton.addEventListener('click', resetMediaPreview); // New: for general file 'X' button
 
         /**
          * Clears all messages from the chat window and adds the initial AI greeting.
          */
         function clearChat() {
             chatWindow.innerHTML = ''; // Clear all messages
-            addMessage('สวัสดีครับ มีอะไรให้ผมช่วยไหม? (รองรับข้อความ, รูปภาพ, วิดีโอ, และไฟล์ทั่วไป)', 'ai');
+            addMessage('สวัสดีครับ มีอะไรให้ผมช่วยไหม? (รองรับข้อความ, รูปภาพ, วิดีโอ)', 'ai');
             showMessageBox('ล้างประวัติแชทแล้ว!', 'info');
             console.log("Chat history cleared.");
         }
@@ -508,15 +457,10 @@
                 }
             }
 
-            // Handle text or general files - these are combined into a text part for Gemini API
-            if (userMessageText || (selectedMediaFile && !selectedMediaFile.type.startsWith('image/') && !selectedMediaFile.type.startsWith('video/'))) {
-                let finalTextMessage = userMessageText;
-                if (selectedMediaFile && !selectedMediaFile.type.startsWith('image/') && !selectedMediaFile.type.startsWith('video/')) {
-                    // Prepend file name for general files
-                    finalTextMessage = `(ไฟล์แนบ: ${selectedMediaFile.name})${userMessageText ? '\n' + userMessageText : ''}`;
-                }
-                messagePartsForAPI.push({ text: finalTextMessage });
-                displayContentForUI.text = finalTextMessage; // Always set text for UI display
+            // Handle text - now only text is processed here
+            if (userMessageText) {
+                messagePartsForAPI.push({ text: userMessageText });
+                displayContentForUI.text = userMessageText; // Always set text for UI display
             }
 
             // Check if anything is to be sent
@@ -573,7 +517,8 @@
         // Event listeners for send button and enter key
         sendButton.addEventListener('click', sendMessage);
         userInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
+            if (e.key === 'Enter' && !e.shiftKey) { // Only send if Enter is pressed without Shift
+                e.preventDefault(); // Prevent default new line behavior
                 sendMessage();
             }
         });
@@ -582,7 +527,7 @@
         clearChatButton.addEventListener('click', clearChat);
 
         // Initial AI greeting message
-        addMessage('สวัสดีครับ มีอะไรให้ผมช่วยไหม? (รองรับข้อความ, รูปภาพ, วิดีโอ, และไฟล์ทั่วไป)', 'ai');
+        addMessage('สวัสดีครับ มีอะไรให้ผมช่วยไหม? (รองรับข้อความ, รูปภาพ, วิดีโอ)', 'ai');
     </script>
 </body>
 </html>
