@@ -1,16 +1,25 @@
 # Define installation directory for the .bat files
 $baseTargetDir = "C:\Program Files (x86)\Steam\config" # IMPORTANT: Change this to your desired path, e.g., "C:\Program Files (x86)\Steam\config"
 
-# Define protocols and their respective handler scripts
+# Define protocols and their respective handler scripts with their GitHub Raw download URLs
 $protocols = @(
-    @{ Name = "addapp_g0d"; HandlerScript = "addapp_handler.bat"; MainScript = "addapp.bat" }
-    @{ Name = "removeapp_g0d"; HandlerScript = "removeapp_handler.bat"; MainScript = "removeapp.bat" }
+    @{
+        Name = "addapp_g0d";
+        HandlerScript = "addapp_handler.bat";
+        MainScript = "addapp.bat";
+        HandlerDownloadUrl = "https://raw.githubusercontent.com/dev-g0d/dev-g0d.github.io/main-site/site/ManifestDL/addapp_handler.bat";
+        MainScriptDownloadUrl = "https://raw.githubusercontent.com/dev-g0d/dev-g0d.github.io/main-site/site/ManifestDL/addapp.bat"
+    },
+    @{
+        Name = "removeapp_g0d";
+        HandlerScript = "removeapp_handler.bat";
+        MainScript = "removeapp.bat";
+        HandlerDownloadUrl = "https://raw.githubusercontent.com/dev-g0d/dev-g0d.github.io/main-site/site/ManifestDL/removeapp_handler.bat";
+        MainScriptDownloadUrl = "https://raw.githubusercontent.com/dev-g0d/dev-g0d.github.io/main-site/site/ManifestDL/removeapp.bat"
+    }
 )
 
-# Get the directory where this setup script is located (source for other .bat files)
-$sourceDir = (Get-Item -Path $PSScriptRoot).FullName
-
-# ====== Check Target Directory and Essential Files ======
+# ====== Check Target Directory ======
 Write-Host "Checking setup requirements..."
 # Check if target directory exists and is writable (attempt to create if not)
 try {
@@ -26,65 +35,36 @@ try {
     exit 1
 }
 
-# Check if main .bat files exist in the source directory
-$allRequiredSourceBatsExist = $true
-foreach ($protocol in $protocols) {
-    $mainScriptPath = Join-Path $sourceDir $protocol.MainScript
-    if (-not (Test-Path $mainScriptPath)) {
-        Write-Host "❌ Required script not found: $mainScriptPath" -ForegroundColor Red
-        $allRequiredSourceBatsExist = $false
-    } else {
-        Write-Host "✅ Found required script: $mainScriptPath" -ForegroundColor Green
-    }
-}
-
-if (-not $allRequiredSourceBatsExist) {
-    Write-Host "Please ensure all essential .bat files (addapp.bat, removeapp.bat) are in the same directory as this setup script." -ForegroundColor Red
-    exit 1
-}
-
 Write-Host "`nStarting protocol setup..."
 
-# --- Create/Update handler .bat files and copy main .bat files ---
+# --- Download and Create/Update handler .bat files and main .bat files ---
 foreach ($protocol in $protocols) {
     $protocolName = $protocol.Name
     $handlerScriptFileName = $protocol.HandlerScript
     $mainScriptFileName = $protocol.MainScript
+    $handlerDownloadUrl = $protocol.HandlerDownloadUrl
+    $mainScriptDownloadUrl = $protocol.MainScriptDownloadUrl
+
     $handlerBatPath = Join-Path $baseTargetDir $handlerScriptFileName
     $mainBatTargetPath = Join-Path $baseTargetDir $mainScriptFileName
 
-    # ====== Write Handler .bat File ======
-    $batContent = @"
-@echo off
-setlocal EnableDelayedExpansion
-
-set "FULL_URL_ARG=%%~1"
-set "APP_ID=!FULL_URL_ARG:%protocolName%:=!"
-
-if not defined APP_ID (
-    echo Error: No APP_ID found in the protocol URL for $($protocolName).
-    exit /b 1
-)
-
-call "%~dp0$($mainScriptFileName)" "!APP_ID!"
-endlocal
-exit /b
-"@
-
+    # ====== Download Handler .bat File ======
     try {
-        $batContent | Set-Content -Encoding ASCII -Path $handlerBatPath -Force
-        Write-Host "✅ Handler script created/updated: $handlerBatPath" -ForegroundColor Green
+        Write-Host "Downloading handler script '$handlerScriptFileName' from '$handlerDownloadUrl'..."
+        (New-Object System.Net.WebClient).DownloadFile($handlerDownloadUrl, $handlerBatPath)
+        Write-Host "✅ Handler script downloaded/updated: $handlerBatPath" -ForegroundColor Green
     } catch {
-        Write-Host "❌ Failed to create handler script '$handlerScriptFileName': $_" -ForegroundColor Red
+        Write-Host "❌ Failed to download handler script '$handlerScriptFileName' from '$handlerDownloadUrl': $_" -ForegroundColor Red
         exit 1
     }
 
-    # ====== Copy Main .bat File ======
+    # ====== Download Main .bat File ======
     try {
-        Copy-Item -Path (Join-Path $sourceDir $mainScriptFileName) -Destination $baseTargetDir -Force | Out-Null
-        Write-Host "✅ Copied main script: $mainBatTargetPath" -ForegroundColor Green
+        Write-Host "Downloading main script '$mainScriptFileName' from '$mainScriptDownloadUrl'..."
+        (New-Object System.Net.WebClient).DownloadFile($mainScriptDownloadUrl, $mainBatTargetPath)
+        Write-Host "✅ Main script downloaded/updated: $mainBatTargetPath" -ForegroundColor Green
     } catch {
-        Write-Host "❌ Failed to copy main script '$mainScriptFileName': $_" -ForegroundColor Red
+        Write-Host "❌ Failed to download main script '$mainScriptFileName' from '$mainScriptDownloadUrl': $_" -ForegroundColor Red
         exit 1
     }
 }
