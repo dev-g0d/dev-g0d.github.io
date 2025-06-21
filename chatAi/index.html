@@ -265,19 +265,16 @@
     <div class="chat-container">
         <div id="chat-window"></div>
         <div id="input-area">
-            <!-- Container for media preview -->
             <div id="media-preview-container">
                 <img id="image-preview" src="#" alt="Image Preview">
                 <video id="video-preview" src="#" controls muted style="display:none;"></video>
             </div>
 
-            <!-- Image upload button -->
             <label for="image-input" class="upload-button">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-image"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
             </label>
             <input type="file" id="image-input" accept="image/*" style="display:none;">
 
-            <!-- Video upload button -->
             <label for="video-input" class="upload-button">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-video"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="1" y="6" rx="2" ry="2"/></svg>
             </label>
@@ -292,7 +289,7 @@
         // IMPORTANT: Your API Key is placed here.
         // Please be aware that exposing your API Key directly in frontend code is NOT secure for production applications.
         // It's highly recommended to restrict this key's usage in Google Cloud Console.
-        const API_KEY = "YOUR_API_KEY_HERE"; // <<< ใส่นาย API Key ของนายตรงนี้เลยเพื่อน!
+        const API_KEY = "AIzaSyC8Ng5z4AHmjVaPeMBGMYENDHl1CSb5wR0"; // <<< ใส่นาย API Key ของนายตรงนี้เลยเพื่อน!
         
         // Load the Generative AI SDK from CDN
         // This provides the necessary functions to interact with Gemini API.
@@ -363,29 +360,29 @@
         // Function to reset all media preview elements and clear selected file
         function resetMediaPreview() {
             console.log("Resetting media preview...");
-            // Clear file input values to allow selecting the same file again if needed
-            imageInput.value = ''; 
-            videoInput.value = ''; 
-            selectedMediaFile = null; // Clear the stored selected file
+            // No need to clear input.value here, as it will be cleared after sendMessage
+            selectedMediaFile = null; 
 
-            // Hide image and video previews by removing the 'has-media' class
             imagePreview.classList.remove('has-media'); 
             videoPreview.classList.remove('has-media'); 
 
-            // Clear the src attributes of preview elements
             imagePreview.src = '#'; 
             videoPreview.src = '#'; 
-            // For video, also call load() to ensure it truly resets and unloads current media
             videoPreview.load(); 
             console.log("Media preview reset complete.");
         }
 
         // Event listener for image input change
         imageInput.addEventListener('change', (event) => {
-            console.log("Image input changed.");
-            resetMediaPreview(); // Clear any previous media before setting a new one
-            selectedMediaFile = event.target.files[0]; // Get the selected file
-            if (selectedMediaFile) {
+            console.log("Image input changed. Processing file...");
+            // IMPORTANT: Get the file FIRST, before any reset logic that might clear event.target.files
+            const file = event.target.files[0]; 
+            
+            if (file) {
+                // Now reset, knowing we have the file
+                resetMediaPreview(); 
+                selectedMediaFile = file; // Store the selected file
+
                 console.log("Image file selected:", selectedMediaFile.name, selectedMediaFile.type);
                 const reader = new FileReader(); // Create a FileReader to read the file
                 reader.onload = (e) => { // When the file is loaded (read)
@@ -398,34 +395,44 @@
                 };
                 reader.readAsDataURL(selectedMediaFile); // Read the file as a Data URL (Base64)
             } else {
-                console.log("No image file selected.");
+                console.log("No image file selected from input.");
+                // If no file is selected (e.g., user opens dialog and cancels), ensure previous selection is cleared
+                resetMediaPreview();
             }
         });
 
         // Event listener for video input change
         videoInput.addEventListener('change', (event) => {
-            console.log("Video input changed.");
-            resetMediaPreview(); // Clear any previous media before setting a new one
-            selectedMediaFile = event.target.files[0]; // Get the selected file
-            if (selectedMediaFile) {
+            console.log("Video input changed. Processing file...");
+            // IMPORTANT: Get the file FIRST
+            const file = event.target.files[0]; 
+            
+            if (file) {
+                // Now reset, knowing we have the file
+                resetMediaPreview();
+                selectedMediaFile = file; // Store the selected file
+
                 console.log("Video file selected:", selectedMediaFile.name, selectedMediaFile.type);
-                const reader = new FileReader(); // Create a FileReader to read the file
-                reader.onload = (e) => { // When the file is loaded (read)
-                    videoPreview.src = e.target.result; // Set the video preview source to the Data URL
-                    videoPreview.classList.add('has-media'); // Show the video preview
-                    videoPreview.play().catch(e => console.log("Video autoplay blocked:", e)); // Try to autoplay, catch potential errors
+                const reader = new FileReader(); 
+                reader.onload = (e) => { 
+                    videoPreview.src = e.target.result;
+                    videoPreview.classList.add('has-media'); 
+                    videoPreview.play().catch(e => console.log("Video autoplay blocked:", e)); 
                     console.log("Video preview updated (first 50 chars of Data URL):", videoPreview.src.substring(0, 50) + "...");
                 };
-                reader.onerror = (e) => { // Handle any errors during file reading
+                reader.onerror = (e) => { 
                     console.error("FileReader error for video:", e);
                 };
-                reader.readAsDataURL(selectedMediaFile); // Read the file as a Data URL (Base64)
+                reader.readAsDataURL(selectedMediaFile); 
             } else {
-                console.log("No video file selected.");
+                console.log("No video file selected from input.");
+                // If no file is selected (e.g., user opens dialog and cancels), ensure previous selection is cleared
+                resetMediaPreview();
             }
         });
 
         // Event listeners to clear media preview if clicked (user wants to remove the preview)
+        // This will also clear the selectedMediaFile variable
         imagePreview.addEventListener('click', resetMediaPreview);
         videoPreview.addEventListener('click', resetMediaPreview);
 
@@ -433,8 +440,8 @@
         // Asynchronous function to send a message (and potentially media) to the AI
         async function sendMessage() {
             const userMessage = userInput.value.trim();
-            let messageParts = []; // Array to hold text and media parts for the Gemini API request
-            let displayContent = {}; // Object to hold content for displaying in the chat window
+            let messageParts = []; 
+            let displayContent = {}; 
 
             console.log("Attempting to send message...");
 
@@ -444,27 +451,27 @@
                 const reader = new FileReader();
                 // Read the file as a Data URL (Base64) asynchronously
                 const mediaDataUrl = await new Promise((resolve, reject) => {
-                    reader.onloadend = () => resolve(reader.result); // Resolve with Data URL when loaded
-                    reader.onerror = (e) => reject(e); // Reject promise if FileReader encounters an error
-                    reader.readAsDataURL(selectedMediaFile); // Start reading the file
-                }).catch(error => { // Catch any errors from the Promise (FileReader errors)
+                    reader.onloadend = () => resolve(reader.result); 
+                    reader.onerror = (e) => reject(e); 
+                    reader.readAsDataURL(selectedMediaFile); 
+                }).catch(error => { 
                     console.error("Error reading media file for sending:", error);
-                    alert("เกิดข้อผิดพลาดในการอ่านไฟล์สื่อ: " + error.message); // Inform user via alert
-                    return null; // Return null to indicate failure to read file
-                });
-
-                if (!mediaDataUrl) { // If reading failed, re-enable input and stop the function
+                    alert("เกิดข้อผิดพลาดในการอ่านไฟล์สื่อ: " + error.message); 
+                    // Make sure inputs are re-enabled if file reading fails
                     sendButton.disabled = false; 
                     userInput.disabled = false; 
                     userInput.focus(); 
+                    return null; 
+                });
+
+                if (!mediaDataUrl) { 
+                    console.log("Media Data URL is null, likely due to a reading error. Aborting send.");
                     return;
                 }
 
-                // Extract base64 data and mime type from the Data URL for the API request
                 const base64Data = mediaDataUrl.split(',')[1];
                 const mimeType = selectedMediaFile.type;
 
-                // Add media part to the messageParts array for the API
                 messageParts.push({
                     inlineData: {
                         data: base64Data,
@@ -472,7 +479,6 @@
                     }
                 });
 
-                // Set display content based on media type
                 if (mimeType.startsWith('image/')) {
                     displayContent.imageUrl = mediaDataUrl;
                     console.log("Added image to message parts for API.");
@@ -498,6 +504,10 @@
             // Display user's message (which might include media) in the chat window
             addMessage(displayContent, 'user'); 
             userInput.value = ''; // Clear the text input field
+            // Ensure file inputs are cleared for next upload. 
+            // We clear input.value here, which will also affect selectedMediaFile indirectly if not explicitly reset later.
+            imageInput.value = ''; 
+            videoInput.value = '';
             resetMediaPreview(); // Clear any displayed media previews after sending
 
             // Disable input and button to prevent multiple submissions while waiting for AI
@@ -509,7 +519,7 @@
             loadingMessageDiv.classList.add('message', 'ai-message');
             loadingMessageDiv.innerHTML = '<span class="loading-dots">. . .</span>';
             chatWindow.appendChild(loadingMessageDiv);
-            chatWindow.scrollTop = chatWindow.scrollHeight; // Scroll to bottom
+            chatWindow.scrollTop = chatWindow.scrollHeight; 
             console.log("Sending message to AI...");
 
             try {
@@ -517,43 +527,35 @@
                 const result = await chat.sendMessageStream(messageParts);
 
                 let aiResponseText = '';
-                // Iterate over the streamed chunks of the AI's response
                 for await (const chunk of result.stream) {
                     const chunkText = chunk.text();
                     aiResponseText += chunkText;
-                    // Update the loading message div with streamed content and loading dots
                     loadingMessageDiv.innerHTML = aiResponseText + '<span class="loading-dots">. . .</span>';
-                    chatWindow.scrollTop = chatWindow.scrollHeight; // Keep scrolling to bottom
+                    chatWindow.scrollTop = chatWindow.scrollHeight; 
                 }
-                // Once streaming is complete, remove loading dots and display final response
                 loadingMessageDiv.innerHTML = aiResponseText;
                 console.log("AI response received:", aiResponseText);
 
             } catch (error) {
-                // Log and display error message if API call fails
                 console.error('Error calling Gemini API:', error);
-                loadingMessageDiv.innerHTML = 'เกิดข้อผิดพลาดในการเชื่อมต่อกับ AI ลองใหม่อีกครั้ง'; // Display user-friendly error
-                loadingMessageDiv.style.backgroundColor = '#ffdddd'; // Light red background for error
-                loadingMessageDiv.style.color = '#333'; // Dark text for readability
+                loadingMessageDiv.innerHTML = 'เกิดข้อผิดพลาดในการเชื่อมต่อกับ AI ลองใหม่อีกครั้ง'; 
+                loadingMessageDiv.style.backgroundColor = '#ffdddd'; 
+                loadingMessageDiv.style.color = '#333'; 
             } finally {
-                // Re-enable input and button regardless of success or failure
                 sendButton.disabled = false; 
                 userInput.disabled = false; 
-                userInput.focus(); // Focus on input for next message
+                userInput.focus(); 
                 console.log("Message sending process complete.");
             }
         }
 
-        // Event listener for send button click
         sendButton.addEventListener('click', sendMessage);
-        // Event listener for 'Enter' key press in the input field
         userInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 sendMessage();
             }
         });
 
-        // Initial welcome message from AI
         addMessage('สวัสดีครับ มีอะไรให้ผมช่วยไหม? (รองรับข้อความ, รูปภาพ, วิดีโอ)', 'ai');
 
     </script>
