@@ -289,11 +289,11 @@
         // IMPORTANT: Your API Key is placed here.
         // Please be aware that exposing your API Key directly in frontend code is NOT secure for production applications.
         // It's highly recommended to restrict this key's usage in Google Cloud Console.
-        const API_KEY = "AIzaSyC8Ng5z4AHmjVaPeMBGMYENDHl1CSb5wR0"; // <<< ใส่นาย API Key ของนายตรงนี้เลยเพื่อน!
+        const API_KEY = "YOUR_API_KEY_HERE"; // <<< ใส่นาย API Key ของนายตรงนี้เลยเพื่อน!
         
         // Load the Generative AI SDK from CDN
         // This provides the necessary functions to interact with Gemini API.
-        import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
+        import { GoogleGenerativeAI } from "https://esm.run/@google-generative-ai/google-generative-ai";
 
         // Get references to HTML elements
         const chatWindow = document.getElementById('chat-window');
@@ -318,9 +318,9 @@
         // AI will operate based on its default programming and safety policies.
         const chat = model.startChat({
             generationConfig: {
-                maxOutputTokens: 200, // Reverted to default or moderate token limit
-                temperature: 0.7,     // Reverted to default temperature for balanced creativity
-                topP: 0.9,            // Reverted to default topP
+                maxOutputTokens: 200,
+                temperature: 0.7,
+                topP: 0.9,
             },
             // NO systemInstruction here, AI will act as a standard AI assistant.
         });
@@ -345,7 +345,11 @@
                     videoElement.src = content.videoUrl;
                     videoElement.controls = true; // Add controls for playback (play/pause, volume)
                     videoElement.muted = true; // Mute video by default in chat
+                    videoElement.load(); // Ensure video element is ready to play
                     messageDiv.appendChild(videoElement);
+                    videoElement.onloadeddata = () => { // Play only when enough data is loaded
+                        videoElement.play().catch(e => console.log("Video autoplay blocked:", e));
+                    };
                 }
                 if (content.text) { // If there's accompanying text
                     const textElement = document.createElement('p');
@@ -360,7 +364,6 @@
         // Function to reset all media preview elements and clear selected file
         function resetMediaPreview() {
             console.log("Resetting media preview...");
-            // No need to clear input.value here, as it will be cleared after sendMessage
             selectedMediaFile = null; 
 
             imagePreview.classList.remove('has-media'); 
@@ -368,35 +371,40 @@
 
             imagePreview.src = '#'; 
             videoPreview.src = '#'; 
-            videoPreview.load(); 
+            videoPreview.load(); // Explicitly reset video element
             console.log("Media preview reset complete.");
+
+            // Remove any existing loading indicator
+            const existingLoadingIndicator = document.getElementById('video-loading-indicator');
+            if (existingLoadingIndicator) {
+                existingLoadingIndicator.remove();
+            }
         }
 
         // Event listener for image input change
         imageInput.addEventListener('change', (event) => {
             console.log("Image input changed. Processing file...");
-            // IMPORTANT: Get the file FIRST, before any reset logic that might clear event.target.files
             const file = event.target.files[0]; 
             
             if (file) {
-                // Now reset, knowing we have the file
                 resetMediaPreview(); 
-                selectedMediaFile = file; // Store the selected file
+                selectedMediaFile = file; 
 
                 console.log("Image file selected:", selectedMediaFile.name, selectedMediaFile.type);
-                const reader = new FileReader(); // Create a FileReader to read the file
-                reader.onload = (e) => { // When the file is loaded (read)
-                    imagePreview.src = e.target.result; // Set the image preview source to the Data URL
-                    imagePreview.classList.add('has-media'); // Show the image preview
+                const reader = new FileReader(); 
+                reader.onload = (e) => { 
+                    imagePreview.src = e.target.result;
+                    imagePreview.classList.add('has-media'); 
                     console.log("Image preview updated (first 50 chars of Data URL):", imagePreview.src.substring(0, 50) + "...");
                 };
-                reader.onerror = (e) => { // Handle any errors during file reading
+                reader.onerror = (e) => { 
                     console.error("FileReader error for image:", e);
+                    alert("เกิดข้อผิดพลาดในการอ่านไฟล์รูปภาพ: " + e.message);
+                    resetMediaPreview(); // Clear selection on error
                 };
-                reader.readAsDataURL(selectedMediaFile); // Read the file as a Data URL (Base64)
+                reader.readAsDataURL(selectedMediaFile); 
             } else {
-                console.log("No image file selected from input.");
-                // If no file is selected (e.g., user opens dialog and cancels), ensure previous selection is cleared
+                console.log("No image file selected from input. Clearing any existing preview.");
                 resetMediaPreview();
             }
         });
@@ -404,40 +412,97 @@
         // Event listener for video input change
         videoInput.addEventListener('change', (event) => {
             console.log("Video input changed. Processing file...");
-            // IMPORTANT: Get the file FIRST
             const file = event.target.files[0]; 
             
             if (file) {
-                // Now reset, knowing we have the file
-                resetMediaPreview();
-                selectedMediaFile = file; // Store the selected file
+                resetMediaPreview(); // Clear any existing preview or loading indicators
+                selectedMediaFile = file; 
 
                 console.log("Video file selected:", selectedMediaFile.name, selectedMediaFile.type);
+                
+                // Add loading indicator for video processing
+                const loadingP = document.createElement('p');
+                loadingP.textContent = "กำลังโหลดวิดีโอ...";
+                loadingP.id = 'video-loading-indicator';
+                // Insert the loading text before the videoPreview element (or next to it in input-area)
+                // We need to find a parent that contains both input controls and media previews
+                // In our current HTML, #media-preview-container is the parent of image/video previews.
+                // Let's insert it right after the video preview element inside that container.
+                videoPreview.parentNode.insertBefore(loadingP, videoPreview.nextSibling);
+
                 const reader = new FileReader(); 
                 reader.onload = (e) => { 
+                    // Remove loading indicator once loaded
+                    const existingLoadingIndicator = document.getElementById('video-loading-indicator');
+                    if (existingLoadingIndicator) {
+                        existingLoadingIndicator.remove();
+                    }
+
                     videoPreview.src = e.target.result;
                     videoPreview.classList.add('has-media'); 
-                    videoPreview.play().catch(e => console.log("Video autoplay blocked:", e)); 
                     console.log("Video preview updated (first 50 chars of Data URL):", videoPreview.src.substring(0, 50) + "...");
+                    
+                    // --- เพิ่มบรรทัดเหล่านี้เพื่อ debug การแสดงผลวิดีโอ ---
+                    console.log("Video preview element:", videoPreview);
+                    console.log("Video preview display style:", window.getComputedStyle(videoPreview).display);
+                    console.log("Video preview width:", videoPreview.offsetWidth, "height:", videoPreview.offsetHeight);
+                    
+                    videoPreview.oncanplay = () => {
+                        console.log("Video is ready to play (oncanplay event fired)!");
+                        videoPreview.play().catch(e => {
+                            console.log("Video autoplay blocked or error during play:", e);
+                            // Inform user if autoplay blocked - consider adding a play icon
+                        });
+                    };
+                    videoPreview.onstalled = () => {
+                        console.warn("Video loading stalled (onstalled event fired)!");
+                    };
+                    videoPreview.onerror = (err) => {
+                        console.error("Video element error (onerror event fired):", err);
+                        alert("เกิดข้อผิดพลาดในการเล่นวิดีโอ: " + err.message + " โปรดลองไฟล์อื่น");
+                        resetMediaPreview();
+                    };
+                    // --- จบการเพิ่มบรรทัด debug ---
+
+                    videoPreview.load(); // Explicitly load the new source to trigger events like oncanplay
                 };
                 reader.onerror = (e) => { 
                     console.error("FileReader error for video:", e);
+                    // Remove loading indicator on error
+                    const existingLoadingIndicator = document.getElementById('video-loading-indicator');
+                    if (existingLoadingIndicator) {
+                        existingLoadingIndicator.remove();
+                    }
+                    alert("เกิดข้อผิดพลาดในการอ่านไฟล์วิดีโอ: " + e.message + " โปรดลองไฟล์อื่น");
+                    resetMediaPreview(); // Clear selection on error
+                };
+                // Add a timeout for FileReader to prevent indefinite waits for very large files
+                const readFileTimeout = setTimeout(() => {
+                    reader.abort(); // Abort reading if it takes too long
+                    console.warn("Video file reading timed out.");
+                    const existingLoadingIndicator = document.getElementById('video-loading-indicator');
+                    if (existingLoadingIndicator) {
+                        existingLoadingIndicator.remove();
+                    }
+                    alert("การโหลดไฟล์วิดีโอใช้เวลานานเกินไป อาจเป็นเพราะไฟล์มีขนาดใหญ่มาก หรือไม่สามารถอ่านได้");
+                    resetMediaPreview(); // Clear selection on timeout
+                }, 60000); // 60 seconds timeout
+
+                reader.onloadend = () => {
+                    clearTimeout(readFileTimeout); // Clear timeout if loading completes (or aborts)
                 };
                 reader.readAsDataURL(selectedMediaFile); 
+
             } else {
-                console.log("No video file selected from input.");
-                // If no file is selected (e.g., user opens dialog and cancels), ensure previous selection is cleared
+                console.log("No video file selected from input. Clearing any existing preview.");
                 resetMediaPreview();
             }
         });
 
-        // Event listeners to clear media preview if clicked (user wants to remove the preview)
-        // This will also clear the selectedMediaFile variable
         imagePreview.addEventListener('click', resetMediaPreview);
         videoPreview.addEventListener('click', resetMediaPreview);
 
 
-        // Asynchronous function to send a message (and potentially media) to the AI
         async function sendMessage() {
             const userMessage = userInput.value.trim();
             let messageParts = []; 
@@ -445,11 +510,25 @@
 
             console.log("Attempting to send message...");
 
-            // Process selected media file if one exists
             if (selectedMediaFile) {
-                console.log("Processing selected media file:", selectedMediaFile.name);
+                console.log("Processing selected media file:", selectedMediaFile.name, "Type:", selectedMediaFile.type, "Size:", (selectedMediaFile.size / (1024 * 1024)).toFixed(2), "MB");
+
+                // Google Gemini Flash API has a size limit for inlineData (which Data URL uses)
+                // For images, it's generally a few MB. For video, typically up to 50MB for single parts.
+                // Larger files should be handled by Google Cloud Storage or similar.
+                // We're setting a client-side limit for direct Base64 upload for safety.
+                const MAX_VIDEO_FILE_SIZE_MB = 50; // MB
+                if (selectedMediaFile.type.startsWith('video/') && selectedMediaFile.size > MAX_VIDEO_FILE_SIZE_MB * 1024 * 1024) {
+                    alert(`วิดีโอมีขนาดใหญ่เกินไป (สูงสุด ${MAX_VIDEO_FILE_SIZE_MB} MB สำหรับการอัปโหลดโดยตรง) โปรดเลือกไฟล์ที่เล็กลง`);
+                    console.warn(`Video file size (${(selectedMediaFile.size / (1024 * 1024)).toFixed(2)} MB) exceeds direct upload limit (${MAX_VIDEO_FILE_SIZE_MB} MB).`);
+                    sendButton.disabled = false; 
+                    userInput.disabled = false; 
+                    userInput.focus(); 
+                    resetMediaPreview();
+                    return;
+                }
+
                 const reader = new FileReader();
-                // Read the file as a Data URL (Base64) asynchronously
                 const mediaDataUrl = await new Promise((resolve, reject) => {
                     reader.onloadend = () => resolve(reader.result); 
                     reader.onerror = (e) => reject(e); 
@@ -457,7 +536,6 @@
                 }).catch(error => { 
                     console.error("Error reading media file for sending:", error);
                     alert("เกิดข้อผิดพลาดในการอ่านไฟล์สื่อ: " + error.message); 
-                    // Make sure inputs are re-enabled if file reading fails
                     sendButton.disabled = false; 
                     userInput.disabled = false; 
                     userInput.focus(); 
@@ -488,33 +566,26 @@
                 }
             }
 
-            // Add user's text message if it exists
             if (userMessage) {
                 messageParts.push({ text: userMessage });
                 displayContent.text = userMessage;
                 console.log("Added text to message parts.");
             }
 
-            // If no text and no media, do nothing and log a warning
             if (messageParts.length === 0) {
                 console.log("No message or media to send. Aborting sendMessage.");
                 return;
             }
 
-            // Display user's message (which might include media) in the chat window
             addMessage(displayContent, 'user'); 
-            userInput.value = ''; // Clear the text input field
-            // Ensure file inputs are cleared for next upload. 
-            // We clear input.value here, which will also affect selectedMediaFile indirectly if not explicitly reset later.
+            userInput.value = ''; 
             imageInput.value = ''; 
             videoInput.value = '';
-            resetMediaPreview(); // Clear any displayed media previews after sending
+            resetMediaPreview(); 
 
-            // Disable input and button to prevent multiple submissions while waiting for AI
             sendButton.disabled = true; 
             userInput.disabled = true; 
 
-            // Display loading dots while waiting for AI response
             const loadingMessageDiv = document.createElement('div');
             loadingMessageDiv.classList.add('message', 'ai-message');
             loadingMessageDiv.innerHTML = '<span class="loading-dots">. . .</span>';
@@ -523,7 +594,6 @@
             console.log("Sending message to AI...");
 
             try {
-                // Send the combined parts (text and/or media) to the AI model
                 const result = await chat.sendMessageStream(messageParts);
 
                 let aiResponseText = '';
@@ -538,7 +608,15 @@
 
             } catch (error) {
                 console.error('Error calling Gemini API:', error);
-                loadingMessageDiv.innerHTML = 'เกิดข้อผิดพลาดในการเชื่อมต่อกับ AI ลองใหม่อีกครั้ง'; 
+                let errorMessage = 'เกิดข้อผิดพลาดในการเชื่อมต่อกับ AI ลองใหม่อีกครั้ง';
+                if (error.message.includes("Invalid value at 'system_instruction'")) {
+                    errorMessage = 'เกิดข้อผิดพลาด: คำแนะนำระบบ (System Instruction) ไม่ถูกต้อง AI อาจจะจำกัดเนื้อหาบางอย่าง';
+                } else if (error.message.includes("400 Bad Request")) {
+                    errorMessage = 'เกิดข้อผิดพลาด: คำขอไม่ถูกต้อง (เช่น ไฟล์ใหญ่เกินไป หรือเนื้อหาไม่เหมาะสม)';
+                } else if (error.message.includes("Video file size exceeds")) { // Custom error message for size check
+                    errorMessage = 'วิดีโอมีขนาดใหญ่เกินไป ไม่สามารถอัปโหลดได้';
+                }
+                loadingMessageDiv.innerHTML = errorMessage; 
                 loadingMessageDiv.style.backgroundColor = '#ffdddd'; 
                 loadingMessageDiv.style.color = '#333'; 
             } finally {
