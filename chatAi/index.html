@@ -4,41 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Personal Chat AI (Standard + Video Debug)</title>
+    <!-- Tailwind CSS CDN for modern styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        /* Modern Dark Theme Base Styles */
+        /* Custom CSS for specific elements not easily covered by Tailwind or for fine-tuning */
         body {
-            font-family: 'Inter', sans-serif; /* Using Inter font for modern look */
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            margin: 0;
-            background-color: #1a1a2e; /* Deep dark blue background */
-            color: #e0e0e0; /* Light grey text */
+            font-family: 'Inter', sans-serif;
+            /* Tailwind handles most of the layout, but some base styles are here for clarity */
             overflow: hidden; /* Prevent body scrollbar if chat window handles it */
-        }
-
-        /* Container for the chat application */
-        .chat-container {
-            display: flex;
-            flex-direction: column;
-            width: 90%; /* Responsive width */
-            max-width: 768px; /* Max width for desktop */
-            height: 90vh; /* Responsive height */
-            max-height: 900px; /* Max height for larger screens */
-            margin: auto; /* Center the container */
-            background-color: #16213e; /* Slightly lighter deep blue for container */
-            border-radius: 15px; /* Rounded corners for the main container */
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4); /* Deeper shadow */
-            overflow: hidden; /* Hide overflowing content */
-        }
-
-        #chat-window {
-            flex-grow: 1;
-            padding: 20px;
-            overflow-y: auto; /* Enable scrolling for chat history */
-            background-color: #0f1523; /* Even darker chat background */
-            border-bottom: 1px solid #2e3b55; /* Subtle border */
-            scroll-behavior: smooth; /* Smooth scrolling */
         }
 
         /* Custom Scrollbar for Webkit browsers (Chrome, Safari) */
@@ -57,18 +31,12 @@
             background: #4a5160; /* Lighter grey on hover */
         }
 
-        /* Message Bubbles */
+        /* Message Bubbles - keeping some custom styles for distinct shapes and colors */
         .message {
-            margin-bottom: 18px; /* More space between messages */
-            padding: 12px 18px;
-            border-radius: 22px; /* More rounded bubbles */
-            max-width: 80%; /* Slightly more narrow bubbles */
             word-wrap: break-word;
             display: flex;
             flex-direction: column;
-            font-size: 1rem; /* Base font size */
             line-height: 1.5;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for bubbles */
         }
         .user-message {
             background-color: #6a0571; /* Deep purple for user messages */
@@ -86,7 +54,7 @@
             text-align: left;
             border-bottom-left-radius: 8px; /* Sharper corner on one side */
         }
-        .message img, .message video { /* Added video styling */
+        .message img, .message video {
             max-width: 100%;
             height: auto;
             border-radius: 10px;
@@ -99,107 +67,7 @@
             padding: 0;
         }
 
-        /* Input Area */
-        #input-area {
-            display: flex;
-            align-items: center;
-            padding: 15px 20px;
-            border-top: 1px solid #2e3b55;
-            background-color: #16213e;
-            gap: 10px;
-        }
-        #user-input {
-            flex-grow: 1;
-            padding: 12px 20px;
-            border: 1px solid #3e4451;
-            border-radius: 28px;
-            font-size: 1rem;
-            outline: none;
-            transition: border-color 0.3s, box-shadow 0.3s;
-            background-color: #2e3b55;
-            color: #e0e0e0;
-        }
-        #user-input::placeholder {
-            color: #a0a0a0;
-        }
-        #user-input:focus {
-            border-color: #4CAF50;
-            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.3);
-        }
-
-        /* Buttons (Send and Upload) */
-        #send-button {
-            padding: 12px 25px;
-            background: linear-gradient(145deg, #4CAF50, #2e8b57);
-            color: white;
-            border: none;
-            border-radius: 28px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: bold;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-        #send-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-            background: linear-gradient(145deg, #45a049, #287a4a);
-        }
-        #send-button:active {
-            transform: translateY(0);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-        }
-        #send-button:disabled {
-            background: #555;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-            opacity: 0.7;
-        }
-
-        .upload-button { /* Use a class for common styling of upload buttons */
-            background-color: transparent;
-            border: none;
-            cursor: pointer;
-            padding: 10px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: background-color 0.3s, transform 0.2s;
-            color: #a0a0a0;
-            flex-shrink: 0;
-        }
-        .upload-button:hover {
-            background-color: #2e3b55;
-            transform: scale(1.05);
-            color: #e0e0e0;
-        }
-        .upload-button svg {
-            width: 24px;
-            height: 24px;
-        }
-
-        #media-preview-container { /* Container for both image and video previews */
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-right: 10px; /* Space before input field */
-        }
-        #image-preview, #video-preview { /* Combined styling for previews */
-            max-width: 60px;
-            max-height: 60px;
-            border-radius: 10px;
-            object-fit: cover;
-            display: none; /* Hidden by default */
-            border: 1px solid #555;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        #image-preview.has-media, #video-preview.has-media {
-            display: block; /* Show only when media is loaded */
-        }
-
+        /* Loading dots animation */
         .loading-dots {
             display: inline-block;
             font-weight: bold;
@@ -216,72 +84,55 @@
             40% { opacity: 1; }
         }
 
-        /* Responsive adjustments */
-        @media (max-width: 600px) {
-            .chat-container {
-                width: 100%;
-                height: 100vh;
-                margin: 0;
-                border-radius: 0;
-                box-shadow: none;
-            }
-            #chat-window {
-                padding: 15px;
-            }
-            .message {
-                max-width: 90%;
-            }
-            #input-area {
-                padding: 10px 15px;
-            }
-            #user-input {
-                padding: 10px 15px;
-                font-size: 0.9rem;
-            }
-            #send-button {
-                padding: 10px 20px;
-                font-size: 0.9rem;
-            }
-            .upload-button {
-                padding: 6px;
-            }
-            .upload-button svg {
-                width: 20px;
-                height: 20px;
-            }
-            #media-preview-container {
-                gap: 5px;
-                margin-right: 5px;
-            }
-            #image-preview, #video-preview {
-                max-width: 50px;
-                max-height: 50px;
-            }
+        /* Message box for errors - replacing alert() */
+        #message-box {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #f8d7da; /* Light red */
+            color: #721c24; /* Dark red */
+            padding: 10px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: none; /* Hidden by default */
         }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
-<body>
-    <div class="chat-container">
-        <div id="chat-window"></div>
-        <div id="input-area">
-            <div id="media-preview-container">
-                <img id="image-preview" src="#" alt="Image Preview">
-                <video id="video-preview" src="#" controls muted style="display:none;"></video>
+<body class="flex flex-col h-screen m-0 bg-[#1a1a2e] text-[#e0e0e0]">
+    <div id="message-box" role="alert"></div>
+
+    <div class="chat-container flex flex-col w-[90%] max-w-3xl h-[90vh] max-h-[900px] my-auto mx-auto bg-[#16213e] rounded-xl shadow-2xl overflow-hidden">
+        <div id="chat-window" class="flex-grow p-5 overflow-y-auto bg-[#0f1523] border-b border-[#2e3b55] smooth-scroll"></div>
+
+        <div id="input-area" class="flex items-center p-4 border-t border-[#2e3b55] bg-[#16213e] gap-3">
+            <div id="media-preview-container" class="flex items-center gap-2 mr-2">
+                <img id="image-preview" src="#" alt="Image Preview" class="max-w-[60px] max-h-[60px] rounded-lg object-cover hidden border border-[#555] transition-all duration-300 cursor-pointer">
+                <video id="video-preview" src="#" controls muted class="max-w-[60px] max-h-[60px] rounded-lg object-cover hidden border border-[#555] transition-all duration-300 cursor-pointer"></video>
             </div>
 
-            <label for="image-input" class="upload-button">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-image"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+            <!-- Image Upload Button -->
+            <label for="image-input" class="upload-button bg-transparent border-none cursor-pointer p-2 rounded-full flex items-center justify-center transition-colors duration-300 transform hover:bg-[#2e3b55] hover:scale-105 text-[#a0a0a0] flex-shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-image w-6 h-6"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
             </label>
-            <input type="file" id="image-input" accept="image/*" style="display:none;">
+            <input type="file" id="image-input" accept="image/*" class="hidden">
 
-            <label for="video-input" class="upload-button">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-video"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="1" y="6" rx="2" ry="2"/></svg>
+            <!-- Video Upload Button -->
+            <label for="video-input" class="upload-button bg-transparent border-none cursor-pointer p-2 rounded-full flex items-center justify-center transition-colors duration-300 transform hover:bg-[#2e3b55] hover:scale-105 text-[#a0a0a0] flex-shrink-0">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-video w-6 h-6"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="1" y="6" rx="2" ry="2"/></svg>
             </label>
-            <input type="file" id="video-input" accept="video/*" style="display:none;">
+            <input type="file" id="video-input" accept="video/*" class="hidden">
 
-            <input type="text" id="user-input" placeholder="พิมพ์ข้อความของคุณ...">
-            <button id="send-button">ส่ง</button>
+            <!-- Clear Chat Button -->
+            <button id="clear-chat-button" class="upload-button bg-transparent border-none cursor-pointer p-2 rounded-full flex items-center justify-center transition-colors duration-300 transform hover:bg-[#2e3b55] hover:scale-105 text-[#a0a0a0] flex-shrink-0" title="Clear Chat">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-broom w-6 h-6"><path d="M9 13v-3.5a2.5 2.5 0 0 1 5 0V13"/><path d="M12 13v8"/><path d="M20 5H9.5a2.5 2.5 0 0 1 0-5H22v8a2 2 0 0 1-2 2Z"/><path d="M8 10H5a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h3"/><path d="M17 14h2a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3"/></svg>
+            </button>
+
+            <input type="text" id="user-input" placeholder="พิมพ์ข้อความของคุณ..." class="flex-grow px-5 py-3 border border-[#3e4451] rounded-3xl text-base outline-none transition-all duration-300 bg-[#2e3b55] text-[#e0e0e0] placeholder-[#a0a0a0] focus:border-[#4CAF50] focus:shadow-[0_0_0_3px_rgba(76,175,80,0.3)]">
+            <button id="send-button" class="px-6 py-3 bg-gradient-to-br from-[#4CAF50] to-[#2e8b57] text-white border-none rounded-3xl cursor-pointer text-base font-bold transition-all duration-200 ease-in-out shadow-lg hover:translate-y-[-2px] hover:shadow-xl hover:from-[#45a049] hover:to-[#287a4a] active:translate-y-0 active:shadow-md disabled:bg-gray-600 disabled:cursor-not-allowed disabled:opacity-70 disabled:transform-none disabled:shadow-none">
+                ส่ง
+            </button>
         </div>
     </div>
 
@@ -290,7 +141,7 @@
         // Please be aware that exposing your API Key directly in frontend code is NOT secure for production applications.
         // It's highly recommended to restrict this key's usage in Google Cloud Console.
         const API_KEY = "AIzaSyC8Ng5z4AHmjVaPeMBGMYENDHl1CSb5wR0"; // <<< ใส่นาย API Key ของนายตรงนี้เลยเพื่อน!
-        
+
         // Load the Generative AI SDK from CDN
         // This provides the necessary functions to interact with Gemini API.
         import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
@@ -299,36 +150,72 @@
         const chatWindow = document.getElementById('chat-window');
         const userInput = document.getElementById('user-input');
         const sendButton = document.getElementById('send-button');
-        
         const imageInput = document.getElementById('image-input');
         const imagePreview = document.getElementById('image-preview');
-        
-        const videoInput = document.getElementById('video-input'); 
-        const videoPreview = document.getElementById('video-preview'); 
+        const videoInput = document.getElementById('video-input');
+        const videoPreview = document.getElementById('video-preview');
+        const clearChatButton = document.getElementById('clear-chat-button');
+        const messageBox = document.getElementById('message-box');
 
         // Variable to store the selected media file (can be image or video)
-        let selectedMediaFile = null; 
+        let selectedMediaFile = null;
 
         // Initialize Generative AI client with the API Key
         const genAI = new GoogleGenerativeAI(API_KEY);
         // Get the Gemini-Flash model (supports multimodal input like text and images/videos)
-        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" }); 
+        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
         // Start a chat session WITHOUT any specific system instruction or role.
         // AI will operate based on its default programming and safety policies.
         const chat = model.startChat({
             generationConfig: {
-                maxOutputTokens: 200, // Reverted to default or moderate token limit
-                temperature: 0.7,     // Reverted to default temperature for balanced creativity
-                topP: 0.9,            // Reverted to default topP
+                maxOutputTokens: 200, // Moderate token limit
+                temperature: 0.7,     // Default temperature for balanced creativity
+                topP: 0.9,            // Default topP
             },
             // NO systemInstruction here, AI will act as a standard AI assistant.
         });
 
-        // Function to add a message to the chat window, capable of handling text, images, and videos
-        function addMessage(content, sender) { 
+        /**
+         * Displays a temporary message in the message box.
+         * @param {string} message - The message to display.
+         * @param {string} type - The type of message ('success', 'error', 'info').
+         */
+        function showMessageBox(message, type = 'info') {
+            messageBox.textContent = message;
+            messageBox.style.display = 'block';
+
+            // Apply styling based on message type
+            switch (type) {
+                case 'success':
+                    messageBox.style.backgroundColor = '#d4edda'; // Light green
+                    messageBox.style.color = '#155724'; // Dark green
+                    break;
+                case 'error':
+                    messageBox.style.backgroundColor = '#f8d7da'; // Light red
+                    messageBox.style.color = '#721c24'; // Dark red
+                    break;
+                case 'info':
+                default:
+                    messageBox.style.backgroundColor = '#d1ecf1'; // Light blue
+                    messageBox.style.color = '#0c5460'; // Dark blue
+                    break;
+            }
+
+            // Hide the message after a few seconds
+            setTimeout(() => {
+                messageBox.style.display = 'none';
+            }, 3000);
+        }
+
+        /**
+         * Adds a message to the chat window, capable of handling text, images, and videos.
+         * @param {string|object} content - The content of the message (string for text, object for media/text).
+         * @param {string} sender - The sender of the message ('user' or 'ai').
+         */
+        function addMessage(content, sender) {
             const messageDiv = document.createElement('div');
-            messageDiv.classList.add('message');
+            messageDiv.classList.add('message', 'p-3', 'rounded-3xl', 'max-w-[80%]', 'text-base', 'mb-4', 'shadow-md');
             messageDiv.classList.add(sender === 'user' ? 'user-message' : 'ai-message');
 
             if (typeof content === 'string') { // If content is plain text
@@ -354,94 +241,115 @@
                 }
             }
             chatWindow.appendChild(messageDiv);
-            chatWindow.scrollTop = chatWindow.scrollHeight; // Scroll to bottom to show new message
+            // Scroll to bottom to show new message smoothly
+            chatWindow.scrollTop = chatWindow.scrollHeight;
         }
 
-        // Function to reset all media preview elements and clear selected file
+        /**
+         * Resets all media preview elements and clears the selected file.
+         */
         function resetMediaPreview() {
             console.log("Resetting media preview...");
-            // No need to clear input.value here, as it will be cleared after sendMessage
-            selectedMediaFile = null; 
+            selectedMediaFile = null;
 
-            imagePreview.classList.remove('has-media'); 
-            videoPreview.classList.remove('has-media'); 
+            // Hide and clear image preview
+            imagePreview.classList.remove('has-media');
+            imagePreview.src = '#';
+            imagePreview.style.display = 'none';
 
-            imagePreview.src = '#'; 
-            videoPreview.src = '#'; 
-            videoPreview.load(); 
+            // Hide and clear video preview
+            videoPreview.classList.remove('has-media');
+            videoPreview.src = '#';
+            videoPreview.load(); // Reload the video element to clear its source
+            videoPreview.style.display = 'none';
+
             console.log("Media preview reset complete.");
         }
 
         // Event listener for image input change
         imageInput.addEventListener('change', (event) => {
             console.log("Image input changed. Processing file...");
-            // IMPORTANT: Get the file FIRST, before any reset logic that might clear event.target.files
-            const file = event.target.files[0]; 
-            
+            const file = event.target.files[0];
+
             if (file) {
-                // Now reset, knowing we have the file
-                resetMediaPreview(); 
+                // First, reset any existing media preview
+                resetMediaPreview();
                 selectedMediaFile = file; // Store the selected file
 
                 console.log("Image file selected:", selectedMediaFile.name, selectedMediaFile.type);
-                const reader = new FileReader(); // Create a FileReader to read the file
-                reader.onload = (e) => { // When the file is loaded (read)
-                    imagePreview.src = e.target.result; // Set the image preview source to the Data URL
-                    imagePreview.classList.add('has-media'); // Show the image preview
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block'; // Show the image preview
+                    imagePreview.classList.add('has-media');
                     console.log("Image preview updated (first 50 chars of Data URL):", imagePreview.src.substring(0, 50) + "...");
                 };
-                reader.onerror = (e) => { // Handle any errors during file reading
+                reader.onerror = (e) => {
                     console.error("FileReader error for image:", e);
+                    showMessageBox("เกิดข้อผิดพลาดในการอ่านไฟล์รูปภาพ: " + e.message, 'error');
+                    resetMediaPreview(); // Clear preview on error
                 };
-                reader.readAsDataURL(selectedMediaFile); // Read the file as a Data URL (Base64)
+                reader.readAsDataURL(selectedMediaFile);
             } else {
                 console.log("No image file selected from input.");
-                // If no file is selected (e.g., user opens dialog and cancels), ensure previous selection is cleared
-                resetMediaPreview();
+                resetMediaPreview(); // Ensure previous selection is cleared if user cancels file dialog
             }
         });
 
         // Event listener for video input change
         videoInput.addEventListener('change', (event) => {
             console.log("Video input changed. Processing file...");
-            // IMPORTANT: Get the file FIRST
-            const file = event.target.files[0]; 
-            
+            const file = event.target.files[0];
+
             if (file) {
-                // Now reset, knowing we have the file
+                // First, reset any existing media preview
                 resetMediaPreview();
                 selectedMediaFile = file; // Store the selected file
 
                 console.log("Video file selected:", selectedMediaFile.name, selectedMediaFile.type);
-                const reader = new FileReader(); 
-                reader.onload = (e) => { 
+                const reader = new FileReader();
+                reader.onload = (e) => {
                     videoPreview.src = e.target.result;
-                    videoPreview.classList.add('has-media'); 
-                    videoPreview.play().catch(e => console.log("Video autoplay blocked:", e)); 
+                    videoPreview.style.display = 'block'; // Show the video preview
+                    videoPreview.classList.add('has-media');
+                    videoPreview.load(); // Load the video to ensure it's ready for playback
+                    videoPreview.play().catch(error => {
+                        console.log("Video autoplay blocked or failed:", error);
+                        // No need for alert, just log. User can manually play.
+                    });
                     console.log("Video preview updated (first 50 chars of Data URL):", videoPreview.src.substring(0, 50) + "...");
                 };
-                reader.onerror = (e) => { 
+                reader.onerror = (e) => {
                     console.error("FileReader error for video:", e);
+                    showMessageBox("เกิดข้อผิดพลาดในการอ่านไฟล์วิดีโอ: " + e.message, 'error');
+                    resetMediaPreview(); // Clear preview on error
                 };
-                reader.readAsDataURL(selectedMediaFile); 
+                reader.readAsDataURL(selectedMediaFile);
             } else {
                 console.log("No video file selected from input.");
-                // If no file is selected (e.g., user opens dialog and cancels), ensure previous selection is cleared
-                resetMediaPreview();
+                resetMediaPreview(); // Ensure previous selection is cleared if user cancels file dialog
             }
         });
 
         // Event listeners to clear media preview if clicked (user wants to remove the preview)
-        // This will also clear the selectedMediaFile variable
         imagePreview.addEventListener('click', resetMediaPreview);
         videoPreview.addEventListener('click', resetMediaPreview);
 
+        /**
+         * Clears all messages from the chat window and adds the initial AI greeting.
+         */
+        function clearChat() {
+            chatWindow.innerHTML = ''; // Clear all messages
+            addMessage('สวัสดีครับ มีอะไรให้ผมช่วยไหม? (รองรับข้อความ, รูปภาพ, วิดีโอ)', 'ai');
+            showMessageBox('ล้างประวัติแชทแล้ว!', 'info');
+            console.log("Chat history cleared.");
+        }
 
         // Asynchronous function to send a message (and potentially media) to the AI
         async function sendMessage() {
             const userMessage = userInput.value.trim();
-            let messageParts = []; 
-            let displayContent = {}; 
+            let messageParts = [];
+            let displayContent = {};
 
             console.log("Attempting to send message...");
 
@@ -451,20 +359,19 @@
                 const reader = new FileReader();
                 // Read the file as a Data URL (Base64) asynchronously
                 const mediaDataUrl = await new Promise((resolve, reject) => {
-                    reader.onloadend = () => resolve(reader.result); 
-                    reader.onerror = (e) => reject(e); 
-                    reader.readAsDataURL(selectedMediaFile); 
-                }).catch(error => { 
+                    reader.onloadend = () => resolve(reader.result);
+                    reader.onerror = (e) => reject(e);
+                    reader.readAsDataURL(selectedMediaFile);
+                }).catch(error => {
                     console.error("Error reading media file for sending:", error);
-                    alert("เกิดข้อผิดพลาดในการอ่านไฟล์สื่อ: " + error.message); 
-                    // Make sure inputs are re-enabled if file reading fails
-                    sendButton.disabled = false; 
-                    userInput.disabled = false; 
-                    userInput.focus(); 
-                    return null; 
+                    showMessageBox("เกิดข้อผิดพลาดในการอ่านไฟล์สื่อ: " + error.message, 'error');
+                    sendButton.disabled = false;
+                    userInput.disabled = false;
+                    userInput.focus();
+                    return null;
                 });
 
-                if (!mediaDataUrl) { 
+                if (!mediaDataUrl) {
                     console.log("Media Data URL is null, likely due to a reading error. Aborting send.");
                     return;
                 }
@@ -502,24 +409,22 @@
             }
 
             // Display user's message (which might include media) in the chat window
-            addMessage(displayContent, 'user'); 
+            addMessage(displayContent, 'user');
             userInput.value = ''; // Clear the text input field
-            // Ensure file inputs are cleared for next upload. 
-            // We clear input.value here, which will also affect selectedMediaFile indirectly if not explicitly reset later.
-            imageInput.value = ''; 
-            videoInput.value = '';
+            imageInput.value = ''; // Clear file input (important for re-uploading the same file)
+            videoInput.value = ''; // Clear file input
             resetMediaPreview(); // Clear any displayed media previews after sending
 
             // Disable input and button to prevent multiple submissions while waiting for AI
-            sendButton.disabled = true; 
-            userInput.disabled = true; 
+            sendButton.disabled = true;
+            userInput.disabled = true;
 
             // Display loading dots while waiting for AI response
             const loadingMessageDiv = document.createElement('div');
             loadingMessageDiv.classList.add('message', 'ai-message');
             loadingMessageDiv.innerHTML = '<span class="loading-dots">. . .</span>';
             chatWindow.appendChild(loadingMessageDiv);
-            chatWindow.scrollTop = chatWindow.scrollHeight; 
+            chatWindow.scrollTop = chatWindow.scrollHeight;
             console.log("Sending message to AI...");
 
             try {
@@ -531,24 +436,26 @@
                     const chunkText = chunk.text();
                     aiResponseText += chunkText;
                     loadingMessageDiv.innerHTML = aiResponseText + '<span class="loading-dots">. . .</span>';
-                    chatWindow.scrollTop = chatWindow.scrollHeight; 
+                    chatWindow.scrollTop = chatWindow.scrollHeight;
                 }
-                loadingMessageDiv.innerHTML = aiResponseText;
+                loadingMessageDiv.innerHTML = aiResponseText; // Remove loading dots after full response
                 console.log("AI response received:", aiResponseText);
 
             } catch (error) {
                 console.error('Error calling Gemini API:', error);
-                loadingMessageDiv.innerHTML = 'เกิดข้อผิดพลาดในการเชื่อมต่อกับ AI ลองใหม่อีกครั้ง'; 
-                loadingMessageDiv.style.backgroundColor = '#ffdddd'; 
-                loadingMessageDiv.style.color = '#333'; 
+                loadingMessageDiv.innerHTML = 'เกิดข้อผิดพลาดในการเชื่อมต่อกับ AI ลองใหม่อีกครั้ง';
+                loadingMessageDiv.style.backgroundColor = '#ffdddd';
+                loadingMessageDiv.style.color = '#333';
+                showMessageBox('เกิดข้อผิดพลาดในการเชื่อมต่อกับ AI ลองใหม่อีกครั้ง', 'error');
             } finally {
-                sendButton.disabled = false; 
-                userInput.disabled = false; 
-                userInput.focus(); 
+                sendButton.disabled = false;
+                userInput.disabled = false;
+                userInput.focus();
                 console.log("Message sending process complete.");
             }
         }
 
+        // Event listeners for send button and enter key
         sendButton.addEventListener('click', sendMessage);
         userInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
@@ -556,8 +463,11 @@
             }
         });
 
-        addMessage('สวัสดีครับ มีอะไรให้ผมช่วยไหม? (รองรับข้อความ, รูปภาพ, วิดีโอ)', 'ai');
+        // Event listener for clear chat button
+        clearChatButton.addEventListener('click', clearChat);
 
+        // Initial AI greeting message
+        addMessage('สวัสดีครับ มีอะไรให้ผมช่วยไหม? (รองรับข้อความ, รูปภาพ, วิดีโอ)', 'ai');
     </script>
 </body>
 </html>
