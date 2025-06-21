@@ -39,6 +39,8 @@
             line-height: 1.5;
             width: fit-content; /* Make message bubble fit its content width */
             max-width: 80%; /* Revert to a more common chat bubble width, allowing more side margin */
+            margin-bottom: 18px; /* Space between messages */
+            font-size: 1rem; /* Base font size */
         }
         .user-message {
             background-color: #6a0571; /* Deep purple for user messages */
@@ -47,14 +49,20 @@
             margin-left: auto;
             text-align: right;
             border-bottom-right-radius: 8px; /* Sharper corner on one side */
+            padding: 12px 18px; /* Padding for user messages */
+            border-radius: 22px; /* More rounded bubbles */
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for bubbles */
         }
         .ai-message {
-            background-color: #0f4c75; /* Deep blue for AI messages */
-            color: white;
+            /* Removed background, padding, border-radius, and shadow for AI messages */
+            background-color: transparent; /* Transparent background */
+            color: #e0e0e0; /* Light grey text */
             align-self: flex-start;
             margin-right: auto;
             text-align: left;
-            border-bottom-left-radius: 8px; /* Sharper corner on one side */
+            /* No specific border-radius as it's not a bubble */
+            padding: 0; /* No padding for plain text */
+            box-shadow: none; /* No shadow */
         }
         .message img, .message video {
             max-width: 100%;
@@ -272,9 +280,17 @@
          */
         function addMessage(content, sender) {
             const messageDiv = document.createElement('div');
-            // Reverted max-width to 80% and added width: fit-content for better sizing
-            messageDiv.classList.add('message', 'p-3', 'rounded-3xl', 'text-base', 'mb-4', 'shadow-md');
-            messageDiv.classList.add(sender === 'user' ? 'user-message' : 'ai-message');
+            // Remove Tailwind classes related to padding, border-radius, and shadow from the base message class
+            messageDiv.classList.add('message', 'mb-4', 'text-base');
+            
+            if (sender === 'user') {
+                // Add bubble styling only for user messages
+                messageDiv.classList.add('user-message', 'p-3', 'rounded-3xl', 'shadow-md');
+            } else {
+                // Keep AI messages plain
+                messageDiv.classList.add('ai-message');
+            }
+
 
             if (typeof content === 'string') { // If content is plain text
                 const textElement = document.createElement('p');
@@ -476,6 +492,7 @@
 
             // Display loading dots while waiting for AI response
             const loadingMessageDiv = document.createElement('div');
+            // Ensure loading dots also don't have bubble styling
             loadingMessageDiv.classList.add('message', 'ai-message');
             loadingMessageDiv.innerHTML = '<span class="loading-dots">. . .</span>';
             chatWindow.appendChild(loadingMessageDiv);
