@@ -230,16 +230,17 @@
         // Get the Gemini-Flash model (supports multimodal input like text and images/videos)
         const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
-        // Start a chat session and include a system instruction to define the AI's persona
+        // Start a chat session WITHOUT any system instruction to avoid API rejection issues.
+        // The AI will operate based on its default programming and safety policies.
         const chat = model.startChat({
             generationConfig: {
                 maxOutputTokens: 200, // Moderate token limit
                 temperature: 0.7,     // Default temperature for balanced creativity
                 topP: 0.9,            // Default topP
             },
-            // Add a system instruction here to define the AI's persona or role.
-            // You can change the text below to define how your AI should behave.
-            systemInstruction: "",
+            // systemInstruction has been removed to avoid "Invalid value" errors.
+            // If you wish to set a persona, ensure the instruction is very general and polite,
+            // for example: "คุณคือผู้ช่วย AI ที่เป็นมิตรและพร้อมให้ความช่วยเหลือ."
         });
 
         /**
@@ -281,7 +282,7 @@
          */
         function addMessage(content, sender) {
             const messageDiv = document.createElement('div');
-            // Remove Tailwind classes related to padding, border-radius, and shadow from the base message class
+            // Removed Tailwind classes related to padding, border-radius, and shadow from the base message class
             messageDiv.classList.add('message', 'mb-4', 'text-base');
             
             if (sender === 'user') {
@@ -413,7 +414,7 @@
          */
         function clearChat() {
             chatWindow.innerHTML = ''; // Clear all messages
-            addMessage('สวัสดีครับ มีอะไรให้ผมช่วยไหม? (รองรับข้อความ, รูปภาพ, วิดีโอ)', 'ai');
+            addMessage('คุณอยากให้ผมชื่ออะไร? 😁', 'ai');
             showMessageBox('ล้างประวัติแชทแล้ว!', 'info');
             console.log("Chat history cleared.");
         }
@@ -540,7 +541,7 @@
         clearChatButton.addEventListener('click', clearChat);
 
         // Initial AI greeting message
-        addMessage('สวัสดีครับ มีอะไรให้ผมช่วยไหม? (รองรับข้อความ, รูปภาพ, วิดีโอ)', 'ai');
+        addMessage('คุณอยากให้ผมชื่ออะไร? 😁', 'ai');
     </script>
 </body>
 </html>
