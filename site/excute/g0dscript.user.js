@@ -660,13 +660,27 @@
         discountBlock.setAttribute('role', 'link');
         discountBlock.setAttribute('aria-label', `DEV/g0d`);
         discountBlock.style.backgroundColor = '#000000';
-        discountBlock.innerHTML = `
-            <div class="discount_pct" style="display: none;"></div>
-            <div class="discount_prices">
-                <div class="discount_original_price" style="display: none;"></div>
-                <div class="discount_final_price" style="color: #b3b3b3;">DEV/g0d</div>
-            </div>
-        `;
+
+        const discountPct = document.createElement('div');
+        discountPct.className = 'discount_pct';
+        discountPct.style.display = 'none';
+        discountBlock.appendChild(discountPct);
+
+        const discountPrices = document.createElement('div');
+        discountPrices.className = 'discount_prices';
+        discountBlock.appendChild(discountPrices);
+
+        const discountOriginalPrice = document.createElement('div');
+        discountOriginalPrice.className = 'discount_original_price';
+        discountOriginalPrice.style.display = 'none';
+        discountPrices.appendChild(discountOriginalPrice);
+
+        const discountFinalPrice = document.createElement('div');
+        discountFinalPrice.className = 'discount_final_price';
+        discountFinalPrice.style.color = '#b3b3b3';
+        discountFinalPrice.textContent = 'DEV/g0d';
+        discountPrices.appendChild(discountFinalPrice);
+
         gamePurchaseActionBg.appendChild(discountBlock);
 
         const hasDownloadLinks = currentAppData && (
@@ -694,15 +708,11 @@
             gamePurchaseActionBg.appendChild(downloadButtonContainer);
         }
 
-        if (currentAppData && currentAppData.manifest && currentAppData.manifest !== "") {
-            const manifestLuaDiv = document.createElement('div');
-            manifestLuaDiv.className = 'btn_addtocart btn_packageinfo';
-            manifestLuaDiv.innerHTML = '<span data-panel=\'{"focusable":true,"clickOnActivate":true}\' role="button" class="btn_blue_steamui btn_medium" style="cursor: pointer;"><span>Manifest&Lua</span></span>';
-            manifestLuaDiv.addEventListener('click', createAddToLibraryDialog);
-            gamePurchaseActionBg.appendChild(manifestLuaDiv);
-        } else {
-            console.log(`No manifest data found for app ID: ${appId}. Manifest&Lua button will not be added.`);
-        }
+        const manifestLuaDiv = document.createElement('div');
+        manifestLuaDiv.className = 'btn_addtocart btn_packageinfo';
+        manifestLuaDiv.innerHTML = '<span data-panel=\'{"focusable":true,"clickOnActivate":true}\' role="button" class="btn_blue_steamui btn_medium" style="cursor: pointer;"><span>Manifest&Lua</span></span>';
+        manifestLuaDiv.addEventListener('click', createAddToLibraryDialog);
+        gamePurchaseActionBg.appendChild(manifestLuaDiv);
 
 
         const parentOfOriginal = originalPurchaseArea.parentNode;
