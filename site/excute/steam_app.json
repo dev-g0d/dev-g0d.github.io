@@ -1,0 +1,10 @@
+{
+    "app:3527290": {
+        "button1": "https://furcate.eu/files/3059400.zip",
+        "button2": "https://furcate.eu/files/3059400.zip"
+    },
+    "app:YOUR_OTHER_APP_ID": {
+        "button1": "...",
+        "button2": "..."
+    }
+}
