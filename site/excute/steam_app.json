@@ -1,10 +1,10 @@
 {
-    "app:3527290": {
-        "button1": "https://furcate.eu/files/3059400.zip",
-        "button2": "https://furcate.eu/files/3059400.zip"
+    "app:3167540": {
+        "gdownload": "https://upload.com/files/test.zip",
+        "fdownload": "https://upload.com/files/test.fix.zip",
+        "gpassword": "1234"
+        "fpassword": "1234"
+        "manifest": "https://furcate.eu/files/3059400.zip",
+        "how": "แตกไฟล์/nเล่นเกม!"
     },
-    "app:YOUR_OTHER_APP_ID": {
-        "button1": "...",
-        "button2": "..."
-    }
 }
