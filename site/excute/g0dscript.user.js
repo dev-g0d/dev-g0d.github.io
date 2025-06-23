@@ -1,4 +1,3 @@
-
 // ==UserScript==
 // @name          SteamG0d by DEVg0d
 // @namespace     g0d
