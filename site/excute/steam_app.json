@@ -10,7 +10,7 @@
     },
     "app:2878960": {
         "manifest": "https://github.com/dev-g0d/dev-g0d.github.io/raw/refs/heads/main-site/site/excute/WWE2K25/2878960.zip"
-    }
+    },
      "app:3176060": {
         "gdownload": "",
         "fdownload": "https://github.com/dev-g0d/dev-g0d.github.io/raw/refs/heads/main-site/site/excute/EmissaryZero/EmissaryZero.fix.g0d.rar",
@@ -19,5 +19,5 @@
         "fpassword": "g0d",
         "manifest": "https://github.com/dev-g0d/dev-g0d.github.io/raw/refs/heads/main-site/site/excute/EmissaryZero/3176060.zip",
         "how": "แตกไฟล์fixไว้ในโฟเดอร์เกม"
-    },
+    }
 }
