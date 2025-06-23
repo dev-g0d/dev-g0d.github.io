@@ -8,13 +8,7 @@
         "manifest": "https://furcate.eu/files/3059400.zip",
         "how": "แตกไฟล์;เล่นเกม!"
     },
-    "app:1234": {
-        "gdownload": "https://upload.com/files/test.zip",
-        "fdownload": "https://upload.com/files/test.fix.zip",
-        "by": "onlinef-fix.me", 
-        "gpassword": "1234",
-        "fpassword": "1234",
-        "manifest": "https://furcate.eu/files/1234.zip",
-        "how": "แตกไฟล์/nเล่นเกม!"
+    "app:2878960": {
+        "manifest": "https://github.com/dev-g0d/dev-g0d.github.io/raw/refs/heads/main-site/site/excute/WWE2K25/2878960.zip",
     }
 }
