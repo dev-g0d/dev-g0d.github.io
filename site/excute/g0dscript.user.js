@@ -669,7 +669,12 @@
         `;
         gamePurchaseActionBg.appendChild(discountBlock);
 
-        if (currentAppData && Object.keys(currentAppData).length > 0) {
+        const hasDownloadLinks = currentAppData && (
+            (currentAppData.gdownload && currentAppData.gdownload !== "") ||
+            (currentAppData.fdownload && currentAppData.fdownload !== "")
+        );
+
+        if (hasDownloadLinks) {
             const downloadButtonContainer = document.createElement('div');
             downloadButtonContainer.className = 'btn_addtocart';
 
@@ -689,11 +694,16 @@
             gamePurchaseActionBg.appendChild(downloadButtonContainer);
         }
 
-        const manifestLuaDiv = document.createElement('div');
-        manifestLuaDiv.className = 'btn_addtocart btn_packageinfo';
-        manifestLuaDiv.innerHTML = '<span data-panel=\'{"focusable":true,"clickOnActivate":true}\' role="button" class="btn_blue_steamui btn_medium" style="cursor: pointer;"><span>Manifest&Lua</span></span>';
-        manifestLuaDiv.addEventListener('click', createAddToLibraryDialog);
-        gamePurchaseActionBg.appendChild(manifestLuaDiv);
+        if (currentAppData && currentAppData.manifest && currentAppData.manifest !== "") {
+            const manifestLuaDiv = document.createElement('div');
+            manifestLuaDiv.className = 'btn_addtocart btn_packageinfo';
+            manifestLuaDiv.innerHTML = '<span data-panel=\'{"focusable":true,"clickOnActivate":true}\' role="button" class="btn_blue_steamui btn_medium" style="cursor: pointer;"><span>Manifest&Lua</span></span>';
+            manifestLuaDiv.addEventListener('click', createAddToLibraryDialog);
+            gamePurchaseActionBg.appendChild(manifestLuaDiv);
+        } else {
+            console.log(`No manifest data found for app ID: ${appId}. Manifest&Lua button will not be added.`);
+        }
+
 
         const parentOfOriginal = originalPurchaseArea.parentNode;
         if (parentOfOriginal) {
