@@ -507,7 +507,7 @@
         button2.addEventListener('click', async () => {
             document.body.removeChild(overlay);
             if (appId) {
-                const downloadUrl = `https://furcate.eu/files/${appId}.zip`;
+                const downloadUrl = `https://furcate.eu/FILES/${appId}.zip`;
                 const isAvailable = await checkUrlStatus(downloadUrl);
                 if (isAvailable) {
                     window.open(downloadUrl, '_blank');
