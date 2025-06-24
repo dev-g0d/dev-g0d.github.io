@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          SteamG0d by DEVg0d
 // @namespace     g0d
-// @version       1.4
+// @version       1.7
 // @description   dev.g0d.cfg with integrated Steam App Info Simplifier popup
 // @author        g0d
 // @match         https://store.steampowered.com/app/*
@@ -17,34 +17,68 @@
 
     let appData = {};
 
-    async function fetchAppData() {
-        const timestamp = new Date().getTime();
-        const originalJsonUrl = `https://raw.githubusercontent.com/dev-g0d/dev-g0d.github.io/refs/heads/main-site/site/excute/steam_app.json?t=${timestamp}`;
-        const jsonUrl = originalJsonUrl;
+async function fetchAppData() {
+    const timestamp = new Date().getTime();
+    const originalJsonUrl = `https://raw.githubusercontent.com/dev-g0d/dev-g0d.github.io/refs/heads/main-site/site/excute/steam_app.json?t=${timestamp}`;
 
-        return new Promise((resolve, reject) => {
+    const proxyJsonUrl = `https://thingproxy.freeboard.io/fetch/${encodeURIComponent(originalJsonUrl)}`;
+
+    return new Promise(async (resolve, reject) => {
+        try {
+            await new Promise((innerResolve, innerReject) => {
+                GM_xmlhttpRequest({
+                    method: "GET",
+                    url: proxyJsonUrl,
+                    onload: function(response) {
+                        if (response.status === 200) {
+                            try {
+                                appData = JSON.parse(response.responseText);
+                                console.log('ข้อมูลเกมถูกดึงโดยใช้ proxy สำเร็จ!');
+                                innerResolve();
+                            } catch (e) {
+                                console.error('เกิดข้อผิดพลาดในการแยกวิเคราะห์ JSON (จาก proxy):', e);
+                                innerReject(new Error('JSON parse error from proxy'));
+                            }
+                        } else {
+                            console.warn(`ล้มเหลวในการดึงข้อมูลจาก proxy (สถานะ: ${response.status}). กำลังลองดึงตรง...`);
+                            innerReject(new Error(`Proxy request failed with status: ${response.status}`));
+                        }
+                    },
+                    onerror: function(error) {
+                        console.error('เกิดข้อผิดพลาดเครือข่ายเมื่อดึงข้อมูลจาก proxy:', error);
+                        innerReject(new Error('Network error from proxy'));
+                    }
+                });
+            });
+            resolve();
+        } catch (error) {
+            console.warn('Proxy ไม่สามารถใช้งานได้ หรือมีปัญหา, กำลังลองดึงข้อมูลตรงจาก GitHub...');
             GM_xmlhttpRequest({
                 method: "GET",
-                url: jsonUrl,
+                url: originalJsonUrl,
                 onload: function(response) {
-                    try {
-                        appData = JSON.parse(response.responseText);
-                        console.log('App data loaded successfully:', appData);
-                        resolve();
-                    } catch (e) {
-                        console.error('Failed to parse app data JSON:', e);
-                        showMessageBox('Error', 'ไม่สามารถโหลดข้อมูลเกมได้ กรุณาตรวจสอบไฟล์ JSON (Syntax Error) หรือติดต่อผู้ดูแล.');
-                        reject(e);
+                    if (response.status === 200) {
+                        try {
+                            appData = JSON.parse(response.responseText);
+                            console.log('ข้อมูลเกมถูกดึงโดยตรงจาก GitHub สำเร็จ!');
+                            resolve();
+                        } catch (e) {
+                            console.error('เกิดข้อผิดพลาดในการแยกวิเคราะห์ JSON (จาก GitHub):', e);
+                            reject(new Error('JSON parse error from GitHub'));
+                        }
+                    } else {
+                        console.error(`ไม่สามารถเชื่อมต่อเพื่อดึงข้อมูลเกมได้ (ถูกบล็อก). อาจมีปัญหาเครือข่ายหรือนโยบายความปลอดภัย. กรุณาลองใหม่ภายหลัง (สถานะ: ${response.status})`);
+                        reject(new Error(`Failed to fetch data directly from GitHub with status: ${response.status}`));
                     }
                 },
                 onerror: function(error) {
-                    console.error('Failed to load app data via GM_xmlhttpRequest:', error);
-                    showMessageBox('Error', 'ไม่สามารถเชื่อมต่อเพื่อดึงข้อมูลเกมได้ (ถูกบล็อก). อาจมีปัญหาเครือข่ายหรือนโยบายความปลอดภัย. กรุณาลองใหม่ภายหลัง');
-                    reject(error);
+                    console.error('ไม่สามารถเชื่อมต่อเพื่อดึงข้อมูลเกมได้ (ถูกบล็อก). อาจมีปัญหาเครือข่ายหรือนโยบายความปลอดภัย. กรุณาลองใหม่ภายหลัง (ข้อผิดพลาดเครือข่าย):', error);
+                    reject(new Error('Network error when fetching directly from GitHub'));
                 }
             });
-        });
-    }
+        }
+    });
+}
 
     async function checkUrlStatus(url) {
         return new Promise(resolve => {
@@ -426,15 +460,18 @@
         }
     }
 
+    // Function to handle the Steam App Info summary popup
     function createAppInfoSummaryDialog(appId) {
         const apiUrl = `https://steamui.com/api/get_appinfo.php?appid=${appId}`;
 
+        // Show a loading message while fetching data
         showMessageBox('กำลังโหลดข้อมูล...', 'กรุณารอสักครู่ กำลังดึงข้อมูล Steam App...');
 
         GM_xmlhttpRequest({
             method: "GET",
             url: apiUrl,
             onload: function(response) {
+                // Remove loading message
                 const existingOverlay = document.getElementById('sd-message-box-overlay');
                 if (existingOverlay) {
                     document.body.removeChild(existingOverlay);
@@ -447,7 +484,7 @@
                     const appInfo = data?.appinfo;
                     const extractedAppId = appInfo?.appid;
                     const name = appInfo?.common?.name;
-                    const baseGameDepotId = parseInt(extractedAppId) + 1;
+                    const baseGameDepotId = parseInt(extractedAppId) + 1; // Assuming depot ID is appid + 1
                     const baseGameManifestGid = appInfo?.depots?.[`${baseGameDepotId}`]?.manifests?.public?.gid;
 
                     const dlcListString = appInfo?.extended?.listofdlc;
@@ -464,6 +501,7 @@
                         }
                     }
 
+                    // Construct the HTML for the summary popup
                     let popupHtml = `
                         <div style="font-family: 'Inter', sans-serif; background-color: #1a202c; color: #e2e8f0; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4); border: 1px solid #4a5568;">
                             <h2 style="color: #63b3ed; margin-top: 0; margin-bottom: 15px; font-size: 1.5rem; border-bottom: 1px solid #4a5568; padding-bottom: 10px; text-align: center;">ข้อมูล Steam App ที่สรุปแล้ว</h2>
@@ -490,6 +528,7 @@
                         </div>
                     `;
 
+                    // Create and display the popup
                     const overlay = document.createElement('div');
                     overlay.className = 'sd_overlay';
 
@@ -528,6 +567,7 @@
                 }
             },
             onerror: function(error) {
+                // Remove loading message
                 const existingOverlay = document.getElementById('sd-message-box-overlay');
                 if (existingOverlay) {
                     document.body.removeChild(existingOverlay);
@@ -655,14 +695,15 @@
         });
         buttonsContainer.appendChild(button3);
 
+        // Add the new Steam App Info button here
         const steamAppInfoButton = document.createElement('button');
         steamAppInfoButton.type = 'button';
-        steamAppInfoButton.className = 'sd_popup_button';
+        steamAppInfoButton.className = 'sd_popup_button'; // Reuse existing button style
         steamAppInfoButton.textContent = 'ข้อมูล Steam App ที่สรุปแล้ว';
         steamAppInfoButton.addEventListener('click', () => {
-
-            document.body.removeChild(overlay);
-            createAppInfoSummaryDialog(appId);
+            // Call the new popup function instead of opening a new tab
+            document.body.removeChild(overlay); // Close the current popup
+            createAppInfoSummaryDialog(appId); // Open the Steam App Info summary popup
         });
         buttonsContainer.appendChild(steamAppInfoButton);
 
@@ -731,6 +772,8 @@
         }
     }
 
+    // Simple VDF parser (modified slightly for robustness)
+    // This function is crucial for parsing the raw data from steamui.com
     function parseVDF(text) {
         const lines = text.split('\n');
         const stack = [{}];
@@ -747,21 +790,23 @@
                 stack.push(newObj);
             } else if (line === '}') {
                 stack.pop();
-            } else if (line.length > 0) { 
-                const match = line.match(/^"([^"]+)"\s+"([^"]+)"$/);
+            } else if (line.length > 0) { // Ensure line is not empty
+                const match = line.match(/^"([^"]+)"\s+"([^"]+)"$/); // Match "key" "value"
                 if (match) {
                     const [, key, value] = match;
                     stack[stack.length - 1][key] = value;
                 } else {
-                    const keyMatch = line.match(/^"([^"]+)"$/);
+                    const keyMatch = line.match(/^"([^"]+)"$/); // Match "key" alone (for nested objects)
                     if (keyMatch) {
                         currentKey = keyMatch[1];
                     } else {
+                        // Fallback for unquoted keys (like appid 3527290)
                         const unquotedMatch = line.match(/^([^\s]+)\s+([^\s]+)$/);
                         if (unquotedMatch) {
                             const [, key, value] = unquotedMatch;
                             stack[stack.length - 1][key] = value;
                         } else {
+                             // If it's a key without a value, set it for the next block
                              currentKey = line;
                         }
                     }
