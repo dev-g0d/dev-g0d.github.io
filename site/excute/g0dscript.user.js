@@ -20,7 +20,7 @@
     async function fetchAppData() {
         const timestamp = new Date().getTime();
         const originalJsonUrl = `https://raw.githubusercontent.com/dev-g0d/dev-g0d.github.io/refs/heads/main-site/site/excute/steam_app.json?t=${timestamp}`;
-        const jsonUrl = `https://thingproxy.freeboard.io/fetch/${encodeURIComponent(originalJsonUrl)}`;
+        const jsonUrl = originalJsonUrl;
 
         return new Promise((resolve, reject) => {
             GM_xmlhttpRequest({
