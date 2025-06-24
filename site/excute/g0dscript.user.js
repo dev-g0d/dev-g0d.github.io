@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          SteamG0d by DEVg0d
 // @namespace     g0d
-// @version       1.0
+// @version       1.1
 // @description   dev.g0d.cfg
 // @author        g0d
 // @match         https://store.steampowered.com/app/*
