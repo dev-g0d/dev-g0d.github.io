@@ -4,27 +4,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gemini Chat (Media Preview + DragDrop)</title>
+  <title>Gemini Chat (Multi Media Upload)</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
   <script type="module" src="https://esm.run/@google/generative-ai"></script>
   <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      overflow: hidden;
-    }
-    #chat-window::-webkit-scrollbar {
-      width: 8px;
-    }
-    #chat-window::-webkit-scrollbar-track {
-      background: #21252b;
-    }
-    #chat-window::-webkit-scrollbar-thumb {
-      background: #3e4451;
-    }
-    #chat-window::-webkit-scrollbar-thumb:hover {
-      background: #4a5160;
-    }
+    body { font-family: 'Inter', sans-serif; overflow: hidden; }
+    #chat-window::-webkit-scrollbar { width: 8px; }
+    #chat-window::-webkit-scrollbar-track { background: #21252b; }
+    #chat-window::-webkit-scrollbar-thumb { background: #3e4451; }
+    #chat-window::-webkit-scrollbar-thumb:hover { background: #4a5160; }
     .preview img, .preview video {
       max-height: 80px;
       border-radius: 0.5rem;
@@ -51,8 +40,8 @@
       <div id="preview-container" class="flex gap-3 flex-wrap"></div>
     </div>
     <div class="flex gap-2">
-      <input type="file" id="image-input" accept="image/*" hidden>
-      <input type="file" id="video-input" accept="video/*" hidden>
+      <input type="file" id="image-input" accept="image/*" multiple hidden>
+      <input type="file" id="video-input" accept="video/*" multiple hidden>
       <button id="btn-img" class="text-sm bg-blue-600 px-3 py-1 rounded text-white">เลือกรูป</button>
       <button id="btn-vid" class="text-sm bg-purple-600 px-3 py-1 rounded text-white">เลือกวิดีโอ</button>
       <button id="clear-button" class="text-sm text-red-400">ล้างแชท</button>
@@ -82,26 +71,26 @@
     const previewContainer = document.getElementById("preview-container");
     const dropZone = document.getElementById("drop-zone");
 
-    let selectedMedia = null;
+    let selectedMedia = [];
 
     function addMessage(content, sender) {
       const msg = document.createElement("div");
       msg.className = `max-w-[70%] px-4 py-2 rounded-xl whitespace-pre-wrap ${sender === 'user' ? 'bg-[#6a0571] text-white self-end ml-auto' : 'bg-[#2e3b55] text-[#ccc]'} flex flex-col`;
       if (typeof content === 'string') msg.innerHTML = content;
       else {
-        if (content.imageUrl) {
+        (content.imageUrls || []).forEach(url => {
           const img = document.createElement('img');
-          img.src = content.imageUrl;
+          img.src = url;
           img.className = "rounded mb-2 max-w-full";
           msg.appendChild(img);
-        }
-        if (content.videoUrl) {
+        });
+        (content.videoUrls || []).forEach(url => {
           const vid = document.createElement('video');
-          vid.src = content.videoUrl;
+          vid.src = url;
           vid.controls = true;
           vid.className = "rounded mb-2 max-w-full";
           msg.appendChild(vid);
-        }
+        });
         if (content.text) {
           const p = document.createElement('p');
           p.innerHTML = content.text;
@@ -113,51 +102,55 @@
     }
 
     function resetPreview() {
-      selectedMedia = null;
+      selectedMedia = [];
       previewContainer.innerHTML = '';
     }
 
-    function showPreview(file) {
-      resetPreview();
-      const reader = new FileReader();
-      reader.onload = e => {
-        const wrapper = document.createElement('div');
-        wrapper.className = "relative preview";
+    function handleFiles(files) {
+      [...files].forEach(file => {
+        const reader = new FileReader();
+        reader.onload = e => {
+          const wrapper = document.createElement('div');
+          wrapper.className = "relative preview";
 
-        const btn = document.createElement('button');
-        btn.innerText = 'x';
-        btn.onclick = resetPreview;
+          const btn = document.createElement('button');
+          btn.innerText = 'x';
+          btn.onclick = () => {
+            selectedMedia = selectedMedia.filter(f => f.file !== file);
+            wrapper.remove();
+          };
 
-        let media;
-        if (file.type.startsWith('image')) {
-          media = document.createElement('img');
-        } else {
-          media = document.createElement('video');
-          media.controls = true;
-        }
-        media.src = e.target.result;
+          let media;
+          if (file.type.startsWith('image')) {
+            media = document.createElement('img');
+          } else if (file.type.startsWith('video')) {
+            media = document.createElement('video');
+            media.controls = true;
+          } else return;
 
-        wrapper.appendChild(media);
-        wrapper.appendChild(btn);
-        previewContainer.appendChild(wrapper);
-        selectedMedia = { file, dataUrl: e.target.result };
-      };
-      reader.readAsDataURL(file);
+          media.src = e.target.result;
+          wrapper.appendChild(media);
+          wrapper.appendChild(btn);
+          previewContainer.appendChild(wrapper);
+          selectedMedia.push({ file, dataUrl: e.target.result });
+        };
+        reader.readAsDataURL(file);
+      });
     }
 
     async function sendMessage() {
       const text = userInput.value.trim();
-      if (!text && !selectedMedia) return;
+      if (!text && selectedMedia.length === 0) return;
 
       const parts = [];
-      const display = {};
+      const display = { imageUrls: [], videoUrls: [] };
 
-      if (selectedMedia) {
-        const base64 = selectedMedia.dataUrl.split(",")[1];
-        const mime = selectedMedia.file.type;
+      for (const media of selectedMedia) {
+        const base64 = media.dataUrl.split(",")[1];
+        const mime = media.file.type;
         parts.push({ inlineData: { data: base64, mimeType: mime } });
-        if (mime.startsWith('image')) display.imageUrl = selectedMedia.dataUrl;
-        else display.videoUrl = selectedMedia.dataUrl;
+        if (mime.startsWith('image')) display.imageUrls.push(media.dataUrl);
+        else if (mime.startsWith('video')) display.videoUrls.push(media.dataUrl);
       }
 
       if (text) {
@@ -188,18 +181,13 @@
     btnImg.onclick = () => imageInput.click();
     btnVid.onclick = () => videoInput.click();
 
-    imageInput.onchange = e => {
-      if (e.target.files[0]) showPreview(e.target.files[0]);
-    };
-    videoInput.onchange = e => {
-      if (e.target.files[0]) showPreview(e.target.files[0]);
-    };
+    imageInput.onchange = e => handleFiles(e.target.files);
+    videoInput.onchange = e => handleFiles(e.target.files);
 
     dropZone.addEventListener('dragover', e => e.preventDefault());
     dropZone.addEventListener('drop', e => {
       e.preventDefault();
-      const file = e.dataTransfer.files[0];
-      if (file && (file.type.startsWith('image') || file.type.startsWith('video'))) showPreview(file);
+      handleFiles(e.dataTransfer.files);
     });
 
     clearButton.onclick = () => {
