@@ -12,6 +12,11 @@
         "how": "แตกไฟล์fixไว้ในโฟเดอร์เกม"
     },
         "app:3527290": {
+        "gdownload": "",
+        "fdownload": "https://github.com/dev-g0d/dev-g0d.github.io/raw/refs/heads/main-site/site/excute/PEAK/fix/PEAK.fix.g0d.rar",
+        "by": "g0d + Kirigiri", 
+        "gpassword": "",
+        "fpassword": "g0d",
         "manifest": "https://github.com/dev-g0d/dev-g0d.github.io/raw/refs/heads/main-site/site/excute/PEAK/3527290.zip"
     }
 }
