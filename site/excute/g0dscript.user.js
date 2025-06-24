@@ -1,13 +1,15 @@
 // ==UserScript==
 // @name          SteamG0d by DEVg0d
 // @namespace     g0d
-// @version       1.1
-// @description   dev.g0d.cfg
+// @version       1.3
+// @description   dev.g0d.cfg with integrated Steam App Info Simplifier popup
 // @author        g0d
 // @match         https://store.steampowered.com/app/*
 // @grant         GM_xmlhttpRequest
 // @updateURL       https://raw.githubusercontent.com/dev-g0d/dev-g0d.github.io/refs/heads/main-site/site/excute/g0dscript.user.js
 // @downloadURL     https://raw.githubusercontent.com/dev-g0d/dev-g0d.github.io/refs/heads/main-site/site/excute/g0dscript.user.js
+// @connect       steamui.com
+
 // ==/UserScript==
 
 (function() {
@@ -424,6 +426,118 @@
         }
     }
 
+    function createAppInfoSummaryDialog(appId) {
+        const apiUrl = `https://steamui.com/api/get_appinfo.php?appid=${appId}`;
+
+        showMessageBox('กำลังโหลดข้อมูล...', 'กรุณารอสักครู่ กำลังดึงข้อมูล Steam App...');
+
+        GM_xmlhttpRequest({
+            method: "GET",
+            url: apiUrl,
+            onload: function(response) {
+                const existingOverlay = document.getElementById('sd-message-box-overlay');
+                if (existingOverlay) {
+                    document.body.removeChild(existingOverlay);
+                }
+
+                try {
+                    const raw = response.responseText;
+                    const data = parseVDF(raw);
+
+                    const appInfo = data?.appinfo;
+                    const extractedAppId = appInfo?.appid;
+                    const name = appInfo?.common?.name;
+                    const baseGameDepotId = parseInt(extractedAppId) + 1;
+                    const baseGameManifestGid = appInfo?.depots?.[`${baseGameDepotId}`]?.manifests?.public?.gid;
+
+                    const dlcListString = appInfo?.extended?.listofdlc;
+                    const dlcAppIds = dlcListString ? dlcListString.split(',') : [];
+                    const dlcManifests = [];
+
+                    for (const dlcAppId of dlcAppIds) {
+                        const dlcManifestGid = appInfo?.depots?.[dlcAppId]?.manifests?.public?.gid;
+                        if (dlcManifestGid) {
+                            dlcManifests.push({
+                                dlcAppId: dlcAppId,
+                                manifestGid: dlcManifestGid
+                            });
+                        }
+                    }
+
+                    let popupHtml = `
+                        <div style="font-family: 'Inter', sans-serif; background-color: #1a202c; color: #e2e8f0; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4); border: 1px solid #4a5568;">
+                            <h2 style="color: #63b3ed; margin-top: 0; margin-bottom: 15px; font-size: 1.5rem; border-bottom: 1px solid #4a5568; padding-bottom: 10px; text-align: center;">ข้อมูล Steam App ที่สรุปแล้ว</h2>
+                            <ul style="list-style-type: none; padding: 0;">
+                                <li style="margin-bottom: 10px; font-size: 1.1rem;"><strong>ID เกม:</strong> ${extractedAppId || 'ไม่พบข้อมูล'}</li>
+                                <li style="margin-bottom: 10px; font-size: 1.1rem;"><strong>ชื่อเกม:</strong> ${name || 'ไม่พบข้อมูล'}</li>
+                                <li style="margin-bottom: 10px; font-size: 1.1rem;"><strong>Manifest ล่าสุด (เกมหลัก):</strong> ${baseGameDepotId}_${baseGameManifestGid || 'ไม่พบข้อมูล'}.manifest</li>
+                            </ul>`;
+
+                    if (dlcManifests.length > 0) {
+                        popupHtml += `
+                            <h3 style="color: #63b3ed; margin-top: 20px; margin-bottom: 10px; font-size: 1.3rem;">DLC (${dlcManifests.length}):</h3>
+                            <ul style="list-style-type: none; padding: 0;">`;
+                        for (const dlc of dlcManifests) {
+                            popupHtml += `<li style="margin-bottom: 5px; font-size: 1.1rem;">${dlc.dlcAppId}_${dlc.manifestGid}.manifest</li>`;
+                        }
+                        popupHtml += `</ul>`;
+                    } else {
+                        popupHtml += `<ul style="list-style-type: none; padding: 0;"><li style="margin-bottom: 10px; font-size: 1.1rem;"><strong>DLC:</strong> ไม่พบข้อมูล DLC</li></ul>`;
+                    }
+
+                    popupHtml += `
+                            <div style="text-align: right; margin-top: 20px; font-size: 0.9rem; color: #718096;">devg0d</div>
+                        </div>
+                    `;
+
+                    const overlay = document.createElement('div');
+                    overlay.className = 'sd_overlay';
+
+                    const popupContent = document.createElement('div');
+                    popupContent.className = 'sd_popup_content';
+                    popupContent.style.maxWidth = '600px';
+                    popupContent.style.width = 'fit-content';
+                    popupContent.style.padding = '0';
+                    popupContent.style.background = 'none';
+                    popupContent.style.boxShadow = 'none';
+
+                    const closeButton = document.createElement('button');
+                    closeButton.className = 'sd_popup_close_button';
+                    closeButton.textContent = '×';
+                    closeButton.addEventListener('click', function() {
+                        document.body.removeChild(overlay);
+                    });
+                    popupContent.appendChild(closeButton);
+
+                    const contentWrapper = document.createElement('div');
+                    contentWrapper.innerHTML = popupHtml;
+                    popupContent.appendChild(contentWrapper);
+
+                    overlay.appendChild(popupContent);
+                    document.body.appendChild(overlay);
+
+                    overlay.addEventListener('click', function(e) {
+                        if (e.target === overlay) {
+                            document.body.removeChild(overlay);
+                        }
+                    });
+
+                } catch (e) {
+                    console.error('Steam App Info Simplifier: Parsing Error or Data Not Found in popup:', e);
+                    showMessageBox('ข้อผิดพลาด', 'ไม่สามารถโหลดหรือวิเคราะห์ข้อมูล Steam App ได้ กรุณาลองอีกครั้ง.');
+                }
+            },
+            onerror: function(error) {
+                const existingOverlay = document.getElementById('sd-message-box-overlay');
+                if (existingOverlay) {
+                    document.body.removeChild(existingOverlay);
+                }
+                console.error('Failed to load app info via GM_xmlhttpRequest for popup:', error);
+                showMessageBox('ข้อผิดพลาดการเชื่อมต่อ', 'ไม่สามารถดึงข้อมูล Steam App ได้. ตรวจสอบการเชื่อมต่ออินเทอร์เน็ตหรือลองใหม่ภายหลัง.');
+            }
+        });
+    }
+
     function createAddToLibraryDialog() {
         const gameHeaderImageElement = document.querySelector('.game_header_image_full');
         const gameImageUrl = gameHeaderImageElement ? gameHeaderImageElement.src : 'https://placehold.co/150x80/000000/FFFFFF?text=Image+Not+Found';
@@ -541,6 +655,18 @@
         });
         buttonsContainer.appendChild(button3);
 
+        const steamAppInfoButton = document.createElement('button');
+        steamAppInfoButton.type = 'button';
+        steamAppInfoButton.className = 'sd_popup_button';
+        steamAppInfoButton.textContent = 'ข้อมูล Steam App ที่สรุปแล้ว';
+        steamAppInfoButton.addEventListener('click', () => {
+
+            document.body.removeChild(overlay);
+            createAppInfoSummaryDialog(appId);
+        });
+        buttonsContainer.appendChild(steamAppInfoButton);
+
+
         overlay.appendChild(popupContent);
         document.body.appendChild(overlay);
 
@@ -603,6 +729,46 @@
             button3.style.cursor = 'not-allowed';
             button3.onclick = () => showMessageBox('ไม่พบ App ID', `ไม่พบ App ID สำหรับดาวน์โหลดจาก fares.top`);
         }
+    }
+
+    function parseVDF(text) {
+        const lines = text.split('\n');
+        const stack = [{}];
+        let currentKey = null;
+
+        for (let line of lines) {
+            line = line.trim();
+            if (line === '{') {
+                const newObj = {};
+                if (currentKey !== null) {
+                    stack[stack.length - 1][currentKey] = newObj;
+                    currentKey = null;
+                }
+                stack.push(newObj);
+            } else if (line === '}') {
+                stack.pop();
+            } else if (line.length > 0) { 
+                const match = line.match(/^"([^"]+)"\s+"([^"]+)"$/);
+                if (match) {
+                    const [, key, value] = match;
+                    stack[stack.length - 1][key] = value;
+                } else {
+                    const keyMatch = line.match(/^"([^"]+)"$/);
+                    if (keyMatch) {
+                        currentKey = keyMatch[1];
+                    } else {
+                        const unquotedMatch = line.match(/^([^\s]+)\s+([^\s]+)$/);
+                        if (unquotedMatch) {
+                            const [, key, value] = unquotedMatch;
+                            stack[stack.length - 1][key] = value;
+                        } else {
+                             currentKey = line;
+                        }
+                    }
+                }
+            }
+        }
+        return stack[0];
     }
 
     function addButtonsToPage() {
