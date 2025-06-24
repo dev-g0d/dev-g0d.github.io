@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          SteamG0d by DEVg0d
 // @namespace     g0d
-// @version       1.3
+// @version       1.4
 // @description   dev.g0d.cfg with integrated Steam App Info Simplifier popup
 // @author        g0d
 // @match         https://store.steampowered.com/app/*
