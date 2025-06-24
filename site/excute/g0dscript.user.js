@@ -569,7 +569,7 @@
         }
 
         if (appId) {
-            const furcateUrl = `https://furcate.eu/files/${appId}.zip`;
+            const furcateUrl = `https://furcate.eu/FILES/${appId}.zip`;
             checkUrlStatus(furcateUrl).then(isAvailable => {
                 if (!isAvailable) {
                     button2.textContent = 'furcate.eu (ไม่พบ)';
