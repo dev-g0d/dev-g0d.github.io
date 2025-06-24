@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gemini Chat (Media Ready)</title>
+  <title>Gemini Chat (Media Preview + DragDrop)</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
   <script type="module" src="https://esm.run/@google/generative-ai"></script>
@@ -25,15 +25,36 @@
     #chat-window::-webkit-scrollbar-thumb:hover {
       background: #4a5160;
     }
+    .preview img, .preview video {
+      max-height: 80px;
+      border-radius: 0.5rem;
+      border: 2px solid #4a5160;
+    }
+    .preview button {
+      background: #c0392b;
+      color: white;
+      font-size: 12px;
+      padding: 0 6px;
+      border-radius: 50%;
+      position: absolute;
+      top: -8px;
+      right: -8px;
+    }
   </style>
 </head>
 <body class="flex flex-col h-screen bg-[#1a1a2e] text-[#e0e0e0]">
   <div id="chat-window" class="flex-grow p-4 overflow-y-auto bg-[#0f1523] space-y-4"></div>
 
-  <div class="p-4 bg-[#16213e] space-y-2">
+  <div class="p-4 bg-[#16213e] space-y-3">
+    <div id="drop-zone" class="flex flex-wrap items-center gap-3 p-2 border border-dashed border-gray-500 rounded hover:border-green-400">
+      <span class="text-sm text-gray-400">ลากไฟล์มาวางตรงนี้ หรือกดปุ่มด้านล่าง</span>
+      <div id="preview-container" class="flex gap-3 flex-wrap"></div>
+    </div>
     <div class="flex gap-2">
-      <input type="file" id="image-input" accept="image/*" class="text-sm text-gray-300">
-      <input type="file" id="video-input" accept="video/*" class="text-sm text-gray-300">
+      <input type="file" id="image-input" accept="image/*" hidden>
+      <input type="file" id="video-input" accept="video/*" hidden>
+      <button id="btn-img" class="text-sm bg-blue-600 px-3 py-1 rounded text-white">เลือกรูป</button>
+      <button id="btn-vid" class="text-sm bg-purple-600 px-3 py-1 rounded text-white">เลือกวิดีโอ</button>
       <button id="clear-button" class="text-sm text-red-400">ล้างแชท</button>
     </div>
     <div class="flex items-end gap-3">
@@ -45,9 +66,9 @@
   <script type="module">
     import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
 
-    const API_KEY = "AIzaSyC8Ng5z4AHmjVaPeMBGMYENDHl1CSb5wR0"; // <<< ใส่ API Key ของคุณ
+    const API_KEY = "YOUR_API_KEY_HERE";
     const genAI = new GoogleGenerativeAI(API_KEY);
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
     const chat = model.startChat({ generationConfig: { maxOutputTokens: 8192 } });
 
     const chatWindow = document.getElementById("chat-window");
@@ -56,6 +77,12 @@
     const imageInput = document.getElementById("image-input");
     const videoInput = document.getElementById("video-input");
     const clearButton = document.getElementById("clear-button");
+    const btnImg = document.getElementById("btn-img");
+    const btnVid = document.getElementById("btn-vid");
+    const previewContainer = document.getElementById("preview-container");
+    const dropZone = document.getElementById("drop-zone");
+
+    let selectedMedia = null;
 
     function addMessage(content, sender) {
       const msg = document.createElement("div");
@@ -85,35 +112,52 @@
       chatWindow.scrollTop = chatWindow.scrollHeight;
     }
 
-    function resetInputs() {
-      imageInput.value = "";
-      videoInput.value = "";
+    function resetPreview() {
+      selectedMedia = null;
+      previewContainer.innerHTML = '';
     }
 
-    clearButton.onclick = () => {
-      chatWindow.innerHTML = '';
-      addMessage('สวัสดีครับ มีอะไรให้ผมช่วยไหม? รองรับข้อความ รูปภาพ วิดีโอ', 'ai');
-    };
+    function showPreview(file) {
+      resetPreview();
+      const reader = new FileReader();
+      reader.onload = e => {
+        const wrapper = document.createElement('div');
+        wrapper.className = "relative preview";
+
+        const btn = document.createElement('button');
+        btn.innerText = 'x';
+        btn.onclick = resetPreview;
+
+        let media;
+        if (file.type.startsWith('image')) {
+          media = document.createElement('img');
+        } else {
+          media = document.createElement('video');
+          media.controls = true;
+        }
+        media.src = e.target.result;
+
+        wrapper.appendChild(media);
+        wrapper.appendChild(btn);
+        previewContainer.appendChild(wrapper);
+        selectedMedia = { file, dataUrl: e.target.result };
+      };
+      reader.readAsDataURL(file);
+    }
 
     async function sendMessage() {
       const text = userInput.value.trim();
-      const imageFile = imageInput.files[0];
-      const videoFile = videoInput.files[0];
-      if (!text && !imageFile && !videoFile) return;
+      if (!text && !selectedMedia) return;
 
       const parts = [];
       const display = {};
 
-      if (imageFile) {
-        const base64 = await fileToBase64(imageFile);
-        parts.push({ inlineData: { data: base64, mimeType: imageFile.type } });
-        display.imageUrl = "data:" + imageFile.type + ";base64," + base64;
-      }
-
-      if (videoFile) {
-        const base64 = await fileToBase64(videoFile);
-        parts.push({ inlineData: { data: base64, mimeType: videoFile.type } });
-        display.videoUrl = "data:" + videoFile.type + ";base64," + base64;
+      if (selectedMedia) {
+        const base64 = selectedMedia.dataUrl.split(",")[1];
+        const mime = selectedMedia.file.type;
+        parts.push({ inlineData: { data: base64, mimeType: mime } });
+        if (mime.startsWith('image')) display.imageUrl = selectedMedia.dataUrl;
+        else display.videoUrl = selectedMedia.dataUrl;
       }
 
       if (text) {
@@ -122,8 +166,8 @@
       }
 
       addMessage(display, 'user');
-      userInput.value = "";
-      resetInputs();
+      userInput.value = '';
+      resetPreview();
 
       const loader = document.createElement("div");
       loader.textContent = "...";
@@ -137,19 +181,31 @@
         aiText += chunk.text();
         loader.textContent = aiText;
       }
-
       loader.remove();
       addMessage(aiText, 'ai');
     }
 
-    function fileToBase64(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result.split(",")[1]);
-        reader.onerror = e => reject(e);
-        reader.readAsDataURL(file);
-      });
-    }
+    btnImg.onclick = () => imageInput.click();
+    btnVid.onclick = () => videoInput.click();
+
+    imageInput.onchange = e => {
+      if (e.target.files[0]) showPreview(e.target.files[0]);
+    };
+    videoInput.onchange = e => {
+      if (e.target.files[0]) showPreview(e.target.files[0]);
+    };
+
+    dropZone.addEventListener('dragover', e => e.preventDefault());
+    dropZone.addEventListener('drop', e => {
+      e.preventDefault();
+      const file = e.dataTransfer.files[0];
+      if (file && (file.type.startsWith('image') || file.type.startsWith('video'))) showPreview(file);
+    });
+
+    clearButton.onclick = () => {
+      chatWindow.innerHTML = '';
+      addMessage('สวัสดีครับ มีอะไรให้ผมช่วยไหม? รองรับข้อความ รูปภาพ วิดีโอ', 'ai');
+    };
 
     sendButton.onclick = sendMessage;
     userInput.addEventListener("keypress", e => {
