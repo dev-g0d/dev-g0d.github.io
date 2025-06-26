@@ -52,5 +52,14 @@
     "fix_info": "",
     "MF_LUA": "https://github.com/dev-g0d/dev-g0d.github.io/raw/refs/heads/main-site/site/excute/ZOMBIE%20RAID:%20No%20One%20Survives/688540.zip",
     "MF_LUA_info": "ใช้กับ SteamTools"
+  },
+  {
+    "app": "728880",
+    "download": "",
+    "download_info": "",
+    "fix": "https://github.com/dev-g0d/dev-g0d.github.io/raw/refs/heads/main-site/site/excute/Overcooked!2/Overcooked2.fix.g0d.rar",
+    "fix_info": "รหัสผ่าน: g0d",
+    "MF_LUA": "https://github.com/dev-g0d/dev-g0d.github.io/raw/refs/heads/main-site/site/excute/Overcooked!2/728880.zip",
+    "MF_LUA_info": "ใช้กับ SteamTools"
   }
 ]
