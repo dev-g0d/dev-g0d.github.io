@@ -9,12 +9,12 @@
     "MF_LUA_info": "ใช้กับ SteamTools"
   },
   {
-    "app": "APP_ID_เกมถัดไป",
-    "download": "ลิงก์ดาวน์โหลดของเกมถัดไป",
-    "download_info": "ข้อมูลดาวน์โหลดของเกมถัดไป",
-    "fix": "ลิงก์แก้ไขของเกมถัดไป",
-    "fix_info": "ข้อมูลแก้ไขของเกมถัดไป",
-    "MF_LUA": "ลิงก์ Lua & Manifest ของเกมถัดไป",
-    "MF_LUA_info": "ข้อมูล Lua & Manifest ของเกมถัดไป"
+    "app": "3176060",
+    "download": "",
+    "download_info": "",
+    "fix": "https://github.com/dev-g0d/dev-g0d.github.io/raw/refs/heads/main-site/site/excute/EmissaryZero/EmissaryZero.fix.g0d.rar",
+    "fix_info": "รหัสผ่าน: g0d",
+    "MF_LUA": "https://github.com/dev-g0d/dev-g0d.github.io/raw/refs/heads/main-site/site/excute/EmissaryZero/3176060.zip",
+    "MF_LUA_info": "ใช้กับ SteamTools"
   }
 ]
