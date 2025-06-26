@@ -1,6 +1,5 @@
-[
-  {
-    "app": "1335830",
+{
+  "1335830": {
     "download": "https://www.google.com/",
     "download_info": "รหัสผ่าน ดาวน์โหลด 1234",
     "fix": "https://www.google.com/",
@@ -8,8 +7,7 @@
     "MF_LUA": "https://www.google.com/",
     "MF_LUA_info": "รหัสผ่าน Lua&Manifest 1234"
   },
-  {
-    "app": "OTHER_APP_ID",
+  "ANOTHER_APP_ID": {
     "download": "...",
     "download_info": "...",
     "fix": "...",
@@ -17,4 +15,4 @@
     "MF_LUA": "...",
     "MF_LUA_info": "..."
   }
-]
+}
