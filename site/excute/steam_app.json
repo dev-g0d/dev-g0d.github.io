@@ -17,4 +17,14 @@
     "MF_LUA": "https://github.com/dev-g0d/dev-g0d.github.io/raw/refs/heads/main-site/site/excute/EmissaryZero/3176060.zip",
     "MF_LUA_info": "ใช้กับ SteamTools"
   }
+  ,
+  {
+    "app": "3527290",
+    "download": "",
+    "download_info": "",
+    "fix": "https://github.com/dev-g0d/dev-g0d.github.io/raw/refs/heads/main-site/site/excute/PEAK/fix/PEAK.fix.g0d.rar",
+    "fix_info": "รหัสผ่าน: g0d",
+    "MF_LUA": "https://github.com/dev-g0d/dev-g0d.github.io/raw/refs/heads/main-site/site/excute/PEAK/3527290.zip",
+    "MF_LUA_info": "ใช้กับ SteamTools"
+  }
 ]
