@@ -1,12 +1,12 @@
 [
   {
     "app": "1335830",
-    "download": "https://www.google.com/download_lens_island",
-    "download_info": "รหัสผ่าน: LensDownload123",
-    "fix": "https://www.google.com/fix_lens_island",
-    "fix_info": "วิธีแก้ไข: ลองลบไฟล์ชั่วคราว",
-    "MF_LUA": "https://www.google.com/lua_manifest_lens_island",
-    "MF_LUA_info": "คำแนะนำ: ใช้ Notepad++ เปิด"
+    "download": "",
+    "download_info": "",
+    "fix": "",
+    "fix_info": "",
+    "MF_LUA": "https://github.com/dev-g0d/dev-g0d.github.io/raw/refs/heads/main-site/site/excute/Len's%20Island/1335830.zip",
+    "MF_LUA_info": "ใช้กับ SteamTools"
   },
   {
     "app": "APP_ID_เกมถัดไป",
