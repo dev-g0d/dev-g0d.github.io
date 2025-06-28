@@ -7,11 +7,27 @@
     "episodes": [
       {
         "episode_title": "EP.1",
-        "connect": "ลิงก์สำหรับดูออนไลน์ EP.1 ของซีรี่ย์2"
+        "connect": "vlcg0d:https://huggingface.co/ceog0d/mv2-data/resolve/main/SQG3/SS3EP1.data?download=true"
       },
       {
         "episode_title": "EP.2",
-        "connect": "ลิงก์สำหรับดูออนไลน์ EP.2 ของซีรี่ย์2"
+        "connect": "vlcg0d:https://huggingface.co/ceog0d/mv2-data/resolve/main/SQG3/SS3EP2.data?download=true"
+      },
+      {
+        "episode_title": "EP.3",
+        "connect": "vlcg0d:https://huggingface.co/ceog0d/mv2-data/resolve/main/SQG3/SS3EP3.data?download=true"
+      },
+      {
+        "episode_title": "EP.4",
+        "connect": "vlcg0d:https://huggingface.co/ceog0d/mv2-data/resolve/main/SQG3/SS3EP4.data?download=true"
+      },
+      {
+        "episode_title": "EP.5",
+        "connect": "vlcg0d:https://huggingface.co/ceog0d/mv2-data/resolve/main/SQG3/SS3EP5.data?download=true"
+      },
+      {
+        "episode_title": "EP.6",
+        "connect": "vlcg0d:https://huggingface.co/ceog0d/mv2-data/resolve/main/SQG3/SS3EP6.data?download=true"
       }
     ]
   }
