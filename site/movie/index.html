@@ -437,54 +437,59 @@
         }
       });
     }
-    function renderSeries(list = series) {
-      const seriesList = document.getElementById('seriesList');
-      seriesList.innerHTML = '';
-      document.getElementById('movieGrid').classList.add('hidden');
-      document.getElementById('comingList').classList.add('hidden');
-      seriesList.classList.remove('hidden');
-      list.forEach(movie => {
-        const card = document.createElement('div');
-        card.className = 'thumbnail rounded-lg overflow-hidden';
+function renderSeries(list = series) {
+  const seriesList = document.getElementById('seriesList');
+  seriesList.innerHTML = '';
+  document.getElementById('movieGrid').classList.add('hidden');
+  document.getElementById('comingList').classList.add('hidden');
+  seriesList.classList.remove('hidden');
+  list.forEach(movie => { // ในที่นี้ movie คือแต่ละซีรีส์
+    const card = document.createElement('div');
+    card.className = 'thumbnail rounded-lg overflow-hidden';
 
-        let ytEmbed = "";
-        let ytId = "";
-        if(movie.video && getYoutubeId(movie.video)){
-          ytId = getYoutubeId(movie.video);
-          ytEmbed = `<iframe class="yt-preview" src="${getYoutubeEmbed(movie.video,true,0,1)}" allow="autoplay; encrypted-media" frameborder="0" tabindex="-1"></iframe>`;
-        }
+    let ytEmbed = "";
+    let ytId = "";
+    if(movie.video && getYoutubeId(movie.video)){
+      ytId = getYoutubeId(movie.video);
+      ytEmbed = `<iframe class="yt-preview" src="${getYoutubeEmbed(movie.video,true,0,1)}" allow="autoplay; encrypted-media" frameborder="0" tabindex="-1"></iframe>`;
+    }
 
-        card.innerHTML =
-          `<div class="media-container" ${ytEmbed ? `data-ytid="${ytId}"` : ""}>
-            <img src="${movie.thumbnail}" alt="${movie.title}">
-            ${ytEmbed}
-          </div>
-          <div class="p-4">
-            <div class="mb-1">${renderMovieTag("series")}</div>
-            <p class="text-xl" style="color:#c9d5ea !important;">${movie.title}</p>
-            <p class="text-gray-400 text-sm mb-2">${movie.year ? `ปี ${movie.year}` : ''}</p>
-            <button class="main-btn" type="button">ดูออนไลน์</button>
-          </div>
-        `;
-        seriesList.appendChild(card);
+    // สร้าง HTML สำหรับ card ซีรีส์
+    let episodesHtml = '';
+    if (movie.episodes && movie.episodes.length > 0) {
+      // สร้าง dropdown หรือรายการปุ่มสำหรับแต่ละตอน
+      episodesHtml = `<select class="main-btn mt-3" onchange="window.location.href=this.value">`;
+      episodesHtml += `<option value="">เลือกตอน</option>`;
+      movie.episodes.forEach(ep => {
+        episodesHtml += `<option value="${ep.connect}">${ep.episode_title}</option>`;
+      });
+      episodesHtml += `</select>`;
+    } else {
+      episodesHtml = `<button class="main-btn disabled-btn" type="button" disabled>ไม่มีตอนให้ชม</button>`;
+    }
 
-        const viewBtn = card.querySelector('.main-btn');
-        if (viewBtn && movie.connect) {
-          viewBtn.addEventListener('click', function() {
-            window.location.href = movie.connect;
-          });
-        } else if (viewBtn) {
-          viewBtn.classList.add('disabled-btn');
-        }
+    card.innerHTML =
+      `<div class="media-container" ${ytEmbed ? `data-ytid="${ytId}"` : ""}>
+        <img src="${movie.thumbnail}" alt="${movie.title}">
+        ${ytEmbed}
+      </div>
+      <div class="p-4">
+        <div class="mb-1">${renderMovieTag("series")}</div>
+        <p class="text-xl" style="color:#c9d5ea !important;">${movie.title}</p>
+        <p class="text-gray-400 text-sm mb-2">${movie.year ? `ปี ${movie.year}` : ''}</p>
+        ${episodesHtml}
+      </div>
+    `;
+    seriesList.appendChild(card);
 
-        const media = card.querySelector('.media-container');
-        if(media && ytId){
-          media.addEventListener('click', function(e) {
-            showYoutubePopup(ytId);
-          });
-        }
+    const media = card.querySelector('.media-container');
+    if(media && ytId){
+      media.addEventListener('click', function(e) {
+        showYoutubePopup(ytId);
       });
     }
+  });
+}
     function renderComing(list = coming) {
       const comingList = document.getElementById('comingList');
       comingList.innerHTML = '';
