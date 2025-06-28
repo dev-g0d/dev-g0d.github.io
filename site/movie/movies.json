@@ -7,14 +7,14 @@
     "year": 2025
   },
   {
-    "title": "Companion (2025) คอมแพเนียน เขย่าขวัญ",
+    "title": "Companion คอมแพเนียน เขย่าขวัญ",
     "thumbnail": "https://m.media-amazon.com/images/M/MV5BODczNjU4NGItZjUxOC00MzFiLTk5MzItNjlmNWYyNTMyYTcxXkEyXkFqcGc@._V1_FMjpg_UY4096_.jpg",
     "video": "https://youtu.be/Qr_kX0D3DNA?si=Tf0D7Goke5wGTF7x",
     "connect": "vlcg0d:https://huggingface.co/ceog0d/mv2-data/resolve/main/cp2025.data?download=true",
     "year": 2025
   },
   {
-    "title": "Terrifier 3 (2024) เทอร์ริไฟเออร์ อิหนูกูจะฆ่ามึง 3 (ซับไทย)",
+    "title": "Terrifier 3 อิหนูกูจะฆ่ามึง (ซับไทย)",
     "thumbnail": "https://m.media-amazon.com/images/M/MV5BNzc2MWUyYzctY2E4Ny00ZTlmLThjNTMtMTViZGI5NjcyN2EzXkEyXkFqcGc@.jpg",
     "video": "https://youtu.be/tk2mkXHN2G8?si=KrQ6ij-kjvVBsF8G",
     "connect": "vlcg0d:https://huggingface.co/ceog0d/mv2-data/resolve/main/TR3.data?download=true",
