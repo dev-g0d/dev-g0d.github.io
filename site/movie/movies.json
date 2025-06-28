@@ -1,9 +1,9 @@
 [
   {
-    "title": "final Destination: Bloodlines ทายาทโกงตาย (ซับไทย)",
+    "title": "final Destination: Bloodlines ทายาทโกงตาย",
     "thumbnail": "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcRPOL53RyoU4eyip77wbyuNsOWMhHTy_keVNujx8nHDCVy3eirJ",
     "video": "https://youtu.be/UWMzKXsY9A4?si=RrA5yMQnbOpPb7zV",
-    "connect": "vlcg0d:https://huggingface.co/ceog0d/mv2-data/resolve/main/FDB_6.data?download=true",
+    "connect": "vlcg0d:https://huggingface.co/ceog0d/mv2-data/resolve/main/FDB25.data?download=true",
     "year": 2025
   },
   {
@@ -14,7 +14,7 @@
     "year": 2025
   },
   {
-    "title": "Terrifier 3 (2024) เทอร์ริไฟเออร์ อิหนูกูจะฆ่ามึง 3",
+    "title": "Terrifier 3 (2024) เทอร์ริไฟเออร์ อิหนูกูจะฆ่ามึง 3 (ซับไทย)",
     "thumbnail": "https://m.media-amazon.com/images/M/MV5BNzc2MWUyYzctY2E4Ny00ZTlmLThjNTMtMTViZGI5NjcyN2EzXkEyXkFqcGc@.jpg",
     "video": "https://youtu.be/tk2mkXHN2G8?si=KrQ6ij-kjvVBsF8G",
     "connect": "vlcg0d:https://huggingface.co/ceog0d/mv2-data/resolve/main/TR3.data?download=true",
