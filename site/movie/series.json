@@ -1,8 +1,18 @@
 [
   {
-    "title": "Sample Series Name",
-    "thumbnail": "https://share.com/series.jpg",
-    "video": "https://youtu.be/series_ep1",
-    "year": 2024
+    "title": "Squid Game ซีซั่น3",
+    "thumbnail": "https://static.wikia.nocookie.net/thesquidgame/images/0/0a/Season_3_Poster_5.png/revision/latest/scale-to-width-down/1000?cb=20250616063141",
+    "video": "https://youtu.be/zgGTVaG2UiQ?si=Ur6YAUF-3w_H62AP",
+    "year": 2025,
+    "episodes": [
+      {
+        "episode_title": "EP.1",
+        "connect": "ลิงก์สำหรับดูออนไลน์ EP.1 ของซีรี่ย์2"
+      },
+      {
+        "episode_title": "EP.2",
+        "connect": "ลิงก์สำหรับดูออนไลน์ EP.2 ของซีรี่ย์2"
+      }
+    ]
   }
 ]
