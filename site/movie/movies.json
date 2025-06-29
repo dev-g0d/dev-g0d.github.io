@@ -19,6 +19,13 @@
     "video": "https://youtu.be/tk2mkXHN2G8?si=KrQ6ij-kjvVBsF8G",
     "connect": "vlcg0d:https://huggingface.co/ceog0d/mv2-data/resolve/main/TR3.data?download=true",
     "year": 2024
+  },
+  {
+    "title": "Elemental เมืองอลวนธาตุอลเวง (ซับไทย)",
+    "thumbnail": "https://lumiere-a.akamaihd.net/v1/images/elemental-poster-th_c0d1337a.jpeg",
+    "video": "https://youtu.be/hXzcyx9V0xw?si=hsmbh0UI2ErQwfT2",
+    "connect": "vlcg0d:https://huggingface.co/ceog0d/mv2-data/resolve/main/Elt23.data?download=true",
+    "year": 2023
   }
 ]
 
