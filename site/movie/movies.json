@@ -26,6 +26,13 @@
     "video": "https://youtu.be/hXzcyx9V0xw?si=hsmbh0UI2ErQwfT2",
     "connect": "vlcg0d:https://huggingface.co/ceog0d/mv2-data/resolve/main/Elt23.data?download=true",
     "year": 2023
+  },
+  {
+    "title": "I Am Sam สุภาพบุรุษปัญญานิ่ม (ซับไทย)",
+    "thumbnail": "https://m.media-amazon.com/images/S/pv-target-images/1ffe99307ca7024a1ae83cff68e0a24bb53545c6504e134fc917011ecd70bf7e.jpg",
+    "video": "https://youtu.be/ir6_2EkhzAc?si=pVg6AxTPG11DN_q1",
+    "connect": "vlcg0d:https://huggingface.co/ceog0d/mv2-data/resolve/main/IAmSam.data?download=true",
+    "year": 2001
   }
 ]
 
