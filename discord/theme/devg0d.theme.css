@@ -1,5 +1,18 @@
 /*! DEVg0d THEME */
 
+/* Custom Font */
+@font-face {
+  font-family: 'SF Pro TH';
+  src: url('https://dev-g0d.github.io/fonts/SFProTH_regular.woff.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Apply custom font globally */
+* {
+  font-family: 'SF Pro TH', 'gg sans', Whitney, 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+}
+
 /* Background settings */
 :root {
   --background-position: center;
