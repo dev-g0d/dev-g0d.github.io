@@ -1,0 +1,226 @@
+/*! DEVg0d THEME */
+
+/* Background settings */
+:root {
+  --background-image: url(https://img.freepik.com/free-photo/anime-boy-balcony-winter-night_23-2152020162.jpg?t=st=1763615883~exp=1763619483~hmac=479b779d60b0f7812d75b0903da79d640454035c19f766d8996dbff8233afcd3&w=1480);
+  --background-position: center;
+  --background-size: cover;
+  --background-attachment: fixed;
+  --background-filter: saturate(calc(var(--saturation-factor, 1) * 1));
+  --background-shading-percent: 100%;
+}
+
+:is(.theme-dark, .theme-light .theme-dark) {
+  --hsl-background-shading: rgba(0, 0, 0, 0.4);
+}
+
+:is(.theme-light, .theme-dark .theme-light) {
+  --hsl-background-shading: rgba(252, 252, 252, 0.3);
+}
+
+/* Display theme name and version */
+.info__2debe::after {
+  content: "DEV/g0d" " " "1.0.0 BETA";
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.3333333333;
+  font-weight: 400;
+  font-family: var(--font-primary);
+}
+
+.visual-refresh:not(.platform-osx) .leading_c38106::before {
+  content: "DEV/g0d";
+  position: static;
+  margin-left: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-default);
+  order: 2;
+  filter: drop-shadow(0 0 5px rgba(88, 101, 242, 0.5));
+}
+
+.visual-refresh:not(.platform-osx) .leading_c38106::after {
+  content: "1.0.0 BETA";
+  position: static;
+  margin-top: -5px;
+  margin-left: 5px;
+  font-family: var(--code-font);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  order: 3;
+}
+
+/* Background image support */
+:is(html, body, .appMount__51fd7) {
+  background: none;
+}
+
+.app_a3002d {
+  background: var(--hsl-background-shading);
+  color: rgba(0, 0, 0, 0);
+}
+
+.app__160d8 {
+  background: hsl(
+    from var(--hsl-background-shading) h s
+      l/calc(var(--background-shading-percent) * 0.1)
+  );
+}
+
+.bg__960e4 {
+  background: var(--background-image) var(--background-position) /
+    var(--background-size) no-repeat;
+  background-attachment: var(--background-attachment);
+  filter: var(--background-filter);
+  z-index: -1;
+}
+
+.container_a2f514 {
+  background: var(--hsl-background-shading);
+}
+
+.refresh-fast-follow-guild-bg.visual-refresh .bg__960e4 {
+  background: var(--background-image) var(--background-position) /
+    var(--background-size) no-repeat;
+  background-attachment: var(--background-attachment);
+  filter: var(--background-filter);
+  z-index: -1;
+}
+
+.refresh-fast-follow-guild-bg.visual-refresh .guilds__5e434 {
+  background: rgba(0, 0, 0, 0);
+}
+
+/* Chat area transparency */
+.chat_f75fb0 {
+  background: rgba(0, 0, 0, 0);
+}
+
+.chat_f75fb0[data-has-border="true"] {
+  border: none;
+}
+
+.chat_f75fb0.threadSidebarOpen_f75fb0 {
+  border-bottom-right-radius: 0;
+}
+
+.theme-midnight .content_f75fb0 {
+  border: none;
+}
+
+.chatContent_f75fb0,
+.scroller__28a87 {
+  background: hsl(
+    from var(--hsl-background-shading) h s
+      l/calc(var(--background-shading-percent) * 0.4)
+  );
+}
+
+.chatGradientBase__36d07 {
+  background: none;
+}
+
+.chatHeaderBar_dc83f5 {
+  background: rgba(0, 0, 0, 0);
+}
+
+/* Members list hover slide animation */
+.chatContent_f75fb0 {
+  max-width: calc(100% - 60px);
+}
+
+.title_f75fb0 {
+  z-index: 11;
+}
+
+.members_c8ffbb,
+.membersWrap_c8ffbb,
+.container_c8ffbb {
+  min-width: 60px;
+  transition-duration: 500ms;
+  transition-property: box-shadow, min-width, width;
+  width: 60px;
+  z-index: 10;
+}
+
+.members_c8ffbb:hover,
+.membersWrap_c8ffbb:hover {
+  min-width: 240px;
+  width: 240px;
+}
+
+.membersWrap_c8ffbb {
+  height: 100%;
+  position: absolute;
+  right: 0;
+}
+
+.membersWrap_c8ffbb:hover {
+  box-shadow: 0 0 20px 10px #00000044;
+}
+
+.membersGroup_c8ffbb {
+  height: 0;
+  transition-duration: 500ms;
+  transition-property: height;
+}
+
+.members_c8ffbb:hover .membersGroup_c8ffbb {
+  height: 40px;
+}
+
+/* Settings and content regions */
+.contentRegion__23e6b {
+  background: hsl(
+    from var(--hsl-background-shading) h s
+      l/calc(var(--background-shading-percent) * 0.4)
+  );
+}
+
+.contentRegionScroller__23e6b {
+  background: rgba(0, 0, 0, 0);
+}
+
+/* People/Friends list */
+.peopleColumn__133bf {
+  background: hsl(
+    from var(--hsl-background-shading) h s
+      l/calc(var(--background-shading-percent) * 0.4)
+  );
+}
+
+.container__7d20c {
+  background: hsl(
+    from var(--hsl-background-shading) h s
+      l/calc(var(--background-shading-percent) * 0.2)
+  );
+}
+
+/* Sidebar transparency */
+.standardSidebarView__23e6b {
+  background: rgba(0, 0, 0, 0);
+}
+
+.sidebarRegionScroller__23e6b {
+  background: hsl(
+    from var(--hsl-background-shading) h s
+      l/calc(var(--background-shading-percent) * 0.3)
+  );
+  padding: 20px 8px 60px 20px;
+}
+
+/* Activity/Discovery */
+.contentContainer__89463 {
+  background: hsl(
+    from var(--hsl-background-shading) h s
+      l/calc(var(--background-shading-percent) * 0.4)
+  );
+}
+
+.sidebarContainer__89463 {
+  background: hsl(
+    from var(--hsl-background-shading) h s
+      l/calc(var(--background-shading-percent) * 0.3)
+  );
+}
